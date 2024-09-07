@@ -8,15 +8,31 @@ class Controller
         {
             header("Content-Type: application/json");
             echo json_encode($data);
-            exit();
         }
 
         function view(string $filename, array $data = [])
         {
             header("Content-Type: text/html");
 
-            require(__DIR__ . "\\..\\views\\$filename.view.php");
+            $path = __DIR__ . "\\..\\views\\$filename";
+
+            include_once __DIR__ . '\\utils\\htmx_plugin\\htmx.php';
+            require file_exists("$path.view.php") ? "$path.view.php" : "$path.php";
+        }
+
+        function redirect(string $location)
+        {
+            header("Location: $location");
             exit();
+        }
+
+        function component(string $component, array $data = [])
+        {
+            $path = __DIR__ . "\\..\\views\\components\\$component";
+
+            include_once __DIR__ . '\\utils\\htmx_plugin\\htmx.php';
+
+            include_once file_exists("$path.com.php") ? "$path.com.php" : "$path.php";
         }
 
         $request = new Request($param);

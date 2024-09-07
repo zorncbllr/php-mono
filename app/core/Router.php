@@ -79,8 +79,4 @@ class Router
     {
         return __DIR__ . "\\..\\controllers\\$className.php";
     }
-    static function redirect(string $path, array $data = [])
-    {
-        header("Location: $path");
-    }
 }
