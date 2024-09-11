@@ -6,7 +6,11 @@
 
 # Creating a Controller
 
-    Run command: 'composer gen con [name of controller class]'
+    Run command:
+        'composer gen con [name of controller class]'
+    or
+        'php gen.php con [name of controller class]'
+
 
     After running this command, a controller class snippet will be generated with a default index route handler.
     Routes are determined by the controllers defined inside the controllers folder.
@@ -19,7 +23,11 @@
 
 # Creating a Model
 
-    Run command: 'composer gen mod [name of model class]'
+    Run command:
+        'composer gen mod [name of model class]'
+    or
+        'php gen.php mod [name of model class]'
+
 
     After running this command, a model class snippet will be generated with default id attribute and a commented static function that you need to configure to depending on your liking.
     The name of the model class will be automatically saved as a table to the database.
@@ -32,7 +40,11 @@
 
 # Creating a View
 
-    Run command: 'composer gen view [name of view]'
+    Run command:
+        'composer gen view [name of view]'
+    or
+        'php gen.php view [name of view]'
+
 
     After running this command, a .view.php file will be generated with default html snippet and an h1 tag with the file's name.
     All parameters are provided by the $data associative array variable;
