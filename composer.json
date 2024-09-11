@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "gen": "php app/core/utils/mono_cli/cli.php"
+  }
+}
