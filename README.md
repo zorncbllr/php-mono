@@ -1,10 +1,10 @@
-### MONO - PHP FRAMEWORK
+# MONO - PHP FRAMEWORK
 
     Mono is an Object Oriented Based PHP Framework.
     It follows the MVC architecture.
     It comes with it's own commandline interface built with composer scripts.
 
-# Creating a Controller
+## Creating a Controller
 
     Run command:
         'composer gen con [name of controller class]'
@@ -21,7 +21,7 @@
     controller: Home.php
     route: /home
 
-# Creating a Model
+## Creating a Model
 
     Run command:
         'composer gen mod [name of model class]'
@@ -38,7 +38,7 @@
 
         User::find() will return all rows in the table
 
-# Creating a View
+## Creating a View
 
     Run command:
         'composer gen view [name of view]'
