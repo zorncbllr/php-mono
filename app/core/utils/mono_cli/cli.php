@@ -1,6 +1,6 @@
 <?php
 
-try {
+if (isset($argv[1]) and isset($argv[2])) {
     switch ($argv[1]) {
         case "con":
             $class = ucfirst($argv[2]);
@@ -65,9 +65,13 @@ try {
                 "<div>\n\t<h1>$comp component</h1>\n<h1>"
             );
             break;
+
+        default:
+            echo "invalid command";
+            break;
     }
-} catch (ErrorException $_) {
-    echo "unable to generate file";
+} else {
+    echo "invalid command";
 }
 
 exit();
