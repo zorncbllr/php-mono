@@ -2,7 +2,11 @@
 
 require_once __DIR__ . '\\Generate.php';
 
-if (isset($argv[1]) && $argv[2]) {
+foreach ($argv as $arg) {
+    echo "{$arg} \n";
+}
+
+if (isset($argv[1]) && isset($argv[2])) {
 
     $type = $argv[1];
     $filename = $argv[2];
@@ -10,7 +14,7 @@ if (isset($argv[1]) && $argv[2]) {
     if ($type === 'con' or $type === 'controller') {
         Generate::createNewController($filename);
     } elseif ($type === 'mod' or $type === 'model') {
-        Generate::createNewModule($filename);
+        Generate::createNewModel($filename);
     } elseif ($type === 'vw' or $type === 'view') {
         Generate::createView($filename);
     } elseif ($type === 'comp' or $type === 'component') {

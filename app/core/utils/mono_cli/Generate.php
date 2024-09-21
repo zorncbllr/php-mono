@@ -23,7 +23,7 @@ class Generate
         exit();
     }
 
-    static function createNewModule(string $filename)
+    static function createNewModel(string $filename)
     {
         $class = ucfirst($filename);
         $directory = __DIR__ . "\\..\\..\\..\\models";
@@ -34,7 +34,7 @@ class Generate
 
         file_put_contents(
             $directory . "\\$class.php",
-            "<?php\n\nclass $class extends Model {\npublic int \$id;\n\tpublic function __construct(int \$id = null){\n\n\t\t\$this->id = \$id;\n\n\t// self::createTable('id INT AUTO_INCREMENT PRIMARY KEY');\n\t}\n}"
+            "<?php\n\nclass $class extends Model {\npublic \$id;\n\tpublic function __construct(\$id = null){\n\n\t\t\$this->id = \$id;\n\n\t// self::createTable('id INT AUTO_INCREMENT PRIMARY KEY');\n\t}\n}"
         );
 
         exit();

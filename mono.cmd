@@ -12,7 +12,7 @@ goto :main
     if "%mode%" == "-s" set is_serve=1
 
     if %is_gen%==1 (
-        php app/core/utils/mono_cli/cli.php %mode% %2
+        php app/core/utils/mono_cli/cli.php %2 %3
     ) else if %is_serve%==1 (
         php -S localhost:3000 public/index.php
     ) else (
@@ -24,7 +24,7 @@ goto :eof
 :main
     set mode=%1
 
-    call :handle_operation
+    call :handle_operation %mode% %2 %3
 
     set mode=
 goto :eof
