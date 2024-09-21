@@ -1,77 +1,24 @@
 <?php
 
-if (isset($argv[1]) and isset($argv[2])) {
-    switch ($argv[1]) {
-        case "con":
-            $class = ucfirst($argv[2]);
-            $directory = __DIR__ . "\\..\\..\\..\\controllers";
+require_once __DIR__ . '\\Generate.php';
 
-            if (!is_dir($directory)) {
-                mkdir($directory);
-                file_put_contents(
-                    $directory . "\\_404.php",
-                    "<?php\n\nclass _404 extends Controller {\n\tpublic static function error(){\n\n\t\treturn view('404');\n\t}\n}\n"
-                );
-            }
+if (isset($argv[1]) && $argv[2] && $argv[3]) {
 
-            file_put_contents(
-                $directory . "\\$class.php",
-                "<?php\n\nclass $class extends Controller {\n\n\t#[Route(method: 'GET')]\n\tpublic function index(Request \$request){\n\n\t\treturn '$class controller';\n\t}\n}\n"
-            );
-            break;
+    $mode = $argv[1];
+    $type = $argv[2];
+    $filename = $argv[3];
 
-        case "mod":
-            $class = ucfirst($argv[2]);
-            $directory = __DIR__ . "\\..\\..\\..\\models";
-
-            if (!is_dir($directory)) {
-                mkdir($directory);
-            }
-
-            file_put_contents(
-                $directory . "\\$class.php",
-                "<?php\n\nclass $class extends Model {\npublic int \$id;\n\tpublic function __construct(int \$id = null){\n\n\t\t\$this->id = \$id;\n\n\t// self::createTable('id INT AUTO_INCREMENT PRIMARY KEY');\n\t}\n}"
-            );
-            break;
-
-        case "view":
-            $view = ucfirst($argv[2]);
-            $directory = __DIR__ . "\\..\\..\\..\\views";
-
-            if (!is_dir($directory)) {
-                mkdir($directory);
-                file_put_contents(
-                    $directory . "\\404.view.php",
-                    "<!DOCTYPE html>\n<html lang='en'>\n<head>\n\t<meta charset='UTF-8'>\n\t<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n\t<title>404 | Page not Found</title>\n</head>\n<body>\n\t<h1>404 | Page not Found</h1>\n</body>\n</html>"
-                );
-            }
-
-            file_put_contents(
-                $directory . "\\$view.view.php",
-                "<!DOCTYPE html>\n<html lang='en'>\n<head>\n\t<meta charset='UTF-8'>\n\t<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n\t<title>$view</title>\n</head>\n<body>\n\t<h1>$view</h1>\n</body>\n</html>"
-            );
-            break;
-
-        case "comp":
-            $comp = ucfirst($argv[2]);
-            $directory = __DIR__ . "\\..\\..\\..\\views\\components";
-
-            if (!is_dir($directory)) {
-                mkdir($directory);
-            }
-
-            file_put_contents(
-                $directory . "\\$comp.com.php",
-                "<div>\n\t<h1>$comp component</h1>\n<h1>"
-            );
-            break;
-
-        default:
-            echo "invalid command";
-            break;
+    if ($mode === 'gen' or $mode === '-g' or $mode === 'generate') {
+        if ($type === 'con' or $type === 'controller') {
+            Generate::createNewController($filename);
+        } elseif ($type === 'mod' or $type === 'model') {
+            Generate::createNewModule($filename);
+        } elseif ($type === 'vw' or $type === 'view') {
+            Generate::createView($filename);
+        } elseif ($type === 'comp' or $type === 'component') {
+            Generate::createNewComponent($filename);
+        }
     }
-} else {
-    echo "invalid command";
 }
 
-exit();
+echo "invalid mono command\n";
