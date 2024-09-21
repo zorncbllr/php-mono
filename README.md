@@ -6,7 +6,8 @@
 
 ## Creating a Controller
 
-    ####Run command:
+#### Run command:
+
         mono -g con <filename>
     or
         mono gen controller <filename>
@@ -24,7 +25,8 @@
 
 ## Creating a Model
 
-    ####Run command:
+#### Run command:
+
         mono -g mod <filename>
     or
         mono gen model <filename>
@@ -43,7 +45,8 @@
 
 ## Creating a View
 
-    ####Run command:
+#### Run command:
+
         mono -g vw <filename>
     or
         mono gen view <filename>
