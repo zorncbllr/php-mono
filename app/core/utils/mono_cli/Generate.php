@@ -51,7 +51,7 @@ class Generate
 
         file_put_contents(
             $directory . "\\$comp.com.php",
-            "<div>\n\t<h1>$comp component</h1>\n<h1>"
+            "<div>\n\t<h1>$comp component</h1>\n<div>"
         );
 
         exit();
