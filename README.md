@@ -4,6 +4,14 @@
     It follows the MVC architecture.
     It comes with it's own commandline interface built with composer scripts.
 
+## Serving the Project
+
+#### Run command:
+
+        mono serve
+    or
+        mono -s
+
 ## Creating a Controller
 
 #### Run command:

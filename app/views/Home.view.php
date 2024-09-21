@@ -9,7 +9,7 @@
 
 <body>
 	<h1>Mono</h1>
-	<p><b>The fast, opinionated, and scalable php framework.</b></p>
+	<h3>The fast, object-oriented, and scalable php framework.</h3>
 	<main>
 		<p>hello world!</p>
 	</main>
