@@ -2,9 +2,6 @@
 
 require_once __DIR__ . '\\Generate.php';
 
-foreach ($argv as $arg) {
-    echo "{$arg} \n";
-}
 
 if (isset($argv[1]) && isset($argv[2])) {
 
