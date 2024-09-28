@@ -95,7 +95,7 @@ class Generate
             $initAttrs .= "\n\t\t\$this->$copy = $attr;" . ($index < (sizeof($attrs) - 1) ? "" : "\n");
         }
 
-        $constructorBlocks[2] = $initAttrs . $constructorBlocks[2];
+        $constructorBlocks[2] = "\n" . $initAttrs . $constructorBlocks[2];
         $constructorBlocks[1] = self::getConstructParams($filename);
 
         $content = "";
@@ -144,13 +144,15 @@ class Generate
 
         $attrs = self::getAttributes($filename);
 
-        $finalParam = "";
+        $severalParams = sizeof($attrs) > 4;
+        $finalParam =  "";
 
         foreach ($attrs as $index => $attr) {
-            $finalParam .= "$attr = null" . ($index != sizeof($attrs) - 1 ? ", " : "");
+            $finalParam .= ($severalParams ? "\n\t\t" : "") . "$attr = null"
+                . ($index != sizeof($attrs) - 1 ? ", " : "");
         }
 
-        $result = $constructor[0] . "($finalParam)";
+        $result = $constructor[0] . "($finalParam" . ($severalParams ? "\n\t)" : ")");
 
         return $result;
     }
