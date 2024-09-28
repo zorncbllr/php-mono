@@ -5,5 +5,6 @@ return [
     "port" => 3306,
     "user" => "root",
     "password" => "",
-    "dbname" => "cluster2"
+    "dbname" => "cluster2",
+    "charset" => "utf8mb4"
 ];

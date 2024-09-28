@@ -19,7 +19,7 @@ abstract class Database
 
         $statement->execute($params);
 
-        return $statement->fetchAll(); 
+        return $statement->fetchAll();
     }
     public static function create(Model $model): bool
     {
@@ -27,7 +27,7 @@ abstract class Database
 
         $attributes = array_filter((array) $model, fn($attr) => $attr !== null);
 
-        $table = lcfirst(get_called_class());
+        $table = lcfirst(get_called_class()) . "s";
 
         $query = "insert into `$table` (";
 
@@ -56,7 +56,7 @@ abstract class Database
     {
         $pdo = self::getPDO();
 
-        $query = "CREATE TABLE IF NOT EXISTS `" . lcfirst(get_called_class()) . "` ( " . $config . " )";
+        $query = "CREATE TABLE IF NOT EXISTS `" . lcfirst(get_called_class()) . "s" . "` ( " . $config . " )";
         $pdo->exec($query);
     }
     public static function initModels()
@@ -77,7 +77,7 @@ abstract class Database
         try {
             $pdo = self::getPDO();
 
-            $table = strtolower(get_called_class());
+            $table = strtolower(get_called_class()) . "s";
             $query = "UPDATE `$table` SET ";
 
             foreach ($params as $key => $value) {
@@ -100,7 +100,7 @@ abstract class Database
     {
         try {
             $pdo = self::getPDO();
-            $table = lcfirst(get_called_class());
+            $table = lcfirst(get_called_class()) . "s";
             $query = "DELETE FROM `$table` WHERE `$table`.`id` = :id";
 
             $statement = $pdo->prepare($query);

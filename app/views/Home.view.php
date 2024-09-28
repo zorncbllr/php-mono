@@ -1,18 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+	<meta charset='UTF-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<title>Home</title>
 </head>
 
 <body>
 	<h1>Mono</h1>
-	<h3>The fast, object-oriented, and scalable php framework.</h3>
-	<main>
-		<p>hello world!</p>
-	</main>
+	<h3>The Fast, Scalable, Object-Oriented PHP Framework.</h3>
+	<p>HELLO WORLD!</p>
 </body>
 
 </html>
