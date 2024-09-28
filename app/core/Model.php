@@ -10,14 +10,28 @@ abstract class Model extends Database
             return parent::query($query);
         }
 
-        $key = key($param);
-        $query .= " where $key = :$key";
-
-        return parent::query($query, $param);
+        return self::mapper(parent::query($query));
     }
 
     public static function findById(int | string $id)
     {
-        return self::find(["id" => $id]);
+        $query = "select * from " . lcfirst(get_called_class()) . "s where id = :id";
+        return self::mapper(
+            parent::query($query, ["id" => $id])[0]
+        );
+    }
+
+    private static function mapper(array $data)
+    {
+        $class = get_called_class();
+
+        if (array_is_list($data)) {
+            return array_map(
+                fn($dt) => new $class(...$dt),
+                $data
+            );
+        }
+
+        return new $class(...$data);
     }
 }

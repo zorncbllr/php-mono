@@ -22,8 +22,11 @@
     or
         mono generate controller <filename>
 
-    After running this command, a controller class snippet will be generated with a default index route handler.
+    After running this command, a controller class snippet will be generated with
+    a default index route handler.
+
     Routes are determined by the controllers defined inside the controllers folder.
+
     Base routes are anchored to the name of the controller class.
 
     example:
@@ -41,15 +44,52 @@
     or
         mono generate model <filename>
 
+    After running this command, a model class snippet will be generated with default
+    id attribute and a commented static function that you need to configure
+    depending on your liking.
 
-    After running this command, a model class snippet will be generated with default id attribute and a commented static function that you need to configure to depending on your liking.
-    The name of the model class will be automatically saved as a table to the database.
+#### Generated example Model
 
-    Model classes provides find, findById, update, and delete static methods.
+    <?php
+
+    class Product extends Model {
+    private $id;
+        public function __construct($id = null){
+
+            $this->id = $id;
+
+        self::createTable('id INT AUTO_INCREMENT PRIMARY KEY');
+        }
+    }
+
+    Use the self::createTable() method to create a new table.
+
+    The name of the model class will be automatically saved as
+    a table to the database.
+
+    Model class provides find, findById, update, and delete static methods.
 
     example:
 
         User::find() will return all rows in the table
+
+#### Getters and Setters Generation
+
+    You may automatically generate getters and setters for your model schema
+    by running the command:
+
+        mono -f <model name>
+    or
+        mono fill <model name>
+
+    example:
+
+        - mono fill user
+        - mono fill product
+
+    After running the command, getters and setters for all specified
+    attributes within the class will be generated automatically, as well as
+    the initialization of the attributes.
 
 ## Creating a View
 
@@ -62,7 +102,9 @@
         mono generate view <filename>
 
 
-    After running this command, a .view.php file will be generated with default html snippet and an h1 tag with the file's name.
+    After running this command, a .view.php file will be generated with
+    default html snippet and an h1 tag with the file's name.
+
     All parameters are provided by the $data associative array variable;
 
     example:
@@ -72,6 +114,7 @@
 ## Routing with Mono
 
     Routes are determined by the controller classes inside the controllers folder.
+
     Base routes are named after the file name of the controller.
 
     example:
@@ -79,7 +122,10 @@
         controller: Users.php
         route: /users
 
-    By default, Home.php or /home refers to the root path. Mono would recognize a controller with Home.php filename as the root controller. hence, / is the same as /home.
+    By default, Home.php or /home refers to the root path.
+
+    Mono would recognize a controller with Home.php filename as the root controller.
+    hence, / is the same as /home.
 
 ## Nested Routes
 
@@ -90,7 +136,9 @@
 
     where profile is the nested route.
 
-    In Mono, to create a nested route handler, you have to create a controller class and another function with Route attribute on the top.
+    In Mono, to create a nested route handler,
+    you have to create a controller class and another function
+    with Route attribute on the top.
 
 #### example implementation:
 
@@ -113,8 +161,11 @@
 
 #### explanation:
 
-    In creating a route handler, you need to specify its Route attribute --- the route path and method.
-    By default, path is pointing at the name of the controller class, thus, you only need to add the specified path like '/profile' to the path.
+    In creating a route handler, you need to specify its Route attribute
+    --- the route path and method.
+
+    By default, path is pointing at the name of the controller class,
+    thus, you only need to add the specified path like '/profile' to the path.
 
     path result:
         /users/profile
@@ -151,7 +202,8 @@
 
 #### explanation:
 
-    If a route includes an specified :id, the route handler will run regardless of the value being passed into the :id.
+    If a route includes an specified :id,
+    the route handler will run regardless of the value being passed into the :id.
 
     example:
         users/12
@@ -164,9 +216,11 @@
 
 ## Parsing Dynamic Route Param
 
-    To parse the route parameter in Mono, you need to access the $request parameter that's availble to you.
+    To parse the route parameter in Mono, you need to access
+    the $request parameter that's availble to you.
 
-    The request object $request includes various data and one of those data is the route param.
+    The request object $request includes various data and
+    one of those data is the route param.
 
 #### accessing the value:
 
@@ -180,7 +234,9 @@
 
 ## Query Parameters in Mono
 
-    Query parameters can be found within the $request object provided by mono function handlers.
+    Query parameters can be found within the $request object
+    provided by mono function handlers.
+
     To access the value of the query parameter, simply specify the query key.
 
 #### example:
@@ -190,19 +246,23 @@
 
 ## Request Methods in Mono
 
-    You can specify the request methods in the Route attribute located on top of the route function handlers.
+    You can specify the request methods in the Route attribute
+    located on top of the route function handlers.
 
 #### example:
 
     #[Route(method: "POST")]
 
     Request methods may include GET, POST, PATCH, PUT, and DELETE.
-    Routes with the same path but different request methods will be treated and handled differently.
+    Routes with the same path but different request methods will be
+    treated and handled differently.
 
 ## The Route Attribute
 
     Route attributes are similar to annotations in other programming languages.
-    The route attribute determines the path, as well as the method a route handler will be handling.
+
+    The route attribute determines the path, as well
+    as the method a route handler will be handling.
 
 #### example:
 
@@ -219,7 +279,8 @@
 
 #### explanation:
 
-    In this example, the route handler function named 'index' has an attribute of Route with the path poiting at home and a request method of GET.
+    In this example, the route handler function named 'index' has an attribute
+    of Route with the path poiting at home and a request method of GET.
 
     The function will only run if the route path given matches the request url.
 
@@ -243,7 +304,8 @@
         }
     }
 
-    To return a view, simply call the view() function and specify the filename of the .view.php file as the first argument.
+    To return a view, simply call the view() function and
+    specify the filename of the .view.php file as the first argument.
 
 #### Returning a View with Argument
 
@@ -260,7 +322,9 @@
         }
     }
 
-    You can add a second argument to the view() function as an associative array to pass in data from the controller to the view.
+    You can add a second argument to the view() function as an
+    associative array to pass in data from the controller to the view.
+
     You can access the value inside the $data array variable.
 
 #### example:
@@ -281,11 +345,14 @@
 
 #### explanation:
 
-    If you pass in a value as the second argument in the view() function, the value can be accessed inside the $data varible just by specifying the key assigned.
+    If you pass in a value as the second argument in the view() function,
+    the value can be accessed inside the $data varible just
+    by specifying the key assigned.
 
 ## Models in Mono
 
     Model classes are blueprints of a database table.
+
     Model classes can have columns specified in your database table.
 
     The name of the model class represents the name of the table inside your database.
@@ -293,7 +360,8 @@
     For example:
         User.php refers to the user table inside your database.
 
-    Model classes also provides built in static functions that you can use to read, create, update, and delete data inside your database.
+    Model classes also provides built in static functions that
+    you can use to read, create, update, and delete data inside your database.
 
 ## Model Class Methods
 
@@ -311,7 +379,10 @@
 ## CreateTable Method in Mono
 
     The createTable() method is used to initialize and configure your database table.
-    You can specify the name, type, and other configurations of your columns by using this method.
+
+    You can specify the name, type, and other configurations of your columns
+    by using this method.
+
     Note that createTable() method will only create a new table if it is not yet created.
 
 #### example implementation:
@@ -339,7 +410,8 @@
 
 ## Create Method
 
-    The create() method provided by the Model class creates and saves a new Model to the database table.
+    The create() method provided by the Model class creates and saves
+    a new Model to the database table.
 
 #### example implementation:
 
@@ -358,7 +430,8 @@
     Syntax:
         Model::create(new Model(...))
 
-    The create() method returns a boolean value, which then can be used to handle invalid inputs and failed creation.
+    The create() method returns a boolean value,
+    which then can be used to handle invalid inputs and failed creation.
 
     Hence, should be:
 
@@ -374,3 +447,51 @@
     } else {
         return 'failed to create new user';
     }
+
+## Find() and FindById() Methods
+
+    For each model schema you create, you will have access to find()
+    and findById() methods.
+
+    find() method is used to get all of the data from your table.
+
+    Mono will automatically assume and use the name of your model
+    schema class as the table name inside your database.
+
+    example:
+        Model schema class name:
+            User
+        Database table name:
+            users
+
+##### find() implementation
+
+    For this example, assume that you have a model User inside your
+    models folder.
+
+    example:
+
+        $users = User::find();
+
+    the find() method returns an array of User objects, hence
+    each element posesses the properties and methods you have specified
+    inside the User model class, such as the getters and setters.
+
+##### findById() implementation
+
+    For this example, assume again that you have a model user inside
+    your models folder.
+
+    example:
+
+        $user = User::findById( id: 1 );
+
+    findById() method takes and int $id parameter to find specific data
+    by its id attribute in the database.
+
+    findById() method returns an object of the model class that
+    issued the method.
+
+    In this example, findById() returns an object instance of User.
+    All public attributes and methods inside the User model class will
+    be accessible in the object returned by this method.

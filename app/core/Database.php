@@ -21,11 +21,32 @@ abstract class Database
 
         return $statement->fetchAll();
     }
+
+    private static function trimClassName(Model $model): array
+    {
+        $attributes = array_filter(
+            (array) $model,
+            fn($attr) => $attr !== null
+        );
+
+        $keys = array_map(
+            fn($attr) => trim(str_replace(get_class($model), "", $attr)),
+            array_keys($attributes)
+        );
+
+        $values = array_values($attributes);
+        $attributes = [];
+
+        for ($i = 0; $i < sizeof($keys); $i++) {
+            $attributes[$keys[$i]] = $values[$i];
+        }
+
+        return $attributes;
+    }
     public static function create(Model $model): bool
     {
         $pdo = self::getPDO();
-
-        $attributes = array_filter((array) $model, fn($attr) => $attr !== null);
+        $attributes = self::trimClassName($model);
 
         $table = lcfirst(get_called_class()) . "s";
 
@@ -42,6 +63,8 @@ abstract class Database
         $attach_attributes();
         $query .= "values (";
         $attach_attributes(":");
+
+        echo $query;
 
         try {
             $statement = $pdo->prepare($query);
@@ -72,8 +95,9 @@ abstract class Database
         }
     }
 
-    public static function update(int $id, array $params): bool
+    public static function update(Model $model): bool
     {
+        $params = self::trimClassName($model);
         try {
             $pdo = self::getPDO();
 
@@ -88,7 +112,7 @@ abstract class Database
 
             $statement = $pdo->prepare($query);
 
-            $statement->execute([...$params, "id" => $id]);
+            $statement->execute([...$params, "id" => $params['id']]);
 
             return true;
         } catch (PDOException $_) {
@@ -96,8 +120,9 @@ abstract class Database
         }
     }
 
-    public static function delete(int $id): bool
+    public static function delete(Model | int $target): bool
     {
+        $id = is_int($target) ? $target : self::trimClassName($target)["id"];
         try {
             $pdo = self::getPDO();
             $table = lcfirst(get_called_class()) . "s";

@@ -2,19 +2,52 @@
 
 class User extends Model
 {
-	public $id, $name, $email, $password;
+	private $id, $name, $email, $password;
 	public function __construct($id = null, $name = null, $email = null, $password = null)
 	{
 		$this->id = $id;
 		$this->name = $name;
 		$this->email = $email;
 		$this->password = $password;
+	}
 
-		self::createTable("
-			id INT AUTO_INCREMENT,
-			name VARCHAR(20) NOT NULL,
-			email VARCHAR(50) NOT NULL UNIQUE,
-			password VARCHAR(100) NOT NULL
-		");
+	public function getId()
+	{
+		return $this->id;
+	}
+
+	public function setId($id)
+	{
+		$this->id = $id;
+	}
+
+	public function getName()
+	{
+		return $this->name;
+	}
+
+	public function setName($name)
+	{
+		$this->name = $name;
+	}
+
+	public function getEmail()
+	{
+		return $this->email;
+	}
+
+	public function setEmail($email)
+	{
+		$this->email = $email;
+	}
+
+	public function getPassword()
+	{
+		return $this->password;
+	}
+
+	public function setPassword($password)
+	{
+		$this->password = $password;
 	}
 }
