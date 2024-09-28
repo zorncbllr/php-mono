@@ -34,7 +34,7 @@ class Generate
 
         file_put_contents(
             $directory . "\\$class.php",
-            "<?php\n\nclass $class extends Model {\nprivate \$id;\n\tpublic function __construct(\$id = null){\n\n\t\t\$this->id = \$id;\n\n\t// self::createTable('id INT AUTO_INCREMENT PRIMARY KEY');\n\t}\n}"
+            "<?php\n\nclass $class extends Model {\n\tprivate \$id;\n\tpublic function __construct(\$id = null) {\n\n\t\t\$this->id = \$id;\n\n\t// self::createTable('id INT AUTO_INCREMENT PRIMARY KEY');\n\t}\n}"
         );
 
         exit();
