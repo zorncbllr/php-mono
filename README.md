@@ -408,7 +408,7 @@
         }
     }
 
-## Create Method
+## Create() Method
 
     The create() method provided by the Model class creates and saves
     a new Model to the database table.
@@ -495,3 +495,73 @@
     In this example, findById() returns an object instance of User.
     All public attributes and methods inside the User model class will
     be accessible in the object returned by this method.
+
+## Update() method
+
+    The update method lets you update a specific data in your database
+    table.
+
+    It takes one argument, your model object, and updates the data
+    by its id.
+
+    The $id attribute is important in this method for targeting the
+    right data in your database table.
+
+#### update() implementation
+
+    In this example, assume that you have a model class User with
+    attributes $id, $username, and $password
+
+    example:
+
+        $user = User::findById( id: 1 );
+
+        $user->setUsername('new_sername_example');
+
+        User::update($user);
+
+    The update method returns a boolean value which you can use
+    to stuffs like checking if the operation was successfull.
+
+    example:
+
+        $user = User::findById( id: 1 );
+
+        $user->setUsername('new_sername_example');
+
+        $is_updated = User::update($user);
+
+        if ($is_updated) {
+            return 'user updated successfully';
+        }
+
+## Delete() method
+
+    The delete() method lets you delete and remove specific data from
+    your database table.
+
+    The delete() method takes one argument, either an object or an integer
+    variable.
+
+    Using integer as an argument will speed up the process of deleting.
+
+    The delete() method returns a boolean value which you can use to check
+    if the operation was successful.
+
+    example:
+
+        $is_deleted = User::delete( target: 1 );
+
+        if ($is_deleted) {
+            return 'user deleted successfully';
+        }
+
+    or
+
+        $user = User::findById( id: 1 );
+
+        $is_deleted = User::delete($user);
+
+        if ($is_deleted) {
+            return 'user deleted successfully';
+        }
