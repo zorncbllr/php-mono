@@ -91,8 +91,15 @@ class Generate
 
         foreach ($attrs as $index => $attr) {
             $copy = str_replace("$", "", $attr);
-            $gettersAndSetters .= self::gettersAndSetters($copy);
-            $initAttrs .= "\n\t\t\$this->$copy = $attr;" . ($index < (sizeof($attrs) - 1) ? "" : "\n");
+            $copy = explode(" ", $copy);
+
+            $copy = $copy[sizeof($copy) - 1];
+
+            if (!str_contains($copy, "public")) {
+                $gettersAndSetters .= self::gettersAndSetters($copy);
+            }
+            $copy = trim(str_replace("public", "", $copy));
+            $initAttrs .= "\n\t\t\$this->$copy = \$$copy;" . ($index < (sizeof($attrs) - 1) ? "" : "\n");
         }
 
         $constructorBlocks[2] = "\n" . $initAttrs . $constructorBlocks[2];
@@ -112,14 +119,56 @@ class Generate
         exit();
     }
 
-    private static function getAttributes(string $filename): array
+    private static function getAttributes(string $filename, $keys = true): array
     {
+        $types = ["string", "int", "array", "object", "bool", "double", "float"];
+        $directory = __DIR__ . "\\..\\..\\..\\models\\";
+
+        $iterator = new DirectoryIterator($directory);
+
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $modelClass = $file->getBasename(".php");
+                array_push($types, $modelClass);
+            }
+        }
+
         $constructorBlocks = self::getconstructorBlocks($filename);
+        $attributes = explode(";", $constructorBlocks[1]);
+        $result = [];
 
-        $attr = trim(explode(";", $constructorBlocks[1])[0]);
-        $attr = str_replace("private ", "", $attr);
+        for ($i = 0; $i < sizeof($attributes) - 1; $i++) {
+            $line = $attributes[$i];
 
-        return explode(", ", $attr);
+            $datatype = "";
+
+            foreach ($types as $type) {
+                if (str_contains($line, $type)) {
+                    $datatype = $type;
+                    $line = str_replace($type, "", $line);
+                    break;
+                }
+            }
+
+            $attrs = explode(",", $line);
+
+            foreach ($attrs as $attr) {
+                $attr = trim(str_replace("private", "", $attr));
+                $result[$attr] = $datatype;
+            }
+        }
+
+        if ($keys) {
+            return array_keys($result);
+        }
+
+        $list = [];
+
+        foreach ($result as $key => $val) {
+            array_push($list, "$val $key");
+        }
+
+        return $list;
     }
 
     private static function getconstructorBlocks(string $filename): array
@@ -142,13 +191,17 @@ class Generate
         $constructorBlocks = self::getconstructorBlocks($filename);
         $constructor = explode("(", $constructorBlocks[1]);
 
-        $attrs = self::getAttributes($filename);
+        $attrs = self::getAttributes($filename, false);
+        $attrs = array_map(
+            fn($attr) => trim(str_replace("public", "", $attr)),
+            $attrs
+        );
 
         $severalParams = sizeof($attrs) > 4;
         $finalParam =  "";
 
         foreach ($attrs as $index => $attr) {
-            $finalParam .= ($severalParams ? "\n\t\t" : "") . "$attr = null"
+            $finalParam .= ($severalParams ? "\n\t\t" : "") . "$attr"
                 . ($index != sizeof($attrs) - 1 ? ", " : "");
         }
 
