@@ -9,6 +9,13 @@ class User extends Model
 		$this->name = $name;
 		$this->email = $email;
 		$this->password = $password;
+
+		self::createTable("
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			name VARCHAR(20) NOT NULL,
+			email VARCHAR(40) NOT NULL,
+			password VARCHAR(100) NOT NULL
+		");
 	}
 
 	public function getId()
