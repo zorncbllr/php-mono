@@ -64,8 +64,6 @@ abstract class Database
         $query .= "values (";
         $attach_attributes(":");
 
-        echo $query;
-
         try {
             $statement = $pdo->prepare($query);
             $statement->execute($attributes);
