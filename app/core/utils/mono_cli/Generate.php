@@ -154,7 +154,7 @@ class Generate
 
             foreach ($attrs as $attr) {
                 $attr = trim(str_replace("private", "", $attr));
-                $result[$attr] = $datatype;
+                $result[str_replace(" ", "", $attr)] = $datatype;
             }
         }
 
@@ -165,7 +165,7 @@ class Generate
         $list = [];
 
         foreach ($result as $key => $val) {
-            array_push($list, "$val $key");
+            array_push($list, $val . " " . $key);
         }
 
         return $list;
@@ -201,7 +201,7 @@ class Generate
         $finalParam =  "";
 
         foreach ($attrs as $index => $attr) {
-            $finalParam .= ($severalParams ? "\n\t\t" : "") . "$attr"
+            $finalParam .= ($severalParams ? "\n\t\t" : "") . trim($attr)
                 . ($index != sizeof($attrs) - 1 ? ", " : "");
         }
 
