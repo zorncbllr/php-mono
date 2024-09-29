@@ -11,7 +11,13 @@ abstract class Model extends Database
         }
 
         $query .= " where " . key($param) . " = :" . key($param);
-        return self::mapper(parent::query($query, [...$param]));
+
+        $data = parent::query($query, [...$param]);
+        if (sizeof($data) <= 1) {
+            return self::mapper($data[0]);
+        }
+
+        return self::mapper($data);
     }
 
     public static function findById(int | string $id)
