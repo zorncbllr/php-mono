@@ -13,7 +13,8 @@ abstract class Model extends Database
         $query .= " where " . key($param) . " = :" . key($param);
 
         $data = parent::query($query, [...$param]);
-        if (sizeof($data) <= 1) {
+
+        if (sizeof($data) === 1) {
             return self::mapper($data[0]);
         }
 
