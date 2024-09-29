@@ -18,5 +18,3 @@ require_once 'Router.php';
 
 $app = new App();
 $router = new Router($app);
-
-Database::initModels();
