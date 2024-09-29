@@ -34,7 +34,7 @@ class Generate
 
         file_put_contents(
             $directory . "\\$class.php",
-            "<?php\n\nclass $class extends Model {\n\tprivate \$id;\n\tpublic function __construct(\$id = null) {\n\n\t\t\$this->id = \$id;\n\n\t// self::createTable('id INT AUTO_INCREMENT PRIMARY KEY');\n\t}\n}"
+            "<?php\n\nclass $class extends Model {\n\tprivate \$id;\n\tpublic function __construct(\$id = null) {\n\t\t\$this->id = \$id;\n\t}\n}"
         );
 
         exit();
@@ -93,9 +93,11 @@ class Generate
             $copy = str_replace("$", "", $attr);
             $copy = explode(" ", $copy);
 
+            $pattern = "/public/";
+
             $copy = $copy[sizeof($copy) - 1];
 
-            if (!str_contains($copy, "public")) {
+            if (!preg_match($pattern, $copy)) {
                 $gettersAndSetters .= self::gettersAndSetters($copy);
             }
             $copy = trim(str_replace("public", "", $copy));
@@ -228,6 +230,8 @@ class Generate
 
         foreach ($attributes as $attr => $type) {
             $copy = str_replace("$", "", $attr);
+            $copy = str_replace("public", "", $copy);
+
             $result .= match ($type) {
                 "string" => "\n\t\t\t$copy VARCHAR(20) NOT NULL",
                 "int" => "\n\t\t\t$copy INT AUTO_INCREMENT PRIMARY KEY",
