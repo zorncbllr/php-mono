@@ -17,7 +17,7 @@ goto :main
     if %is_gen%==1 (
         php app/core/utils/mono_cli/cli.php "gen" %2 %3
     ) else if %is_serve%==1 (
-        php -S localhost:3000 public/index.phps
+        php -S localhost:3000 public/index.php
     ) else if %is_fill%==1 (
           php app/core/utils/mono_cli/cli.php "fill" %2 
     ) else (
