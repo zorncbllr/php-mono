@@ -7,10 +7,11 @@ abstract class Model extends Database
         $query = "select * from " . lcfirst(get_called_class()) . "s";
 
         if (empty($param)) {
-            return parent::query($query);
+            return self::mapper(parent::query($query));
         }
 
-        return self::mapper(parent::query($query));
+        $query .= " where " . key($param) . " = :" . key($param);
+        return self::mapper(parent::query($query, [...$param]));
     }
 
     public static function findById(int | string $id)
