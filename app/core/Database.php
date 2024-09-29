@@ -82,7 +82,7 @@ abstract class Database
         $query = "CREATE TABLE IF NOT EXISTS `" . lcfirst(get_called_class()) . "s" . "` ( " . $config . " )";
         $pdo->exec($query);
     }
-    public static function initModels()
+    protected static function initModels()
     {
         $modelsPath = __DIR__ . "\\..\\models";
         $iterator = new DirectoryIterator($modelsPath);

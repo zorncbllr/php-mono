@@ -2,20 +2,32 @@
 
 class User extends Model
 {
-	private $id, $name, $email, $password;
-	public function __construct($id = null, $name = null, $email = null, $password = null)
-	{
+	private int $id;
+	private string $name, $email, $password;
+	private $date;
+	public function __construct(
+		int $id,
+		string $name,
+		string $email,
+		string $password,
+		$date
+	) {
+
 		$this->id = $id;
 		$this->name = $name;
 		$this->email = $email;
 		$this->password = $password;
-
-		self::createTable("
+		$this->date = $date;
+	}
+	public static function initUser()
+	{
+		self::createTable('
 			id INT AUTO_INCREMENT PRIMARY KEY,
 			name VARCHAR(20) NOT NULL,
-			email VARCHAR(40) NOT NULL,
-			password VARCHAR(100) NOT NULL
-		");
+			email VARCHAR(20) NOT NULL,
+			password VARCHAR(20) NOT NULL,
+			date <ADD YOUR CONFIGURATION>
+		');
 	}
 
 	public function getId()
@@ -56,5 +68,15 @@ class User extends Model
 	public function setPassword($password)
 	{
 		$this->password = $password;
+	}
+
+	public function getDate()
+	{
+		return $this->date;
+	}
+
+	public function setDate($date)
+	{
+		$this->date = $date;
 	}
 }

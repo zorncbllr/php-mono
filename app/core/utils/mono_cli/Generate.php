@@ -82,7 +82,7 @@ class Generate
     {
         $path = self::getPath($filename);
         $constructorBlocks = self::getconstructorBlocks($filename);
-        $attrs = self::getAttributes($filename);
+        $attrs = self::getAttributes($filename, keys: true);
 
         $initAttrs = "";
         $gettersAndSetters = "\n";
@@ -111,6 +111,7 @@ class Generate
             $content .= $block . ($index < sizeof($constructorBlocks) - 1 ? " {" : "");
         }
 
+        $content .= self::initModelFunction($filename);
         $content .= $gettersAndSetters . "\n}";
 
         file_put_contents($path, $content);
@@ -119,7 +120,7 @@ class Generate
         exit();
     }
 
-    private static function getAttributes(string $filename, $keys = true): array
+    private static function getAttributes(string $filename, $keys = false, $list = false, $assoc = false): array
     {
         $types = ["string", "int", "array", "object", "bool", "double", "float"];
         $directory = __DIR__ . "\\..\\..\\..\\models\\";
@@ -160,15 +161,17 @@ class Generate
 
         if ($keys) {
             return array_keys($result);
+        } elseif ($list) {
+            $list = [];
+            foreach ($result as $key => $val) {
+                array_push($list, $val . " " . $key);
+            }
+            return $list;
+        } else if ($assoc) {
+            return $result;
         }
 
-        $list = [];
-
-        foreach ($result as $key => $val) {
-            array_push($list, $val . " " . $key);
-        }
-
-        return $list;
+        return [];
     }
 
     private static function getconstructorBlocks(string $filename): array
@@ -191,7 +194,7 @@ class Generate
         $constructorBlocks = self::getconstructorBlocks($filename);
         $constructor = explode("(", $constructorBlocks[1]);
 
-        $attrs = self::getAttributes($filename, false);
+        $attrs = self::getAttributes($filename, list: true);
         $attrs = array_map(
             fn($attr) => trim(str_replace("public", "", $attr)),
             $attrs
@@ -216,5 +219,23 @@ class Generate
         $setter = "\n\tpublic function set" . ucfirst($attribute) . "(\$$attribute) {\n\t\t\$this->$attribute = \$$attribute;\n\t}\n";
 
         return $getter . $setter;
+    }
+
+    private static function initModelFunction(string $filename)
+    {
+        $attributes = self::getAttributes($filename, assoc: true);
+        $result = "\n\tpublic static function init" . ucfirst($filename) . "() {\n\t\tself::createTable('";
+
+        foreach ($attributes as $attr => $type) {
+            $copy = str_replace("$", "", $attr);
+            $result .= match ($type) {
+                "string" => "\n\t\t\t$copy VARCHAR(20) NOT NULL",
+                "int" => "\n\t\t\t$copy INT AUTO_INCREMENT PRIMARY KEY",
+                default => "\n\t\t\t$copy <ADD YOUR CONFIGURATION>"
+            };
+            $result .= ($attr != array_key_last($attributes)) ? "," : "\n\t\t');\n\t}";
+        }
+
+        return $result;
     }
 }
