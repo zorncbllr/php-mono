@@ -1,20 +1,31 @@
 <?php
 
-abstract class Database
+class Database
 {
-    static private function getPDO()
-    {
-        $config = require __DIR__ . '\\..\\config\\config.php';
-        $dsn = "mysql:" . http_build_query($config, "", ";");
+    private PDO $pdo;
 
-        return new PDO($dsn, $config["user"], $config["password"], [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]);
+    public function __construct()
+    {
+        try {
+            $config = require __DIR__ . '\\..\\config\\config.php';
+            $dsn = "mysql:" . http_build_query($config, "", ";");
+
+            $this->pdo = new PDO($dsn, $config["user"], $config["password"], [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+            ]);
+        } catch (PDOException $e) {
+            echo 'Connection error: ' . $e->getMessage();
+        }
     }
+    public function getPDO()
+    {
+        return $this->pdo;
+    }
+
     public static function query(string $query, array $params = []): array
     {
-        $pdo = self::getPDO();
+        $pdo = $GLOBALS['database']->getPDO();
         $statement = $pdo->prepare($query);
 
         $statement->execute($params);
@@ -45,7 +56,7 @@ abstract class Database
     }
     public static function create(Model $model): bool
     {
-        $pdo = self::getPDO();
+        $pdo = $GLOBALS['database']->getPDO();
         $attributes = self::trimClassName($model);
 
         $table = lcfirst(get_called_class()) . "s";
@@ -75,7 +86,7 @@ abstract class Database
 
     public static function createTable(string $config)
     {
-        $pdo = self::getPDO();
+        $pdo = $GLOBALS['database']->getPDO();
 
         $query = "CREATE TABLE IF NOT EXISTS `" . lcfirst(get_called_class()) . "s" . "` ( " . $config . " )";
         $pdo->exec($query);
@@ -97,7 +108,7 @@ abstract class Database
     {
         $params = self::trimClassName($model);
         try {
-            $pdo = self::getPDO();
+            $pdo = $GLOBALS['database']->getPDO();
 
             $table = strtolower(get_called_class()) . "s";
             $query = "UPDATE `$table` SET ";
@@ -122,7 +133,7 @@ abstract class Database
     {
         $id = is_int($target) ? $target : self::trimClassName($target)["id"];
         try {
-            $pdo = self::getPDO();
+            $pdo = $GLOBALS['database']->getPDO();
             $table = lcfirst(get_called_class()) . "s";
             $query = "DELETE FROM `$table` WHERE `$table`.`id` = :id";
 

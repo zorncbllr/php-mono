@@ -4,7 +4,7 @@ abstract class Model extends Database
 {
     public static function find(array $param = [])
     {
-        $query = "select * from " . lcfirst(get_called_class()) . "s";
+        $query = "select * from `" . lcfirst(get_called_class()) . "s`";
 
         if (empty($param)) {
             return self::mapper(parent::query($query));

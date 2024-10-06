@@ -204,11 +204,20 @@ class Generate
 
         $severalParams = sizeof($attrs) > 4;
         $finalParam =  "";
+        $optionals = "";
 
         foreach ($attrs as $index => $attr) {
-            $finalParam .= ($severalParams ? "\n\t\t" : "") . trim($attr)
-                . ($index != sizeof($attrs) - 1 ? ", " : "");
+            $is_optional = sizeof(explode(' ', $attr)) === 1;
+            $is_last_attr = $index === (sizeof($attrs) - 1);
+            $wspce = sizeof($attrs) > 4 ? "\n\t\t" : "";
+            if ($is_optional) {
+                $optionals .= $wspce . $attr . " = null" . ($is_last_attr ? '' : ', ');
+            } else {
+                $finalParam .= $wspce . $attr . ($is_last_attr && empty($optionals) ? '' : ', ');
+            }
         }
+
+        $finalParam .= $optionals;
 
         $result = $constructor[0] . "($finalParam" . ($severalParams ? "\n\t)" : ")");
 

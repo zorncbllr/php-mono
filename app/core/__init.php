@@ -17,4 +17,5 @@ require_once 'Controller.php';
 require_once 'Router.php';
 
 $app = new App();
+$database = new Database();
 $router = new Router($app);
