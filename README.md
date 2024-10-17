@@ -1,8 +1,8 @@
 # MONO - PHP FRAMEWORK
 
-    Mono is a Fast, Object Oriented Based PHP Framework.
-    It follows the MVC architecture.
-    It comes with it's own commandline interface built with composer scripts.
+Mono is a Fast, Object Oriented Based PHP Framework.
+It follows the MVC architecture.
+It comes with it's own commandline interface built with composer scripts.
 
 ## Serving the Project
 
