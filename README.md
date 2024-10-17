@@ -8,19 +8,25 @@
 
 #### Run command:
 
-        ./mono serve
-    or
-        ./mono -s
+    ./mono serve
+
+or
+
+    ./mono -s
 
 ## Creating a Controller
 
 #### Run command:
 
-        ./mono -g con <filename>
-    or
-        ./mono gen controller <filename>
-    or
-        ./mono generate controller <filename>
+    ./mono -g con <filename>
+
+or
+
+    ./mono gen controller <filename>
+
+or
+
+    ./mono generate controller <filename>
 
 After running this command, a controller class snippet will be generated with
 a default index route handler.
@@ -38,11 +44,15 @@ example:
 
 #### Run command:
 
-        ./mono -g mid <filename>
-    or
-        ./mono gen middleware <filename>
-    or
-        ./mono generate middleware <filename>
+    ./mono -g mid <filename>
+
+or
+
+    ./mono gen middleware <filename>
+
+or
+
+    ./mono generate middleware <filename>
 
 After running this command, a new middleware class snippet will be
 generated with a runnable method that would be executed once a middleware
@@ -88,11 +98,15 @@ example:
 
 #### Run command:
 
-        ./mono -g mod <filename>
-    or
-        ./mono gen model <filename>
-    or
-        ./mono generate model <filename>
+    ./mono -g mod <filename>
+
+or
+
+    ./mono gen model <filename>
+
+or
+
+    ./mono generate model <filename>
 
 After running this command, a model class snippet will be generated with default
 id attribute and a commented static function that you need to configure
@@ -128,14 +142,15 @@ example:
 You may automatically generate getters and setters for your model schema
 by running the command:
 
-        ./mono -f <model name>
-    or
-        ./mono fill <model name>
+    ./mono -f <model name>
+
+or
+
+    ./mono fill <model name>
 
 example:
 
-        - ./mono fill user
-        - ./mono fill product
+        ./mono fill user
 
 After running the command, getters and setters for all specified
 attributes within the class will be generated automatically, as well as
@@ -145,11 +160,15 @@ the initialization of the attributes.
 
 #### Run command:
 
-        mono -g vw <filename>
-    or
-        mono gen view <filename>
-    or
-        mono generate view <filename>
+    mono -g vw <filename>
+
+or
+
+    mono gen view <filename>
+
+or
+
+    mono generate view <filename>
 
 After running this command, a .view.php file will be generated with
 default html snippet and an h1 tag with the file's name.
