@@ -6,5 +6,5 @@ use Request;
 
 abstract class Middleware
 {
-    abstract static function runnable(Request $request, callable $next);
+    abstract static function runnable(Request $request);
 }

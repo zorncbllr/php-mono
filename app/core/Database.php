@@ -8,12 +8,15 @@ class Database
     {
         try {
             $config = require __DIR__ . '/../config/config.php';
-            $dsn = "mysql:" . http_build_query($config, "", ";");
 
-            $this->pdo = new PDO($dsn, $config["user"], $config["password"], [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-            ]);
+            if ($config['dbname'] !== 'sample_db') {
+                $dsn = "mysql:" . http_build_query($config, "", ";");
+
+                $this->pdo = new PDO($dsn, $config["user"], $config["password"], [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                ]);
+            }
         } catch (PDOException $e) {
             echo 'Connection error: ' . $e->getMessage();
         }

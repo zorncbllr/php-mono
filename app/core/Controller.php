@@ -64,7 +64,6 @@ class Controller
                 'runnable'
             ], [
                 $request,
-                fn() => null
             ]);
         }
     }
