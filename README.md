@@ -34,6 +34,56 @@
     controller: Home.php
     route: /home
 
+## Creating a Middleware
+
+#### Run command:
+
+        ./mono -g mid <filename>
+    or
+        ./mono gen middleware <filename>
+    or
+        ./mono generate middleware <filename>
+
+    After running this command, a new middleware class snippet will be
+    generated with a runnable method that would be executed once a middleware
+    is instanciated inside a middleware attribute.
+
+    example:
+
+    <?php
+
+    use App\Core\Middleware;
+
+    class Auth extends Middleware
+    {
+        static function runnable(Request $request)
+        {
+            echo 'Auth Middleware';
+        }
+    }
+
+#### Using Middlewares
+
+    To use a middleware, add an attribute on top of your target method
+    to which you wish to apply the middleware.
+
+    Create a new instance of your middleware inside the Middleware attribute
+    constructor.
+
+    example:
+
+    <?php
+
+    class Home extends Controller
+    {
+        #[Middleware(new Auth)]
+        #[Route(method: 'GET')]
+        public function index(Request $request)
+        {
+            return view('Home');
+        }
+    }
+
 ## Creating a Model
 
 #### Run command:

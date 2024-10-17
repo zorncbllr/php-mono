@@ -18,6 +18,8 @@ if (isset($argv[1]) && (isset($argv[2]) || isset($argv[3]))) {
             Generate::createView($filename);
         } elseif ($type === 'comp' or $type === 'component') {
             Generate::createNewComponent($filename);
+        } elseif ($type === 'mid' or $type === 'middleware') {
+            Generate::createMiddleware($filename);
         }
     } elseif ($mode === "fill") {
         Generate::fillSchema($argv[2]);
