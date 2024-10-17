@@ -14,7 +14,7 @@ class Controller
         {
             header("Content-Type: text/html");
 
-            $path = __DIR__ . "\\..\\views\\$filename";
+            $path = __DIR__ . "/../views/$filename";
             require file_exists("$path.view.php") ? "$path.view.php" : "$path.php";
         }
 
@@ -26,7 +26,7 @@ class Controller
 
         function component(string $component, array $data = [])
         {
-            $path = __DIR__ . "\\..\\views\\components\\$component";
+            $path = __DIR__ . "/../views/components/$component";
             include_once file_exists("$path.com.php") ? "$path.com.php" : "$path.php";
         }
 

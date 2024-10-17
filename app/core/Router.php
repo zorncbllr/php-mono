@@ -77,6 +77,6 @@ class Router
     }
     protected function formatPath(string $className): string
     {
-        return __DIR__ . "\\..\\controllers\\$className.php";
+        return __DIR__ . "/../controllers/$className.php";
     }
 }

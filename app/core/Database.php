@@ -7,7 +7,7 @@ class Database
     public function __construct()
     {
         try {
-            $config = require __DIR__ . '\\..\\config\\config.php';
+            $config = require __DIR__ . '/../config/config.php';
             $dsn = "mysql:" . http_build_query($config, "", ";");
 
             $this->pdo = new PDO($dsn, $config["user"], $config["password"], [
@@ -93,7 +93,7 @@ class Database
     }
     protected static function initModels()
     {
-        $modelsPath = __DIR__ . "\\..\\models";
+        $modelsPath = __DIR__ . "/../models";
         $iterator = new DirectoryIterator($modelsPath);
 
         foreach ($iterator as $file) {

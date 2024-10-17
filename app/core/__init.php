@@ -1,7 +1,7 @@
 <?php
 
 spl_autoload_register(function ($model) {
-    $modelPath = __DIR__ . "\\..\\models\\$model.php";
+    $modelPath = __DIR__ . "/../models/$model.php";
 
     if (file_exists($modelPath)) {
         require $modelPath;
