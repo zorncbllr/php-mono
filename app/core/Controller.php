@@ -32,6 +32,8 @@ class Controller
 
         $request = new Request($param);
 
+        self::handleMiddlewares($method, $request);
+
         $response = call_user_func_array([
             $controller,
             $method->getName()
@@ -43,6 +45,26 @@ class Controller
             echo $response;
         } elseif (is_array($response) || is_object($response)) {
             json($response);
+        }
+    }
+
+    private static function handleMiddlewares(ReflectionMethod $method, Request $request)
+    {
+        if (empty($method->getAttributes('Middleware'))) {
+            return;
+        }
+
+        $attribute = $method->getAttributes('Middleware')[0];
+
+        $middlewares = $attribute->newInstance()->middlewares;
+
+        foreach ($middlewares as $middleware) {
+            call_user_func_array([
+                get_class($middleware),
+                'runnable'
+            ], [
+                $request,
+            ]);
         }
     }
 

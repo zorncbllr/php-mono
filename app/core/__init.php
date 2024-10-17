@@ -1,20 +1,25 @@
 <?php
 
-spl_autoload_register(function ($model) {
-    $modelPath = __DIR__ . "/../models/$model.php";
+$directories = [
+    '/',
+    '/../models/',
+    '/../middlewares/',
+    '/utils/',
+    '/utils/annotations/'
+];
 
-    if (file_exists($modelPath)) {
-        require $modelPath;
+spl_autoload_register(
+    function ($class)
+    use ($directories) {
+        foreach ($directories as $dir) {
+            $path = __DIR__ . "$dir$class.php";
+
+            if (file_exists($path)) {
+                require_once $path;
+            }
+        }
     }
-});
-
-require_once 'App.php';
-require_once 'Database.php';
-require_once 'Model.php';
-require_once 'utils/annotations/Route.php';
-require_once 'utils/Request.php';
-require_once 'Controller.php';
-require_once 'Router.php';
+);
 
 $app = new App();
 $database = new Database();

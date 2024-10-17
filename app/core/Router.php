@@ -46,28 +46,27 @@ class Router
         $reflection = new ReflectionClass($this->controller);
 
         foreach ($reflection->getMethods() as $method) {
-            if (isset($method->getAttributes()[0])) {
-                $attribute = $method->getAttributes()[0];
-                $attr = $attribute->newInstance();
+            $routeIndex = sizeof($method->getAttributes()) - 1;
+            $attribute = $method->getAttributes()[$routeIndex];
+            $attr = $attribute->newInstance();
 
-                if ($_SERVER["REQUEST_METHOD"] === $attr->method) {
+            if ($_SERVER["REQUEST_METHOD"] === $attr->method) {
 
-                    if (sizeof($attr->path) === sizeof($route)) {
-                        $params = [];
+                if (sizeof($attr->path) === sizeof($route)) {
+                    $params = [];
 
-                        for ($i = 0; $i < sizeof($attr->path); $i++) {
-                            if (str_contains($attr->path[$i], ":")) {
-                                $key = str_replace(":", "", $attr->path[$i]);
-                                $params[$key] = $route[$i];
-                                $attr->path[$i] = $route[$i];
-                            }
+                    for ($i = 0; $i < sizeof($attr->path); $i++) {
+                        if (str_contains($attr->path[$i], ":")) {
+                            $key = str_replace(":", "", $attr->path[$i]);
+                            $params[$key] = $route[$i];
+                            $attr->path[$i] = $route[$i];
                         }
+                    }
 
-                        if ($attr->path === $route) {
-                            Controller::getMethod($this->controller, $method, $params);
+                    if ($attr->path === $route) {
+                        Controller::getMethod($this->controller, $method, $params);
 
-                            return;
-                        }
+                        return;
                     }
                 }
             }
