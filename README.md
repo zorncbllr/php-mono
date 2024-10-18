@@ -80,6 +80,34 @@ or controller.
 You may return void, json(), view(), and redirect() in handling
 bad requests or unauthenticated requests.
 
+You may also use a native jwt token inside the middleware,
+which is the recommended place for authentication and
+authorization processes.
+
+example with native jwt token:
+
+    <?php
+
+    use App\Core\Middleware;
+
+    class Auth extends Middleware
+    {
+        static function runnable(Request $request, callable $next)
+        {
+            $jwt = $request->cookies['auth_token'] ?? "";
+
+    	    $key = "sample_secret_key";
+
+    	    $payload = Token::verify($jwt, $key);
+
+    	    if (!$payload) {
+    	    	return redirect('/login');
+    	    }
+
+    	    return $next();
+        }
+    }
+
 #### Using Middlewares
 
 To use a middleware, add an attribute on top of your target method
