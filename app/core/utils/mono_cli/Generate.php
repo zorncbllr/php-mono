@@ -263,7 +263,7 @@ class Generate
 
         file_put_contents(
             $directory . "/$class.php",
-            "<?php\n\nuse App\Core\Middleware;\n\nclass $class extends Middleware\n{\n\tstatic function runnable(Request \$request)\n\t{\n\t\techo '$class Middleware';\n\t}\n}"
+            "<?php\n\nuse App\Core\Middleware;\n\nclass $class extends Middleware\n{\n\tstatic function runnable(Request \$request, callable \$next)\n\t{\n\t\techo '$class Middleware';\n\t}\n}"
         );
 
         exit();

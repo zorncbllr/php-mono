@@ -2,7 +2,7 @@
 
 class Home extends Controller
 {
-	#[Middleware(new Auth)]
+	#[Middleware(new Greet)]
 	#[Route(method: 'GET')]
 	public function index(Request $request)
 	{

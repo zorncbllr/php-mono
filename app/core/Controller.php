@@ -21,7 +21,6 @@ class Controller
         function redirect(string $location)
         {
             header("Location: $location");
-            exit();
         }
 
         function component(string $component, array $data = [])
@@ -32,40 +31,53 @@ class Controller
 
         $request = new Request($param);
 
-        self::handleMiddlewares($method, $request);
+        $valid = self::handleMiddlewares($method, $request);
 
-        $response = call_user_func_array([
-            $controller,
-            $method->getName()
-        ], [
-            ("request" | "req" ? $request : null),
-        ]);
+        if ($valid) {
+            $response = call_user_func_array([
+                $controller,
+                $method->getName()
+            ], [
+                ("request" | "req" ? $request : null),
+            ]);
 
-        if (is_string($response)) {
-            echo $response;
-        } elseif (is_array($response) || is_object($response)) {
-            json($response);
+            if (is_string($response)) {
+                echo $response;
+            } elseif (is_array($response) || is_object($response)) {
+                json($response);
+            }
         }
+
+        exit();
     }
 
     private static function handleMiddlewares(ReflectionMethod $method, Request $request)
     {
         if (empty($method->getAttributes('Middleware'))) {
-            return;
+            return true;
         }
 
         $attribute = $method->getAttributes('Middleware')[0];
 
         $middlewares = $attribute->newInstance()->middlewares;
 
-        foreach ($middlewares as $middleware) {
-            call_user_func_array([
-                get_class($middleware),
-                'runnable'
-            ], [
-                $request,
-            ]);
+        return self::callMiddleware($middlewares, $request, 0);
+    }
+
+    private static function callMiddleware(array $middlewares, Request $request, int $index)
+    {
+        if ($index >= sizeof($middlewares)) {
+            return true;
         }
+
+        return $middlewares[$index]::runnable(
+            $request,
+            fn() => self::callMiddleware(
+                $middlewares,
+                $request,
+                $index + 1
+            )
+        );
     }
 
     static function HandleError(Controller $controller)
