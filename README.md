@@ -66,11 +66,19 @@ example:
 
     class Auth extends Middleware
     {
-        static function runnable(Request $request)
+        static function runnable(Request $request, callable $next)
         {
             echo 'Auth Middleware';
+
+            return $next();
         }
     }
+
+Use the $next() callable function to move to the next middleware
+or controller.
+
+You may return void, json(), view(), and redirect() in handling
+bad requests or unauthenticated requests.
 
 #### Using Middlewares
 
