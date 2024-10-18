@@ -1,17 +1,17 @@
 <?php
 
 class User extends Model
- {
+{
 	public string $name, $email;
 	private $id, $created_at;
 	private string $password;
 
 	public function __construct(
-		string $name, 
-		string $email, 
-		string $password, 
-		$id = null, 
-		$created_at = null, 
+		string $name,
+		string $email,
+		string $password,
+		$id = null,
+		$created_at = null,
 	) {
 
 		$this->name = $name;
@@ -19,48 +19,55 @@ class User extends Model
 		$this->id = $id;
 		$this->created_at = $created_at;
 		$this->password = $password;
-
 	}
-	public static function initUser() {
+	public static function initUser()
+	{
 		self::createTable('
 			name VARCHAR(20) NOT NULL,
 			email VARCHAR(20) NOT NULL,
-			id <ADD YOUR CONFIGURATION>,
-			created_at <ADD YOUR CONFIGURATION>,
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			password VARCHAR(20) NOT NULL
 		');
 	}
 
-	public function getEmail() {
+	public function getEmail()
+	{
 		return $this->email;
 	}
 
-	public function setEmail($email) {
+	public function setEmail($email)
+	{
 		$this->email = $email;
 	}
 
-	public function getId() {
+	public function getId()
+	{
 		return $this->id;
 	}
 
-	public function setId($id) {
+	public function setId($id)
+	{
 		$this->id = $id;
 	}
 
-	public function getCreated_at() {
+	public function getCreated_at()
+	{
 		return $this->created_at;
 	}
 
-	public function setCreated_at($created_at) {
+	public function setCreated_at($created_at)
+	{
 		$this->created_at = $created_at;
 	}
 
-	public function getPassword() {
+	public function getPassword()
+	{
 		return $this->password;
 	}
 
-	public function setPassword($password) {
+	public function setPassword($password)
+	{
 		$this->password = $password;
 	}
-
 }

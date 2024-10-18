@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/Generate.php';
 
-
 if (isset($argv[1]) && (isset($argv[2]) || isset($argv[3]))) {
 
     $mode = $argv[1] ?? "";

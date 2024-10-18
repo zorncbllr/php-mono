@@ -3,25 +3,14 @@
 #include <string>
 
 void handleOperation(const std::string& mode, const std::string& arg1, const std::string& arg2) {
-    bool is_gen = false;
-    bool is_serve = false;
-    bool is_fill = false;
 
-    if (mode == "gen" || mode == "generate" || mode == "-g") {
-        is_gen = true;
-    } else if (mode == "serve" || mode == "-s") {
-        is_serve = true;
-    } else if (mode == "fill" || mode == "-f") {
-        is_fill = true;
-    }
-
-    if (is_gen) {
+    if (mode == "gen" || mode == "generate" || mode == "-g") {  
         std::string command = "php app/core/utils/mono_cli/cli.php \"gen\" " + arg1 + " " + arg2;
         system(command.c_str());
-    } else if (is_serve) {
-        std::string command = "php -S localhost:3000 public/index.php";
+    } else if (mode == "serve" || mode == "-s") {
+         std::string command = "php -S localhost:3000 public/index.php";
         system(command.c_str());
-    } else if (is_fill) {
+    } else if (mode == "fill" || mode == "-f") {
         std::string command = "php app/core/utils/mono_cli/cli.php \"fill\" " + arg1;
         system(command.c_str());
     } else {
