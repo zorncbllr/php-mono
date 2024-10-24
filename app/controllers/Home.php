@@ -1,5 +1,6 @@
 <?php
 
+
 class Home extends Controller
 {
 	#[Middleware(new Greet)]

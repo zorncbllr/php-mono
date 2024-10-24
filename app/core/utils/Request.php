@@ -5,7 +5,7 @@ class Request
     public array $body, $headers, $query, $param, $cookies, $form_data, $sessions;
     public string $base_uri;
 
-    public function __construct($param)
+    public function __construct($param = [])
     {
         $this->setQuery();
         $this->setBody();

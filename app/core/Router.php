@@ -31,19 +31,28 @@ class Router
 
             array_shift($this->URL);
 
-            $this->handleMatchRoute();
+            include_once __DIR__ . '/utils/response_methods.php';
+
+            $reflection = new ReflectionClass($this->controller);
+
+            $valid = Controller::handleMiddlewares(
+                $reflection,
+                new Request()
+            );
+
+            if ($valid) {
+                $this->handleMatchRoute($reflection);
+            }
 
             return;
         }
 
         Controller::HandleError($this->errorController);
     }
-    protected function handleMatchRoute(): void
+    protected function handleMatchRoute(ReflectionClass $reflection): void
     {
         $route = $this->URL;
         $route[0] = "";
-
-        $reflection = new ReflectionClass($this->controller);
 
         foreach ($reflection->getMethods() as $method) {
             $attribute = $method->getAttributes('Route')[0];
