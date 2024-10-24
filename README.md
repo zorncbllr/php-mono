@@ -130,6 +130,24 @@ example:
         }
     }
 
+Middlewares may also be applied on the controller class itself.
+This way, the middleware will be able to handle authentication
+and authorization process for the whole base route.
+
+example:
+
+    <?php
+
+    #[Middleware(new Auth)]
+    class Home extends Controller
+    {
+        #[Route(method: 'GET')]
+        public function index(Request $request)
+        {
+            return view('Home');
+        }
+    }
+
 ## Creating a Model
 
 #### Run command:
