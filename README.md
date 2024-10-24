@@ -132,7 +132,7 @@ example:
 
 Middlewares may also be applied on the controller class itself.
 This way, the middleware will be able to handle authentication
-and authorization process for the whole base route.
+and authorization processes for the whole base route.
 
 example:
 
