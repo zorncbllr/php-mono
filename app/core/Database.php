@@ -7,7 +7,7 @@ class Database
     public function __construct()
     {
         try {
-            $config = require __DIR__ . '/../config/config.php';
+            $config = (require __DIR__ . '/../config/config.php')['database'];
 
             if ($config['dbname'] !== 'sample_db') {
                 $dsn = "mysql:" . http_build_query($config, "", ";");

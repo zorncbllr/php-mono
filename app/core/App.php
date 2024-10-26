@@ -10,6 +10,11 @@ class App
         } else {
             $this->URI_PATH = isset($_GET["url"]) ? "/" . $_GET["url"] : "/Home";
         }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            http_response_code(204);
+            exit();
+        }
     }
 
     static function debug_print(mixed $prop)
