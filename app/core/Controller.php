@@ -11,6 +11,18 @@ class Controller
         $valid = self::handleMiddlewares($method, $request);
 
         if ($valid) {
+
+            spl_autoload_register(
+                function ($service) {
+                    $folder = str_replace('service', '', strtolower($service));
+                    $servicePath = __DIR__ . "/../controllers/$folder/$service.php";
+
+                    if (file_exists($servicePath)) {
+                        require_once $servicePath;
+                    }
+                }
+            );
+
             $response = call_user_func_array([
                 $controller,
                 $method->getName()

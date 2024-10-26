@@ -17,38 +17,50 @@ class Router
         $this->findController();
     }
 
-    protected function findController(): void
+    private function findController(): void
     {
         $route = ucfirst($this->URL[1]);
         $route = $route === 'Index.php' ? 'Home' : $route;
         $controller = $this->formatPath($route);
 
         if (file_exists($controller)) {
-            require $controller;
+            $this->requireController($controller, $route);
+            return;
+        }
 
-            $controllerClass = $route;
-            $this->controller = new $controllerClass();
+        $controller = $this->formatPath($route, true);
 
-            array_shift($this->URL);
-
-            include_once __DIR__ . '/utils/response_methods.php';
-
-            $reflection = new ReflectionClass($this->controller);
-
-            $valid = Controller::handleMiddlewares(
-                $reflection,
-                new Request()
-            );
-
-            if ($valid) {
-                $this->handleMatchRoute($reflection);
-            }
-
+        if (file_exists($controller)) {
+            $this->requireController($controller, $route);
             return;
         }
 
         Controller::HandleError($this->errorController);
     }
+
+    private function requireController(string $controller, string $route)
+    {
+        require $controller;
+
+        $controllerClass = $route;
+        $this->controller = new $controllerClass();
+
+        array_shift($this->URL);
+
+        include_once __DIR__ . '/utils/response_methods.php';
+
+        $reflection = new ReflectionClass($this->controller);
+
+        $valid = Controller::handleMiddlewares(
+            $reflection,
+            new Request()
+        );
+
+        if ($valid) {
+            $this->handleMatchRoute($reflection);
+        }
+    }
+
     protected function handleMatchRoute(ReflectionClass $reflection): void
     {
         $route = $this->URL;
@@ -86,8 +98,9 @@ class Router
         Controller::HandleError($this->errorController);
     }
 
-    private function formatPath(string $className): string
+    private function formatPath(string $className, bool $withFolder = false): string
     {
-        return __DIR__ . "/../controllers/$className.php";
+        $folder = strtolower($className);
+        return __DIR__ . "/../controllers/" . ($withFolder ? "$folder/$className" : $className) . ".php";
     }
 }

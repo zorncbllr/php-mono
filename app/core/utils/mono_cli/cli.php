@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/../../Controller.php';
 require_once __DIR__ . '/Generate.php';
 
 if (isset($argv[1]) && (isset($argv[2]) || isset($argv[3]))) {
@@ -19,6 +20,8 @@ if (isset($argv[1]) && (isset($argv[2]) || isset($argv[3]))) {
             Generate::createNewComponent($filename);
         } elseif ($type === 'mid' or $type === 'middleware') {
             Generate::createMiddleware($filename);
+        } elseif ($type === 'ser' or $type === 'service') {
+            Generate::createControllerService($filename);
         }
     } elseif ($mode === "fill") {
         Generate::fillSchema($argv[2]);

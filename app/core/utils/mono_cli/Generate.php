@@ -2,22 +2,69 @@
 
 class Generate
 {
-    static function createNewController(string $filename)
+    static function createNewController(string $filename, bool $end = true)
     {
         $class = ucfirst($filename);
-        $directory = __DIR__ . "/../../../controllers";
+        $folder = strtolower($class);
+        $directory = __DIR__ . "/../../../controllers/$folder";
 
         if (!is_dir($directory)) {
             mkdir($directory);
             file_put_contents(
-                $directory . "/_404.php",
-                "<?php\n\nclass _404 extends Controller {\n\tpublic static function error(){\n\n\t\treturn view('404');\n\t}\n}\n"
+                $directory . "/../_404.php",
+                "<?php\n\nclass _404 extends Controller {\n\n\tpublic static function error() {\n\n\t\thttp_response_code(404);\n\n\t\treturn view('404');\n\t}\n}\n"
             );
         }
 
         file_put_contents(
             $directory . "/$class.php",
             "<?php\n\nclass $class extends Controller {\n\n\t#[Route(method: 'GET')]\n\tpublic function index(Request \$request){\n\n\t\treturn '$class controller';\n\t}\n}\n"
+        );
+
+        $end ?  exit() : null;
+    }
+
+    static function createControllerService(string $filename)
+    {
+        $class = ucfirst($filename);
+        $directory = __DIR__ . "/../../../controllers";
+        $folder = "$directory/" . strtolower($class);
+        $content = "<?php\n\nclass {$class}Service {";
+
+        if (!is_dir($folder)) {
+            mkdir($folder);
+        }
+
+        $controller = "$directory/$class.php";
+
+        if (file_exists($controller)) {
+            rename($controller, "$folder/$class.php");
+        }
+
+        $controller = "$folder/$class.php";
+
+        if (!file_exists($controller)) {
+            self::createNewController($filename, false);
+        }
+
+        require_once $controller;
+
+        $methods = get_class_methods($class);
+
+        $isInherited = fn($method) => method_exists(
+            get_parent_class($class),
+            $method
+        );
+
+        foreach ($methods as $method) {
+            if (!$isInherited($method)) {
+                $content .= "\n\tstatic function $method(Request \$request) { }\n";
+            }
+        }
+
+        file_put_contents(
+            $folder . "/{$class}Service.php",
+            "$content \n}"
         );
 
         exit();

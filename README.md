@@ -252,6 +252,68 @@ example:
 
     <p> <?= $data["name"] ?> </p>
 
+## Creating a Service
+
+#### Run command:
+
+    ./mono -g ser <filename>
+
+or
+
+    ./mono gen ser <filename>
+
+of
+
+    ./mono generate service <filename>
+
+After running the command, a new service class will be generated with the
+the same methods as the controller class but only static.
+
+Controller class will be automatically created if a controller class
+for the service is not yet created.
+
+example:
+
+    <?php
+
+    class ProductsService
+    {
+        static function index(Request $request)
+        {
+            $product = [
+                'name' => 'Brandyy',
+                'brand' => 'Brand X',
+                'expiration' => 'November 23, 2030'
+            ];
+
+            return json([
+                'product' => $product
+            ]);
+        }
+    }
+
+usage:
+
+    <?php
+
+    class Products extends Controller
+    {
+
+    #[Route(method: 'GET')]
+    public function index(Request $request)
+        {
+            return ProductsService::index($request);
+        }
+    }
+
+Using services can be efficient when the logic is too complex.
+
+Services separates the logic from route handling for better
+code refactoring and better code structuring.
+
+Using services will help your code to be more organized and
+readable.
+
 ## Routing with Mono
 
 Routes are determined by the controller classes inside the controllers folder.
