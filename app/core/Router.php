@@ -6,11 +6,14 @@ class Router
     private array $URL;
     private Controller $controller;
     private Controller $errorController;
+    private Request $request;
 
     public function __construct(App $app)
     {
         $this->app = $app;
         $this->URL = explode("/", $this->app->URI_PATH);
+
+        $this->request = new Request();
 
         require_once $this->formatPath("_404");
         $this->errorController = new _404();
@@ -35,7 +38,7 @@ class Router
             return;
         }
 
-        Controller::HandleError($this->errorController);
+        Controller::HandleError($this->errorController, $this->request);
     }
 
     private function requireController(string $controller, string $route)
@@ -86,7 +89,8 @@ class Router
                         }
 
                         if ($attr->path === $route) {
-                            Controller::getMethod($this->controller, $method, $params);
+                            $this->request->param = $params;
+                            Controller::getMethod($this->controller, $method, $this->request);
 
                             return;
                         }
@@ -95,7 +99,7 @@ class Router
             }
         }
 
-        Controller::HandleError($this->errorController);
+        Controller::HandleError($this->errorController, $this->request);
     }
 
     private function formatPath(string $className, bool $withFolder = false): string

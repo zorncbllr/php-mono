@@ -2,11 +2,9 @@
 
 class Controller
 {
-    static function getMethod(Controller $controller, ReflectionMethod $method, array $param = [])
+    static function getMethod(Controller $controller, ReflectionMethod $method, Request $request)
     {
         include_once __DIR__ . '/utils/response_methods.php';
-
-        $request = new Request($param);
 
         $valid = self::handleMiddlewares($method, $request);
 
@@ -69,10 +67,10 @@ class Controller
         );
     }
 
-    static function HandleError(Controller $controller)
+    static function HandleError(Controller $controller, Request $request)
     {
         $method = new ReflectionMethod("_404::error");
 
-        self::getMethod($controller, $method);
+        self::getMethod($controller, $method, $request);
     }
 }
