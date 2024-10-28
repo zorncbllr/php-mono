@@ -20,6 +20,7 @@ class User extends Model
 		$this->created_at = $created_at;
 		$this->password = $password;
 	}
+
 	public static function initUser()
 	{
 		self::createTable('

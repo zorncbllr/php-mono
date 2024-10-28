@@ -3,13 +3,18 @@
 function handleOperation($mode, $arg1 = '', $arg2 = '')
 {
     if ($mode === 'gen' || $mode === 'generate' || $mode === '-g') {
-        $command = "php app/core/utils/mono_cli/cli.php \"gen\" " . escapeshellarg($arg1) . " " . escapeshellarg($arg2);
+        $command = "php src/core/utils/mono_cli/cli.php \"gen\" " . escapeshellarg($arg1) . " " . escapeshellarg($arg2);
         system($command);
     } elseif ($mode === 'serve' || $mode === '-s') {
-        $command = "php -S localhost:3000 public/index.php";
-        system($command);
+        $port = 3000;
+        $command = "php -S localhost:" . $port;
+        while (!system($command)) {
+            $port++;
+            $command = "php -S localhost:" . $port;
+            system($command);
+        }
     } elseif ($mode === 'fill' || $mode === '-f') {
-        $command = "php app/core/utils/mono_cli/cli.php \"fill\" " . escapeshellarg($arg1);
+        $command = "php src/core/utils/mono_cli/cli.php \"fill\" " . escapeshellarg($arg1);
         system($command);
     } else {
         echo "invalid mono command\n";
