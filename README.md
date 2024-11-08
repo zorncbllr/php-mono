@@ -542,8 +542,6 @@ specify the filename of the .view.php file as the first argument.
 You can add a second argument to the view() function as an
 associative array to pass in data from the controller to the view.
 
-You can access the value inside the $data array variable.
-
 example:
 
 Controller:
@@ -558,7 +556,7 @@ Controller:
 
 View:
 
-    <h1> <?= $data["name"] ?> </h1>
+    <h1> <?= $name ?> </h1>
 
 If you pass in a value as the second argument in the view() function,
 the value can be accessed inside the $data varible just
