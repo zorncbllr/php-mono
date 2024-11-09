@@ -105,7 +105,8 @@ class Router
 
     private function formatPath(string $className, bool $withFolder = false): string
     {
-        $folder = strtolower($className);
+        $folder = $this->camelToDash($className);
+
         return __DIR__ . "/../controllers/" . ($withFolder ? "$folder/$className" : $className) . ".php";
     }
 
@@ -119,5 +120,18 @@ class Router
         }
 
         return $route;
+    }
+
+    private function camelToDash($string)
+    {
+        $words = preg_split("/(?=[A-Z])/", $string);
+
+        $route = "";
+
+        for ($i = 1; $i < sizeof($words); $i++) {
+            $route .= $words[$i] . (array_key_last($words) !== $i ? "-" : "");
+        }
+
+        return strtolower($route);
     }
 }
