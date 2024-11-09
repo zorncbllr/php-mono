@@ -5,7 +5,7 @@ class Generate
     static function createNewController(string $filename, bool $end = true)
     {
         $class = ucfirst($filename);
-        $folder = strtolower($class);
+        $folder = self::camelToDashed($class);
         $directory = __DIR__ . "/../../../controllers/$folder";
 
         if (!is_dir($directory)) {
@@ -28,7 +28,7 @@ class Generate
     {
         $class = ucfirst($filename);
         $directory = __DIR__ . "/../../../controllers";
-        $folder = "$directory/" . strtolower($class);
+        $folder = "$directory/" .  self::camelToDashed($class);
         $content = "<?php\n\nclass {$class}Service {";
 
         if (!is_dir($folder)) {
@@ -314,5 +314,18 @@ class Generate
         );
 
         exit();
+    }
+
+    private static function camelToDashed($string)
+    {
+        $words = preg_split("/(?=[A-Z])/", $string);
+
+        $route = "";
+
+        for ($i = 1; $i < sizeof($words); $i++) {
+            $route .= $words[$i] . (array_key_last($words) !== $i ? "-" : "");
+        }
+
+        return strtolower($route);
     }
 }

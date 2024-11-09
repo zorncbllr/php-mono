@@ -22,7 +22,8 @@ class Router
 
     private function findController(): void
     {
-        $route = ucfirst($this->URL[1]);
+        $route = $this->dashToCamel(ucfirst($this->URL[1]));
+
         $route = $route === 'Index.php' ? 'Home' : $route;
         $controller = $this->formatPath($route);
 
@@ -106,5 +107,17 @@ class Router
     {
         $folder = strtolower($className);
         return __DIR__ . "/../controllers/" . ($withFolder ? "$folder/$className" : $className) . ".php";
+    }
+
+    private function dashToCamel($string)
+    {
+        $words = explode('-', $string);
+        $route = "";
+
+        for ($i = 0; $i < sizeof($words); $i++) {
+            $route .= ucfirst($words[$i]);
+        }
+
+        return $route;
     }
 }
