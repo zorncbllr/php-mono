@@ -246,11 +246,18 @@ example view:
 
     </html>
 
-All parameters are provided by the $data associative array variable;
+You can return view( filename , [ options ] ) to pass data from your
+controller. the keys in your options will be evaluated as a variable.
 
 example:
 
-    <p> <?= $data["name"] ?> </p>
+controller:
+
+    return view('Home', [ 'name' => 'John Doe' ]);
+
+view:
+
+    <p> <?= $name ?> </p>
 
 ## Creating a Service
 

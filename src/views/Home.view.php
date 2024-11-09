@@ -11,7 +11,7 @@
 	<main style="display: grid; place-items: center;">
 		<img style="width: 25rem;" src="/public/mono.png" alt="">
 		<h2>The Fast, Scalable, Object-Oriented PHP Framework.</h2>
-		<p style="color: gray;">HELLO WORLD!</p>
+		<p style="color: gray;"><?= $msg ?></p>
 	</main>
 </body>
 

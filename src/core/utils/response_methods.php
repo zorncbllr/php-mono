@@ -10,6 +10,10 @@ function view(string $filename, array $data = [])
 {
     header("Content-Type: text/html");
 
+    foreach ($data as $key => $val) {
+        eval("\${$key} = '$val';");
+    }
+
     $path = __DIR__ . "/../../views/$filename";
     require file_exists("$path.view.php") ? "$path.view.php" : "$path.php";
 }
@@ -21,6 +25,10 @@ function redirect(string $location)
 
 function component(string $component, array $data = [])
 {
+    foreach ($data as $key => $val) {
+        eval("\${$key} = '$val';");
+    }
+
     $path = __DIR__ . "/../../views/components/$component";
     include_once file_exists("$path.com.php") ? "$path.com.php" : "$path.php";
 }
