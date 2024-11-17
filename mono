@@ -71,16 +71,17 @@ function showHelp()
     echo "
     Usage: php mono <mode> [arg1] [arg2]
 
-    <modes>        <shorcut flags>      <arg1>          <arg2>
-    generate            -g con          controller      <filename>
-                        -g mod          model           <filename>
-                        -g vw           view            <filename>
-                        -g mid          middleware      <filename>
-                        -g ser          service         <filename>
+    <modes>        <shorcut flags>            <arg1>              <arg2>
+    generate            -g             controller  or  con       <filename>
+                        -g             model       or  mod       <filename>
+                        -g             view        or  vw        <filename>
+                        -g             middleware  or  mid       <filename>
+                        -g             service     or  ser       <filename>
+                        -g             component   or  comp      <filename>
 
-    fill                -f              <model>
+    fill                -f                    <model>
     serve               -s
-    update              -u              core
+    update              -u                     core
     help                -h
     ";
 }
