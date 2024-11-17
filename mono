@@ -78,6 +78,7 @@ function showHelp()
                         -g mid          middleware      <filename>
                         -g ser          service         <filename>
 
+    fill                -f              <model>
     serve               -s
     update              -u              core
     help                -h
