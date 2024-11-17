@@ -8,10 +8,25 @@
 </head>
 
 <body>
-	<main style="display: grid; place-items: center;">
-		<img style="width: 25rem;" src="/public/mono.png" alt="">
+	<main style="display: grid;
+				 height: 80%;
+				 display: flex;
+				 flex-direction: column;
+				 justify-content: center;
+				 align-items: center;
+				 gap: 2rem;
+				">
+		<img style="width: 25rem;" src="/public/mono.jpg" alt="mono logo">
 		<h2>The Fast, Scalable, Object-Oriented PHP Framework.</h2>
-		<p style="color: gray;"><?= $msg ?></p>
+		<div
+			style="color: gray;
+			 	   width: 10rem; 
+				   display: grid;
+			       place-items: center;">
+			<marquee>
+				<?= $msg ?>
+			</marquee>
+		</div>
 	</main>
 </body>
 

@@ -11,7 +11,17 @@ function view(string $filename, array $data = [])
     header("Content-Type: text/html");
 
     foreach ($data as $key => $val) {
-        eval("\${$key} = '$val';");
+        $json_val = json_encode($val);
+
+        if (is_array($val)) {
+            eval("\${$key} = json_decode(\$json_val, JSON_OBJECT_AS_ARRAY);");
+        } elseif (is_object($val)) {
+            eval("\${$key} = json_decode(\$json_val);");
+        } elseif (is_string($val)) {
+            eval("\${$key} = '{$val}';");
+        } else {
+            eval("\${$key} = {$json_val};");
+        }
     }
 
     $path = __DIR__ . "/../../views/$filename";

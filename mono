@@ -1,11 +1,16 @@
 <?php
 
+
 function handleOperation($mode, $arg1 = '', $arg2 = '')
 {
     if ($mode === 'gen' || $mode === 'generate' || $mode === '-g') {
         $command = "php src/core/utils/mono_cli/cli.php \"gen\" " . escapeshellarg($arg1) . " " . escapeshellarg($arg2);
         system($command);
-    } elseif ($mode === 'serve' || $mode === '-s') {
+
+        return;
+    }
+
+    if ($mode === 'serve' || $mode === '-s') {
         $port = 3000;
         $command = "php -S localhost:" . $port;
         while (!system($command)) {
@@ -13,27 +18,74 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
             $command = "php -S localhost:" . $port;
             system($command);
         }
-    } elseif ($mode === 'fill' || $mode === '-f') {
+
+        return;
+    }
+
+    if ($mode === 'fill' || $mode === '-f') {
         $command = "php src/core/utils/mono_cli/cli.php \"fill\" " . escapeshellarg($arg1);
         system($command);
-    } elseif ($mode === 'update' || $mode === '-u' && $arg1 === 'core') {
+
+        return;
+    }
+
+    if ($mode === 'update' || $mode === '-u' && $arg1 === 'core') {
+        echo "\nFetching core repository...\n";
+        $success = shell_exec("ping github.com");
+
+        if (!$success) {
+            die("\nUpdate failed: could not update project core. try checking your internet connection and try again.\n");
+        }
+
+        $dir = str_replace("\\", "/", __DIR__ . "\\src\\core");
+
         switch (PHP_OS_FAMILY) {
             case 'Windows':
-                system("rmdir /S /Q " . __DIR__ . "\\src\\core");
+                system("rmdir /S /Q $dir");
                 system("git clone  https://github.com/zorncbllr/core.git " . __DIR__ . "\\src\\core");
                 break;
             case 'Linux':
-                system("rm -rf " . __DIR__ . "/src/core");
+                system("rm -rf $dir");
                 system("git clone  https://github.com/zorncbllr/core.git " . __DIR__ . "/src/core");
                 break;
         }
-    } else {
-        echo "invalid mono command\n";
+
+        echo "\nCore files up to date.\n";
+
+        return;
     }
+
+    if ($mode === 'help' || $mode === '-h') {
+        showHelp();
+
+        return;
+    }
+
+    echo "  Invalid mono command.\n";
+    showHelp();
+    echo "\n\r Please refer to the usage options above.\n";
+}
+
+function showHelp()
+{
+    echo "
+    Usage: php mono <mode> [arg1] [arg2]
+
+    <modes>        <shorcut flags>      <arg1>          <arg2>
+    generate            -g con          controller      <filename>
+                        -g mod          model           <filename>
+                        -g vw           view            <filename>
+                        -g mid          middleware      <filename>
+                        -g ser          service         <filename>
+
+    serve               -s
+    update              -u              core
+    help                -h
+    ";
 }
 
 if ($argc < 2) {
-    echo "Usage: php mono <mode> [arg1] [arg2]\n";
+    showHelp();
     exit(1);
 }
 
