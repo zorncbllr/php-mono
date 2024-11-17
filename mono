@@ -31,12 +31,6 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
 
     if ($mode === 'update' || $mode === '-u' && $arg1 === 'core') {
         echo "\nFetching core repository...\n";
-        $success = shell_exec("ping github.com");
-
-        if (!$success) {
-            die("\nUpdate failed: could not update project core. try checking your internet connection and try again.\n");
-        }
-
         $dir = str_replace("\\", "/", __DIR__ . "\\src\\core");
 
         switch (PHP_OS_FAMILY) {
