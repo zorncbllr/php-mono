@@ -559,8 +559,7 @@ View:
     <h1> <?= $name ?> </h1>
 
 If you pass in a value as the second argument in the view() function,
-the value can be accessed inside the $data varible just
-by specifying the key assigned.
+the value can be accessed within a variable with the same naming convention as your key in the associated array options that you've passed.
 
 ## Models in Mono
 
