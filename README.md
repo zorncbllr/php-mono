@@ -341,8 +341,8 @@ usage:
     class Products extends Controller
     {
 
-    #[Route(method: 'GET')]
-    public function index(Request $request)
+        #[Route(method: 'GET')]
+        public function index(Request $request)
         {
             return ProductsService::index($request);
         }
@@ -576,27 +576,6 @@ View contains all the HTML tags and templates being rendered by the server.
 
 To return a view, simply call the view() function and
 specify the filename of the .view.php file as the first argument.
-
-example:
-
-    return view('Home');
-
-You can also pass in variables as a second argument to the view() function.
-
-#### Returning a View with Options
-
-    <?php
-
-    class Home extends Controller
-    {
-        #[Route(method: 'GET')]
-        public function index(Request $request)
-        {
-            return view("Home", [
-                "name" => "KENDRICK"
-            ]);
-        }
-    }
 
 You can add a second argument to the view() function as an
 associative array to pass in data from the controller to the view.
