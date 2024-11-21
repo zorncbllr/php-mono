@@ -189,16 +189,16 @@ delete(), and initModel() out of the box.
 example:
 
     // returns all rows in the table.
-    User::find() will
+    User::find();
 
     // returns either the user or false if not found.
-    User::find(['email' => $email])
+    User::find(['email' => $email]);
 
     // returns specific user from the database.
-    User::findById()
+    User::findById();
 
     // creates new user in the database.
-    User::create()
+    User::create();
 
 #### Model Auto-Completion
 
