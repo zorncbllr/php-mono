@@ -175,8 +175,6 @@ depending on your liking.
         public function __construct($id = null){
 
             $this->id = $id;
-
-        self::createTable('id INT AUTO_INCREMENT PRIMARY KEY');
         }
     }
 
@@ -185,16 +183,22 @@ Use the self::createTable() method to create a new table.
 The name of the model class will be automatically saved as
 a table to the database.
 
-Model class provides find, findById, update, and delete static methods.
+Model class provides find(), findById(), create(), update(),
+delete(), and initModel() out of the box.
 
 example:
 
     User::find() will return all rows in the table
+    User::find(['email' => $email]) will return either the user or false if not found
+    User::findById() will return the user from the database
+    User::create() will create new user,
 
-#### Getters and Setters Generation
+#### Model Auto-Completion
 
-You may automatically generate getters and setters for your model schema
-by running the command:
+You may automatically initialize all your model attributes/properties
+and generates getters and setters for all private properties of your model schema.
+
+just run the command:
 
     php mono -f <model name>
 
@@ -209,6 +213,27 @@ example:
 After running the command, getters and setters for all specified
 attributes within the class will be generated automatically, as well as
 the initialization of the attributes.
+
+You will also be provided with configuration options to configure
+your rows in the database within the initModel() function.
+
+example:
+
+    public static function initUser()
+    {
+    	self::createTable('
+    		name VARCHAR(20) NOT NULL,
+    		email VARCHAR(20) NOT NULL,
+    		id INT AUTO_INCREMENT PRIMARY KEY,
+    		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    		password VARCHAR(20) NOT NULL
+    	');
+    }
+
+Within this function inside your model, you can configure what your
+table columns should look like.
+
+The syntax comes from SQL code that is being passed in the createTable() method.
 
 ## Creating a View
 
@@ -258,6 +283,9 @@ controller:
 view:
 
     <p> <?= $name ?> </p>
+
+Note that variables in the view depends on the its key being passed
+as the second argument to the view() function.
 
 ## Creating a Service
 
@@ -483,6 +511,10 @@ Route attributes are similar to annotations in other programming languages.
 The route attribute determines the path, as well
 as the method a route handler will be handling.
 
+Note that route attributes are dependent on the controller it was implemented from.
+This means that if you are in a controller with for example, named Home,
+it would automatically assume that home is your base route.
+
 example:
 
     <?php
@@ -494,19 +526,33 @@ example:
         {
             return view("Home");
         }
+
+        #[Route(path: '/profile', method: 'GET')]
+        public function index(Request $request)
+        {
+            return view("Profile");
+        }
     }
+
+uri routes:
+
+    /home
+    /home/profile
 
 In this example, the route handler function named 'index' has an attribute
 of Route with the path poiting at home and a request method of GET.
 
-The function will only run if the route path given matches the request url.
+Notice that you only need to specify the nested path which is /profile
+instead of including /home. This is because /profile is within the Home controller,
+thus Mono assumes that it is already related to the home route, abstracting it from
+the route path.
 
 ## Views in Mono Framework
 
 Mono provides a way to render a view or an HTML template inside PHP.
-Views file have an extension of .view.php
-Views file can be returned by the controller route handler functions.
-Views contains all the HTML tags and templates being rendered by the server.
+View files have an extension of .view.php
+View files can be returned by the controller route handler functions.
+View contains all the HTML tags and templates being rendered by the server.
 
 #### Returning a View
 
@@ -524,7 +570,13 @@ Views contains all the HTML tags and templates being rendered by the server.
 To return a view, simply call the view() function and
 specify the filename of the .view.php file as the first argument.
 
-#### Returning a View with Argument
+example:
+
+    return view('Home');
+
+You can also pass in variables as a second argument to the view() function.
+
+#### Returning a View with Options
 
     <?php
 
@@ -559,7 +611,8 @@ View:
     <h1> <?= $name ?> </h1>
 
 If you pass in a value as the second argument in the view() function,
-the value can be accessed within a variable with the same naming convention as your key in the associated array options that you've passed.
+the value can be accessed within a variable with the same naming convention as specified
+in your key within the associated array options that you've passed.
 
 ## Models in Mono
 
@@ -612,7 +665,10 @@ example implementation:
             $this->id = $id;
             $this->username = $username;
             $this->password = $password;
+        }
 
+        public static function initUser()
+        {
             self::createTable("
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 username VARCHAR(50) NOT NULL UNIQUE,
@@ -682,16 +738,14 @@ Database table name:
 
 example implementations:
 
-For this example, assume that you have a model User inside your
-models folder.
+    // returns all the users in thes users table.
+    $user = User::find();
 
-##### findById() implementation
+    // returns a specific user based on the username.
+    // returns false if not found.
+    $user = User::find(['username' => $username])
 
-example:
-
-    $users = User::find();
-
-the find() method returns an array of User objects, hence
+The find() method returns an array of User objects, hence
 each element posesses the properties and methods you have specified
 inside the User model class, such as the getters and setters.
 
@@ -781,3 +835,86 @@ or
     if ($is_deleted) {
         return 'user deleted successfully';
     }
+
+## Native JWT Token class: sign() and verify() methods
+
+In Mono, you will be provided with the native jwt token with static methods
+sign() and verify() which you can use to authenticate users.
+
+The sign() method generates a hashed token, with the provided payload and secret key.
+
+example with sign():
+
+    $payload = [
+        'userId' => 07737477
+    ];
+
+    $secret = 'hGS7asBcczaUcsa';
+
+    $jwt = Token::sign($payload, $secret);
+
+You may also specify the token expiration as the third argument.
+
+example with expiration:
+
+    $payload = [
+        'userId' => 07737477
+    ];
+
+    $secret = 'hGS7asBcczaUcsa';
+
+    $jwt = Token::sign($payload, $secret, 60 * 60 * 24);
+
+You can use verify() method to check the validity of the token.
+this method returns the decrypted payload if the token is valid,
+and returns false if invalid.
+
+example with verify():
+
+    $payload = Token::verify($payload, $secret);
+
+    // if invalid and returned false.
+    if (!$payload) {
+        return redirect('/login');
+    }
+
+You can use both methods to handle authentication process with your app.
+
+## Validator class
+
+In Mono, you will be provided with the Validator class to for validating
+your data by passing the filters as the first argument and the data as the
+second argument.
+
+example:
+
+    $email = $request->body['email'];
+    $password = $request->body['password'];
+
+    $result = new Validator([
+        'email' => [
+            'type' => 'email',
+            'required' => true,
+        ],
+        'password' => [
+            'required' => true,
+            'length' => [
+                'min' => 8,
+                'max' => 50
+            ],
+            'message' => 'password must be at least 8 characters.'
+        ]
+    ], ['email' => $email, 'password' => $password]);
+
+    if (!$result->isValid()) {
+        return json(['errors' => $result->getErrors()]);
+    }
+
+    return json(['msg' => 'registered successfully.']);
+
+You may specify the type, required, length with minimum and maximum, and
+add your custom message. By default if message is not explicitly provided,
+the default error message will be used.
+
+You can check the validity by using the isValid() method.
+You can also get all errors using the getErrors() getter method.
