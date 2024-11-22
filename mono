@@ -31,21 +31,35 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
 
     if ($mode === 'update' || $mode === '-u' && $arg1 === 'core') {
         echo "\nFetching core repository...\n";
-        $dir = str_replace("\\", "/", __DIR__ . "\\src\\core");
+
+        function error_handler()
+        {
+            echo "\nUpdate failed: there seems to be a problem updating core files, check your internet connection and try again.\n";
+            exit();
+        }
 
         switch (PHP_OS_FAMILY) {
             case 'Windows':
+                if (!str_contains(system("ping -n 1 github.com"), "ms")) {
+                    error_handler();
+                }
+                $dir = __DIR__ . '\\src\\core';
                 system("rmdir /S /Q $dir");
-                system("git clone  https://github.com/zorncbllr/core.git " . __DIR__ . "\\src\\core");
+                if (system("git clone  https://github.com/zorncbllr/core.git $dir")) {
+                    echo "\nCore files up to date.\n";
+                }
                 break;
             case 'Linux':
+                if (!str_contains(system("ping -c 1 github.com"), "ms")) {
+                    error_handler();
+                }
+                $dir = __DIR__ . '/src/core';
                 system("rm -rf $dir");
-                system("git clone  https://github.com/zorncbllr/core.git " . __DIR__ . "/src/core");
+                if (system("git clone  https://github.com/zorncbllr/core.git $dir")) {
+                    echo "\nCore files up to date.\n";
+                }
                 break;
         }
-
-        echo "\nCore files up to date.\n";
-
         return;
     }
 
