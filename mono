@@ -38,6 +38,12 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
             exit();
         }
 
+        function update_readme($dir)
+        {
+            $content = file_get_contents("{$dir}/README.md");
+            file_put_contents("README.md", $content);
+        }
+
         switch (PHP_OS_FAMILY) {
             case 'Windows':
                 if (!str_contains(system("ping -n 1 github.com"), "ms")) {
@@ -46,6 +52,7 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
                 $dir = __DIR__ . '\\src\\core';
                 system("rmdir /S /Q $dir");
                 if (system("git clone  https://github.com/zorncbllr/core.git $dir")) {
+                    update_readme($dir);
                     echo "\nCore files up to date.\n";
                 }
                 break;
@@ -56,6 +63,7 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
                 $dir = __DIR__ . '/src/core';
                 system("rm -rf $dir");
                 if (system("git clone  https://github.com/zorncbllr/core.git $dir")) {
+                    update_readme($dir);
                     echo "\nCore files up to date.\n";
                 }
                 break;
