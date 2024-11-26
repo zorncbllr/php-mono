@@ -77,6 +77,18 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
         return;
     }
 
+    if ($mode === 'db' && $arg1 === 'push') {
+        try {
+            include_once __DIR__ . '/src/core/Database.php';
+            echo "Iniatilizing...";
+            Database::initModels();
+            echo "\nDatabase initialization process complete.\nTable creation successfully executed.\n";
+        } catch (Error $err) {
+            die("Database initializing error: {$err->getMessage()}.\n");
+        }
+        return;
+    }
+
     echo "  Invalid mono command.\n";
     showHelp();
     echo "\n\r Please refer to the usage options above.\n";
@@ -98,6 +110,7 @@ function showHelp()
     fill                -f                    <model>
     serve               -s
     update              -u                     core
+    db                                         push
     help                -h
     ";
 }

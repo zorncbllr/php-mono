@@ -7,20 +7,27 @@ class Database
     public function __construct()
     {
         try {
-            $config = (require __DIR__ . '/../config/config.php')['database'];
+            $config = (require_once __DIR__ . '/../config/config.php')['database'];
 
             if ($config['dbname'] !== 'sample_db') {
-                $dsn = "mysql:" . http_build_query($config, "", ";");
-
-                $this->pdo = new PDO($dsn, $config["user"], $config["password"], [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-                ]);
+                $this->pdo = self::getPDOInstance();
             }
         } catch (PDOException $e) {
             echo 'Connection error: ' . $e->getMessage();
         }
     }
+
+    private static function getPDOInstance(): PDO
+    {
+        $config = (require_once __DIR__ . '/../config/config.php')['database'];
+        $dsn = "mysql:" . http_build_query($config, "", ";");
+
+        return new PDO($dsn, $config["user"], $config["password"], [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        ]);
+    }
+
     public function getPDO()
     {
         return $this->pdo;
@@ -28,7 +35,8 @@ class Database
 
     public static function query(string $query, array $params = []): array
     {
-        $pdo = $GLOBALS['database']->getPDO();
+        $pdo = self::getPDOInstance();
+
         $statement = $pdo->prepare($query);
 
         $statement->execute($params);
@@ -89,20 +97,23 @@ class Database
 
     public static function createTable(string $config)
     {
-        $pdo = $GLOBALS['database']->getPDO();
+        $pdo = self::getPDOInstance();
 
         $query = "CREATE TABLE IF NOT EXISTS `" . lcfirst(get_called_class()) . "s" . "` ( " . $config . " )";
         $pdo->exec($query);
     }
-    protected static function initModels()
+
+    public static function initModels()
     {
+        include_once __DIR__ . '/Model.php';
         $modelsPath = __DIR__ . "/../models";
         $iterator = new DirectoryIterator($modelsPath);
 
         foreach ($iterator as $file) {
             if ($file->isFile()) {
                 $modelClass = $file->getBasename(".php");
-                new $modelClass();
+                include_once "{$modelsPath}/{$modelClass}.php";
+                eval("{$modelClass}::init{$modelClass}();");
             }
         }
     }
