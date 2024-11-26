@@ -85,7 +85,10 @@ class Validator
 
     public function getErrors()
     {
-        return $this->errors;
+        return array_filter(
+            $this->errors,
+            fn($field) => sizeof($field) > 0
+        );
     }
 
     public function isValid()
