@@ -40,8 +40,21 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
 
         function update_readme($dir)
         {
-            $content = file_get_contents("{$dir}/README.md");
-            file_put_contents("README.md", $content);
+            file_put_contents('README.md', shell_exec("git show HEAD:README.md"));
+        }
+
+        function update_core($dir)
+        {
+            system("rmdir /S /Q $dir");
+            if (system("git clone  https://github.com/zorncbllr/core.git $dir")) {
+                update_readme($dir);
+                echo "\nCore files up to date.\n";
+            }
+        }
+
+        function update_kernel()
+        {
+            file_put_contents('mono', shell_exec("git show HEAD:mono"));
         }
 
         switch (PHP_OS_FAMILY) {
@@ -50,22 +63,16 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
                     error_handler();
                 }
                 $dir = __DIR__ . '\\src\\core';
-                system("rmdir /S /Q $dir");
-                if (system("git clone  https://github.com/zorncbllr/core.git $dir")) {
-                    update_readme($dir);
-                    echo "\nCore files up to date.\n";
-                }
+                update_core($dir);
+                update_kernel();
                 break;
             case 'Linux':
                 if (!str_contains(system("ping -c 1 github.com"), "ms")) {
                     error_handler();
                 }
                 $dir = __DIR__ . '/src/core';
-                system("rm -rf $dir");
-                if (system("git clone  https://github.com/zorncbllr/core.git $dir")) {
-                    update_readme($dir);
-                    echo "\nCore files up to date.\n";
-                }
+                update_core($dir);
+                update_kernel();
                 break;
         }
         return;
