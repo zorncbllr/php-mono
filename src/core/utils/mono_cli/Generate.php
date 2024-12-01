@@ -18,7 +18,7 @@ class Generate
 
         file_put_contents(
             $directory . "/$class.php",
-            "<?php\n\nclass $class extends Controller {\n\n\t#[Route(method: 'GET')]\n\tpublic function index(Request \$request){\n\n\t\treturn '$class controller';\n\t}\n}\n"
+            "<?php\n\nclass $class extends Controller {\n\n\t#[Get()]\n\tpublic function index(Request \$request){\n\n\t\treturn '$class controller';\n\t}\n}\n"
         );
 
         $end ?  exit() : null;
