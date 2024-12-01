@@ -21,11 +21,11 @@ class Validator
         $schema = $this->filterSchema;
 
         foreach ($schema as $var => $filters) {
+            $this->errors[$var] = [];
             foreach ($filters as $option => $filter) {
                 switch ($option) {
                     case 'type':
                         if (!$this->isValidType($filter, $data[$var])) {
-                            $this->errors[$var] = [];
                             array_push(
                                 $this->errors[$var],
                                 $option['message'] ?? $var . ' should be of type ' . $filter . '.'
@@ -38,7 +38,6 @@ class Validator
                         $higherThanMax = is_string($data[$var]) ? strlen($data[$var]) > $filter['max'] : $data[$var] > $filter['max'];
 
                         if ($lowerThanMIn || $higherThanMax) {
-                            $this->errors[$var] = [];
                             array_push(
                                 $this->errors[$var],
                                 $option['message'] ?? $var . ' must be at least ' . $filter['min'] . ' and ' . $filter['max'] . ' maximum.'
@@ -47,7 +46,6 @@ class Validator
                         break;
                     case 'required':
                         if (empty(trim($data[$var]))) {
-                            $this->errors[$var] = [];
                             array_push(
                                 $this->errors[$var],
                                 $option['message'] ?? $var . ' should not be empty.'
@@ -87,11 +85,14 @@ class Validator
 
     public function getErrors()
     {
-        return $this->errors;
+        return array_filter(
+            $this->errors,
+            fn($field) => sizeof($field) > 0
+        );
     }
 
     public function isValid()
     {
-        return empty($this->errors);
+        return empty($this->getErrors());
     }
 }

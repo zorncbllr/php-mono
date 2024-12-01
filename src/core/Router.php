@@ -71,12 +71,12 @@ class Router
         $route[0] = "";
 
         foreach ($reflection->getMethods() as $method) {
-            $attributes = $method->getAttributes('Route');
+            $attributes = $method->getAttributes();
 
             foreach ($attributes as $attribute) {
                 $attr = $attribute->newInstance();
 
-                if ($_SERVER["REQUEST_METHOD"] === $attr->method) {
+                if ($attr instanceof Route && $_SERVER["REQUEST_METHOD"] === $attr->method) {
 
                     if (sizeof($attr->path) === sizeof($route)) {
                         $params = [];

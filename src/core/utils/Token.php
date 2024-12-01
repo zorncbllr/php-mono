@@ -32,7 +32,7 @@ class Token
     {
         $token_parts = explode('.', $token);
 
-        if (!$token_parts[0] || !$token_parts[1] || !$token_parts[2]) {
+        if (sizeof($token_parts) < 3) {
             return false;
         }
 
