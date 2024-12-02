@@ -410,31 +410,31 @@ where profile is the nested route.
 
 In Mono, to create a nested route handler,
 you have to create a controller class and another function
-with Route attribute on the top.
+with specified http method attribute on the top.
 
 example implementation:
 
     <?php
 
-    class Users extends Controller {
-
-        #[Route(method: 'GET')]
-        public function index(Request $request){
-
+    class Users extends Controller 
+    {
+        #[Get()]
+        public function index(Request $request)
+        {
             return 'Users controller';
         }
 
-        #[Route(path: "/profile", method: "GET")]
-        public function index(Request $request){
-
+        #[Get('/profile')]
+        public function index(Request $request)
+        {
             return 'this is the profile route handler';
         }
     }
 
 #### explanation:
 
-In creating a route handler, you need to specify its Route attribute
---- the route path and method.
+Mono makes use of php attributes such as Get, Post, Patch, Put, and Delete that are extension of Route attributes.
+You may specify the route inside of these attributes.
 
 By default, path is pointing at the name of the controller class,
 thus, you only need to add the specified path like '/profile' to the path.
@@ -458,17 +458,17 @@ example implementation:
 
     <?php
 
-    class Users extends Controller {
-
-        #[Route(method: 'GET')]
-        public function index(Request $request){
-
+    class Users extends Controller 
+    {
+        #[Get()]
+        public function index(Request $request)
+        {
             return 'Users controller';
         }
 
-        #[Route(path: "/:id", method: "GET")]
-        public function index(Request $request){
-
+        #[Get('/:id')]
+        public function index(Request $request)
+        {
             return 'id = ' . $request->param["id"];
         }
     }
@@ -526,27 +526,24 @@ query parameter:
 
 ## Request Methods in Mono
 
-You can specify the request methods in the Route attribute
-located on top of the route function handlers.
-
-example:
-
-    #[Route(method: "POST")]
-
-Request methods may include GET, POST, PATCH, PUT, and DELETE.
+Request methods may include Get, Post, Patch, Put, and Delete.
 Routes with the same path but different request methods will be
 treated and handled differently.
 
-## The Route Attribute
+## The Route Attributes: Get(), Post(), Patch(), Put(), Delete()
 
 Route attributes are similar to annotations in other programming languages.
 
-The route attribute determines the path, as well
-as the method a route handler will be handling.
+There are five route attributes available in Mono: Get, Post, Patch, Put, and Delete.
 
-Note that route attributes are dependent on the controller it was implemented from.
+Note that route attributes are dependent on the controller they are implemented from.
 This means that if you are in a controller with for example, named Home,
 it would automatically assume that home is your base route.
+
+To implement a route handler, you need to specify the right route attribute for your desired request method.
+You may also provide additional uri path as an argument to these attributes.
+
+By default, if no arguments are provided, Mono assumes that it corresponds to the base route named after the controller.
 
 example:
 
@@ -554,13 +551,13 @@ example:
 
     class Home extends Controller
     {
-        #[Route(method: 'GET')]
+        #[Get()]
         public function index(Request $request)
         {
             return view("Home");
         }
 
-        #[Route(path: '/profile', method: 'GET')]
+        #[Get('/profile')]
         public function index(Request $request)
         {
             return view("Profile");
@@ -573,7 +570,7 @@ uri routes:
     /home/profile
 
 In this example, the route handler function named 'index' has an attribute
-of Route with the path poiting at home and a request method of GET.
+of Get with the path poiting at home.
 
 Notice that you only need to specify the nested path which is /profile
 instead of including /home. This is because /profile is within the Home controller,
@@ -593,7 +590,7 @@ View contains all the HTML tags and templates being rendered by the server.
 
     class Home extends Controller
     {
-        #[Route(method: 'GET')]
+        #[Get()]
         public function index(Request $request)
         {
             return view("Home");
@@ -610,12 +607,14 @@ example:
 
 Controller:
 
-    #[Route(method: 'GET')]
-    public function index(Request $request)
-    {
-        return view("Home", [
-            "name" => "KENDRICK"
-        ]);
+    <?php
+
+    class Home extends Controller {
+        #[Get()]
+        public function index(Request $request)
+        {
+            return view("Home", [ "name" => "KENDRICK" ]);
+        }
     }
 
 View:
@@ -651,17 +650,18 @@ Model class methods includes:
 - find()
 - findById()
 - query()
-- createTable()
+- migrateModel()
 - initModels()
 
-## CreateTable Method in Mono
+## MigrateModel Method in Mono
 
-The createTable() method is used to initialize and configure your database table.
-
+The migrateModel() method is used to initialize and configure your database table.
 You can specify the name, type, and other configurations of your columns
 by using this method.
 
-Note that createTable() method will only create a new table if it is not yet created.
+After configuring, simply run the command 'php mono db push' to migrate your models into your database.
+
+Make sure to provide the correct database configurations inside the src/config folder.
 
 example implementation:
 
@@ -673,7 +673,6 @@ example implementation:
 
         public function __construct($id = null, $username = null, $password = null)
         {
-
             $this->id = $id;
             $this->username = $username;
             $this->password = $password;
@@ -681,7 +680,7 @@ example implementation:
 
         public static function initUser()
         {
-            self::createTable("
+            self::migrateModel("
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 username VARCHAR(50) NOT NULL UNIQUE,
                 password VARCHAR(100) NOT NULL
@@ -788,11 +787,11 @@ table.
 It takes one argument, your model object, and updates the data
 by its id.
 
-The $id attribute is important in this method for targeting the
+The $id variable is important in this method for targeting the
 right data in your database table.
 
 In this example, assume that you have a model class User with
-attributes $id, $username, and $password
+variables $id, $username, and $password
 
 example:
 
