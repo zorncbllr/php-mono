@@ -31,7 +31,21 @@ or
 After running this command, a controller class snippet will be generated with
 a default index route handler.
 
-Routes are determined by the controllers defined inside the controllers folder.
+example controller:
+
+    <?php
+
+    class Home extends Controller
+    {
+        #[Get()]
+        public function index(Request $request)
+        {
+            return 'Home Controller';
+        }
+    }
+
+Mono uses hybrid file-based routing and Route attributes for flexible
+and faster routing.
 
 Base routes are anchored to the name of the controller class.
 
@@ -340,7 +354,6 @@ usage:
 
     class Products extends Controller
     {
-
         #[Route(method: 'GET')]
         public function index(Request $request)
         {
@@ -358,14 +371,27 @@ readable.
 
 ## Routing with Mono
 
-Routes are determined by the controller classes inside the controllers folder.
+Mono uses hybrid file-based routing. Thanks to its file-based characteristics,
+the framework can easily find existing routes, resulting in much faster performance.
 
-Base routes are named after the file name of the controller.
+It is labelled as hybrid because it utilizes route attributes alongside file routing
+system. Because of this, Mono is not only performant in terms of speed, it is also 
+flexible enough to handle complex and nested uri routes. 
+
+Base routes are named after the name of file for the controller.
 
 example:
 
-    controller: Users.php
-    route: /users
+    <?php
+
+    class Home extends Controller
+    {
+        #[Get()]
+        public function index(Request $request)
+        {
+            return ProductsService::index($request);
+        }
+    }
 
 By default, Home.php or /home refers to the root path.
 

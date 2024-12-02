@@ -80,6 +80,12 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
     if ($mode === 'db' && $arg1 === 'push') {
         try {
             include_once __DIR__ . '/src/core/Database.php';
+            spl_autoload_register(function ($model) {
+                $path = __DIR__ . "/src/models/{$model}.php";
+                if (file_exists($path)) {
+                    require_once $path;
+                }
+            });
             echo "Iniatilizing...";
             Database::initModels();
             echo "\nDatabase initialization process complete.\nTable creation successfully executed.\n";
