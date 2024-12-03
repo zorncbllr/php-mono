@@ -137,7 +137,6 @@ example:
     class Home extends Controller
     {
         #[Get()]
-        #[Get()]
         #[Middleware(new Auth)]
         public function index(Request $request)
         {
@@ -186,9 +185,10 @@ depending on your liking.
     <?php
 
     class Product extends Model {
-    private $id;
-        public function __construct($id = null){
+        private $id;
 
+        public function __construct($id = null)
+        {
             $this->id = $id;
         }
     }
@@ -417,11 +417,11 @@ example implementation:
 
     <?php
 
-    class Users extends Controller {
-
-        #[Route(method: 'GET')]
-        public function index(Request $request){
-
+    class Users extends Controller
+    {
+        #[Get()]
+        public function index(Request $request)
+        {
             return 'Users controller';
         }
 
@@ -459,11 +459,11 @@ example implementation:
 
     <?php
 
-    class Users extends Controller {
-
-        #[Route(method: 'GET')]
-        public function index(Request $request){
-
+    class Users extends Controller
+    {
+        #[Get()]
+        public function index(Request $request)
+        {
             return 'Users controller';
         }
 
