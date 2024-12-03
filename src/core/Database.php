@@ -158,6 +158,24 @@ class Database
         }
     }
 
+    public static function extendModel(string $config): bool
+    {
+        try {
+            echo "\nExtending columns...";
+            $pdo = self::getPDOInstance();
+            $table = strtolower(get_called_class()) . "s";
+            $query = "ALTER TABLE `{$table}` ADD " . trim($config);
+
+            $pdo->exec($query);
+
+            echo "\nColumns successfully extended.\n";
+            return true;
+        } catch (PDOException $e) {
+            echo "\nExtend Error: {$e->getMessage()}";
+            return false;
+        }
+    }
+
     public static function initModels()
     {
         include_once __DIR__ . '/Model.php';
