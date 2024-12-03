@@ -13,7 +13,7 @@ class Record extends Model
 
 	public static function initRecord()
 	{
-		self::createTable('
+		self::migrateModel('
 			id INT PRIMARY KEY AUTO_INCREMENT,
 			title VARCHAR(50) NOT NULL,
 			content VARCHAR(255) NOT NULL,

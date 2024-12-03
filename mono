@@ -88,7 +88,7 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
             });
             echo "Iniatilizing...";
             Database::initModels();
-            echo "\nDatabase initialization process complete.\nTable creation successfully executed.\n";
+            echo "\nDatabase initialization process complete.\nTable migration successfully executed.\n";
         } catch (Error $err) {
             die("Database initializing error: {$err->getMessage()}.\n");
         }

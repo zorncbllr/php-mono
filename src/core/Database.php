@@ -95,12 +95,67 @@ class Database
         }
     }
 
-    public static function createTable(string $config)
+    public static function migrateModel(string $config): bool
     {
         $pdo = self::getPDOInstance();
+        $table = lcfirst(get_called_class()) . "s";
 
-        $query = "CREATE TABLE IF NOT EXISTS `" . lcfirst(get_called_class()) . "s" . "` ( " . $config . " )";
-        $pdo->exec($query);
+        try {
+            $query = "CREATE TABLE `{$table}` ( {$config} )";
+            $pdo->exec($query);
+            echo "\nIniatilizing...\nDatabase initialization process complete.\nTable creation successfully executed.\n";
+            return true;
+        } catch (PDOException $e) {
+            if ($e->getCode() === "42S01") {
+                $dbname = (require __DIR__ . '/../config/config.php')['database']['dbname'];
+                return self::alterTable($pdo, $config, [
+                    'table' => $table,
+                    'dbname' => $dbname
+                ]);
+            }
+
+            return false;
+        }
+    }
+
+    private static function alterTable(PDO $pdo, string $table_config, array $params): bool
+    {
+        try {
+            $config = explode(",", $table_config);
+            // ALTER TABLE `records` CHANGE `title` `title` VARCHAR(10) NOT NULL;
+            $query = "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = :dbname AND table_name = :table;";
+
+            $statement = $pdo->prepare($query);
+            $statement->execute($params);
+
+            $table_size = $statement->fetch()['COUNT(*)'];
+
+            $query = "ALTER TABLE `{$params['table']}`";
+
+            echo "\nUpdating Table...\n";
+
+            if ($table_size === sizeof($config)) {
+                for ($i = 0; $i < sizeof($config); $i++) {
+                    $column = trim(explode(' ', $config[$i])[0]);
+                    $column_config = str_replace($column, '', trim($config[$i]));
+
+                    if (!str_contains($column_config, "PRIMARY KEY")) {
+                        $query .= " CHANGE `{$column}` `{$column}`{$column_config}" . ($i < sizeof($config) - 1 ? "," : ";");
+                    }
+                }
+
+                $statement = $pdo->prepare($query);
+                $statement->execute();
+                echo "Table updated successfully.\n";
+                return true;
+            }
+
+            $pdo->exec("DROP TABLE `{$params['table']}`");
+
+            return self::migrateModel($table_config);
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 
     public static function initModels()

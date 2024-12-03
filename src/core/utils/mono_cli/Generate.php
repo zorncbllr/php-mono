@@ -282,7 +282,7 @@ class Generate
     private static function initModelFunction(string $filename)
     {
         $attributes = self::getAttributes($filename, assoc: true);
-        $result = "\n\tpublic static function init" . ucfirst($filename) . "() {\n\t\tself::createTable('";
+        $result = "\n\tpublic static function init" . ucfirst($filename) . "() {\n\t\tself::migrateModel('";
 
         foreach ($attributes as $attr => $type) {
             $copy = str_replace("$", "", $attr);
