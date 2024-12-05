@@ -16,7 +16,7 @@
 				 align-items: center;
 				 gap: 2rem;
 				">
-		<img style="width: 25rem;" src="/public/mono.jpg" alt="mono logo">
+		<img style="width: 25rem;" src="mono.jpg" alt="mono logo">
 		<h2>The Fast, Scalable, Object-Oriented PHP Framework.</h2>
 		<div
 			style="color: gray;
