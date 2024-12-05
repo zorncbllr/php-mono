@@ -12,10 +12,10 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
 
     if ($mode === 'serve' || $mode === '-s') {
         $port = 3000;
-        $command = "php -S localhost:{$port} public/index.php";
+        $command = "php -S localhost:{$port} -t public -f index.php";
         while (!system($command)) {
             $port++;
-            $command = "php -S localhost:{$port} public/index.php";
+            $command = "php -S localhost:{$port} -t public -f index.php";
             system($command);
         }
 
