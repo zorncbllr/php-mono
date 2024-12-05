@@ -3,7 +3,7 @@
 
 class Home extends Controller
 {
-	#[Get]
+	#[Get()]
 	#[Middleware(new Docs)]
 	public function index(Request $request)
 	{
