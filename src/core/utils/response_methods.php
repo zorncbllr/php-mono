@@ -1,6 +1,6 @@
 <?php
 
-function json(array | object $data)
+function json(mixed $data)
 {
     header("Content-Type: application/json");
     echo json_encode($data);
