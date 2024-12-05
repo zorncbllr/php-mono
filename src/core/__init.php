@@ -1,18 +1,12 @@
 <?php
 
-// Add additional directories to be autoloaded.
+$config = require_once __DIR__ . '/../config/cors.config.php';
 
-$directories = [
-    // Core files and directories:
-    '/',
-    '/../models/',
-    '/../middlewares/',
-    '/utils/',
-    '/utils/annotations/'
+header("Access-Control-Allow-Origin: " . $config['origin']);
+header("Access-Control-Allow-Methods: " . implode(', ', $config['allowed_methods']));
+header("Access-Control-Allow-Headers: " . implode(', ', $config['allowed_headers']));
 
-    // Add custom directories here:
-
-];
+$directories = require __DIR__ . '/../config/autoload.config.php';
 
 spl_autoload_register(
     function ($class)

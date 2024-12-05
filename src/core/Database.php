@@ -7,7 +7,7 @@ class Database
     public function __construct()
     {
         try {
-            $config = (require __DIR__ . '/../config/config.php')['database'];
+            $config = require __DIR__ . '/../config/db.config.php';
 
             if ($config['dbname'] !== 'sample_db') {
                 $this->pdo = self::getPDOInstance();
@@ -19,7 +19,7 @@ class Database
 
     private static function getPDOInstance(): PDO
     {
-        $config = (require __DIR__ . '/../config/config.php')['database'];
+        $config = require __DIR__ . '/../config/db.config.php';
         $dsn = "mysql:" . http_build_query($config, "", ";");
 
         return new PDO($dsn, $config["user"], $config["password"], [
