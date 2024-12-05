@@ -18,7 +18,7 @@ class Generate
 
         file_put_contents(
             $directory . "/$class.php",
-            "<?php\n\nclass $class extends Controller {\n\n\t#[Get()]\n\tpublic function index(Request \$request){\n\n\t\treturn '$class controller';\n\t}\n}\n"
+            "<?php\n\nclass $class extends Controller \n{\n\t#[Get()]\n\tpublic function index(Request \$request){\n\t\treturn '$class controller';\n\t}\n}\n"
         );
 
         $end ?  exit() : null;
@@ -92,6 +92,18 @@ class Generate
         $comp = ucfirst($filename);
         $directory = __DIR__ . "/../../../views/components";
 
+        $folders = explode('/', $filename);
+
+        if (sizeof($folders) > 1) {
+            foreach ($folders as $index => $path) {
+                if ($index < sizeof($folders) - 1) {
+                    $directory .= "/{$path}";
+                } else {
+                    $comp = ucfirst($path);
+                }
+            }
+        }
+
         if (!is_dir($directory)) {
             mkdir($directory);
         }
@@ -109,12 +121,26 @@ class Generate
         $view = ucfirst($filename);
         $directory = __DIR__ . "/../../../views";
 
+        $folders = explode('/', $filename);
+
+        if (sizeof($folders) > 1) {
+            foreach ($folders as $index => $path) {
+                if ($index < sizeof($folders) - 1) {
+                    $directory .= "/{$path}";
+                } else {
+                    $view = ucfirst($path);
+                }
+            }
+        }
+
         if (!is_dir($directory)) {
             mkdir($directory);
-            file_put_contents(
-                $directory . "/404.view.php",
-                "<!DOCTYPE html>\n<html lang='en'>\n<head>\n\t<meta charset='UTF-8'>\n\t<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n\t<title>404 | Page not Found</title>\n</head>\n<body>\n\t<h1>404 | Page not Found</h1>\n</body>\n</html>"
-            );
+            if ($directory === __DIR__ . "/../../../views") {
+                file_put_contents(
+                    $directory . "/404.view.php",
+                    "<!DOCTYPE html>\n<html lang='en'>\n<head>\n\t<meta charset='UTF-8'>\n\t<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n\t<title>404 | Page not Found</title>\n</head>\n<body>\n\t<h1>404 | Page not Found</h1>\n</body>\n</html>"
+                );
+            }
         }
 
         file_put_contents(
@@ -303,6 +329,18 @@ class Generate
     {
         $class = ucfirst($filename);
         $directory = __DIR__ . "/../../../middlewares";
+
+        $folders = explode('/', $filename);
+
+        if (sizeof($folders) > 1) {
+            foreach ($folders as $index => $path) {
+                if ($index < sizeof($folders) - 1) {
+                    $directory .= "/{$path}";
+                } else {
+                    $class = ucfirst($path);
+                }
+            }
+        }
 
         if (!is_dir($directory)) {
             mkdir($directory);

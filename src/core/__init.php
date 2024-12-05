@@ -1,11 +1,17 @@
 <?php
 
+// Add additional directories to be autoloaded.
+
 $directories = [
+    // Core files and directories:
     '/',
     '/../models/',
     '/../middlewares/',
     '/utils/',
     '/utils/annotations/'
+
+    // Add custom directories here:
+
 ];
 
 spl_autoload_register(
