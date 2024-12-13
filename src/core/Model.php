@@ -14,6 +14,10 @@ abstract class Model extends Database
 
         $data = parent::query($query, [...$param]);
 
+        if (empty($data)) {
+            return false;
+        }
+
         if (sizeof($data) === 1) {
             return self::mapper($data[0]);
         }
@@ -23,10 +27,15 @@ abstract class Model extends Database
 
     public static function findById(int | string $id)
     {
-        $query = "select * from " . lcfirst(get_called_class()) . "s where id = :id";
-        return self::mapper(
-            parent::query($query, ["id" => $id])[0]
-        );
+        try {
+            $query = "select * from " . lcfirst(get_called_class()) . "s where id = :id";
+
+            $data = parent::query($query, ["id" => $id]);
+
+            return empty($data) ? false : self::mapper($data[0]);
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 
     private static function mapper(array $data)
