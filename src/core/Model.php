@@ -14,6 +14,10 @@ abstract class Model extends Database
 
         $data = parent::query($query, [...$param]);
 
+        if (empty($data) && !empty($param)) {
+            return null;
+        }
+
         if (sizeof($data) === 1) {
             return self::mapper($data[0]);
         }
