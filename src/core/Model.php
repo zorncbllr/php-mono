@@ -4,13 +4,18 @@ abstract class Model extends Database
 {
     public static function find(array $param = [])
     {
-        $query = "select * from `" . lcfirst(get_called_class()) . "s`";
+        $table = strtolower(get_called_class());
+        $query = "SELECT * FROM `{$table}s`";
 
         if (empty($param)) {
             return self::mapper(parent::query($query));
         }
 
-        $query .= " where " . key($param) . " = :" . key($param);
+        $query .= " WHERE";
+
+        foreach ($param as $key => $value) {
+            $query .= ($key !== array_key_first($param) ? " AND " : " ") . "`{$table}s`.`{$key}` = :{$key}";
+        }
 
         $data = parent::query($query, [...$param]);
 
