@@ -6,17 +6,19 @@ class Database
 
     public function __construct()
     {
-        $this->pdo = self::getPDOInstance();
+        $config = require __DIR__ . '/../config/db.config.php';
+
+        if (!empty($config['dbname'])) {
+            $this->pdo = self::getPDOInstance();
+        } else {
+            $this->pdo = false;
+        }
     }
 
     private static function getPDOInstance(): PDO | bool
     {
         try {
             $config = require __DIR__ . '/../config/db.config.php';
-
-            if (empty($config['dbname'])) {
-                throw new PDOException("Uninitialized Database Name. Make sure you have the right database name in src/config/db.config.php file.", 1391992);
-            }
 
             $dsn = "mysql:" . http_build_query($config, "", ";");
 
@@ -25,8 +27,11 @@ class Database
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
             ]);
         } catch (PDOException $e) {
-            if ($e->getCode() == 1391992) {
-                self::alert($e->getMessage());
+            if ($e->getCode() === 2002) {
+                self::alert("Database down: Try starting your database server.");
+            }
+            if ($e->getCode() == 1049) {
+                self::alert("Database Error: Unknown database {$config['dbname']}.");
             }
             return false;
         }
@@ -75,41 +80,33 @@ class Database
         echo "<script>alert('{$msg}')</script>";
     }
 
-    public function save(): bool
+    public function save(): void
     {
-        try {
-            $pdo = $GLOBALS['database']->getPDO();
+        $pdo = $GLOBALS['database']->getPDO();
 
-            if (!$pdo) {
-                throw new PDOException("Uninitialized Database Name. Make sure you have the right database name in src/config/db.config.php file.", 1391992);
-            }
-
-            $attributes = self::getProperties($this);
-            $table = lcfirst(get_called_class()) . "s";
-
-            $query = "insert into `$table` (";
-
-            $attach_attributes = function (string $prep = "")
-            use (&$attributes, &$query) {
-                $tag = $prep ? "" : "`";
-                foreach (array_keys($attributes) as $key) {
-                    $query .= $tag . $prep . $key . $tag . ($key != array_key_last($attributes) ? ", " : ") ");
-                }
-            };
-
-            $attach_attributes();
-            $query .= "values (";
-            $attach_attributes(":");
-
-            $statement = $pdo->prepare($query);
-            $statement->execute($attributes);
-            return true;
-        } catch (PDOException $e) {
-            if ($e->getCode() === 1391992) {
-                self::alert($e->getMessage());
-            }
-            return false;
+        if (!$pdo) {
+            throw new PDOException("Uninitialized Database Name. Make sure you have the right database name in src/config/db.config.php file.", 1391992);
         }
+
+        $attributes = self::getProperties($this);
+        $table = lcfirst(get_called_class()) . "s";
+
+        $query = "insert into `$table` (";
+
+        $attach_attributes = function (string $prep = "")
+        use (&$attributes, &$query) {
+            $tag = $prep ? "" : "`";
+            foreach (array_keys($attributes) as $key) {
+                $query .= $tag . $prep . $key . $tag . ($key != array_key_last($attributes) ? ", " : ") ");
+            }
+        };
+
+        $attach_attributes();
+        $query .= "values (";
+        $attach_attributes(":");
+
+        $statement = $pdo->prepare($query);
+        $statement->execute($attributes);
     }
 
     public static function migrateModel(string $config): bool
@@ -180,68 +177,50 @@ class Database
         }
     }
 
-    public function update(...$params): bool
+    public function update(...$params): void
     {
-        try {
-            $pdo = $GLOBALS['database']->getPDO();
+        $pdo = $GLOBALS['database']->getPDO();
 
-            if (!$pdo) {
-                throw new PDOException("Uninitialized Database Name. Make sure you have the right database name in src/config/db.config.php file.", 1391992);
-            }
-
-            $prevData = self::getProperties($this);
-            $primaryKey = self::getPrimaryKey($prevData);
-
-            $updatedData = [...$prevData, ...$params];
-
-            $this->__construct(...$updatedData);
-
-            $table = strtolower(get_called_class()) . "s";
-            $query = "UPDATE `$table` SET ";
-
-            foreach ($updatedData as $key => $value) {
-                $query .= "`$key` = :$key" . ($key != array_key_last($updatedData) ? ", " : " ");
-            }
-
-            $query .= " WHERE `$table`.`{$primaryKey}` = :{$primaryKey}";
-
-            $statement = $pdo->prepare($query);
-
-            $statement->execute([...$updatedData, $primaryKey => $updatedData[$primaryKey]]);
-
-            return true;
-        } catch (PDOException $e) {
-            if ($e->getCode() === 1391992) {
-                self::alert($e->getMessage());
-            }
-            return false;
+        if (!$pdo) {
+            throw new PDOException("Uninitialized Database Name. Make sure you have the right database name in src/config/db.config.php file.", 1391992);
         }
+
+        $prevData = self::getProperties($this);
+        $primaryKey = self::getPrimaryKey($prevData);
+
+        $updatedData = [...$prevData, ...$params];
+
+        $this->__construct(...$updatedData);
+
+        $table = strtolower(get_called_class()) . "s";
+        $query = "UPDATE `$table` SET ";
+
+        foreach ($updatedData as $key => $value) {
+            $query .= "`$key` = :$key" . ($key != array_key_last($updatedData) ? ", " : " ");
+        }
+
+        $query .= " WHERE `$table`.`{$primaryKey}` = :{$primaryKey}";
+
+        $statement = $pdo->prepare($query);
+
+        $statement->execute([...$updatedData, $primaryKey => $updatedData[$primaryKey]]);
     }
 
-    public function delete(): bool
+    public function delete(): void
     {
-        try {
-            $pdo = $GLOBALS['database']->getPDO();
+        $pdo = $GLOBALS['database']->getPDO();
 
-            if (!$pdo) {
-                throw new PDOException("Uninitialized Database Name. Make sure you have the right database name in src/config/db.config.php file.", 1391992);
-            }
-
-            $modelData = self::getProperties($this);
-            $primaryKey = self::getPrimaryKey($modelData);
-
-            $table = lcfirst(get_called_class()) . "s";
-            $query = "DELETE FROM `$table` WHERE `$table`.`{$primaryKey}` = :{$primaryKey}";
-
-            $statement = $pdo->prepare($query);
-            $statement->execute([$primaryKey => $modelData[$primaryKey]]);
-
-            return true;
-        } catch (PDOException $e) {
-            if ($e->getCode() === 1391992) {
-                self::alert($e->getMessage());
-            }
-            return false;
+        if (!$pdo) {
+            throw new PDOException("Uninitialized Database Name. Make sure you have the right database name in src/config/db.config.php file.", 1391992);
         }
+
+        $modelData = self::getProperties($this);
+        $primaryKey = self::getPrimaryKey($modelData);
+
+        $table = lcfirst(get_called_class()) . "s";
+        $query = "DELETE FROM `$table` WHERE `$table`.`{$primaryKey}` = :{$primaryKey}";
+
+        $statement = $pdo->prepare($query);
+        $statement->execute([$primaryKey => $modelData[$primaryKey]]);
     }
 }

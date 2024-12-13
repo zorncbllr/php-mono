@@ -8,8 +8,7 @@
 </head>
 
 <body>
-	<main style="display: grid;
-				 height: 80%;
+	<main style="height: 80vh;
 				 display: flex;
 				 flex-direction: column;
 				 justify-content: center;

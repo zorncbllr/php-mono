@@ -7,6 +7,6 @@ return [
     "port" => 3306,
     "user" => "root",
     "password" => "",
-    "dbname" => "sample_dbname",
+    "dbname" => "",
     "charset" => "utf8mb4"
 ];
