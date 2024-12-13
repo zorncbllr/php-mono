@@ -45,7 +45,7 @@ class Validator
                         }
                         break;
                     case 'required':
-                        if (empty(trim($data[$var]))) {
+                        if (empty(trim($data[$var])) && $filter === true) {
                             array_push(
                                 $this->errors[$var],
                                 $option['message'] ?? $var . ' should not be empty.'
