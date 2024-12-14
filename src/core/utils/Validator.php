@@ -79,18 +79,15 @@ class Validator
                 $pattern2 = '/^\d{2}\/\d{2}\/\d{4}$/';
                 return preg_match($pattern1, $data) || preg_match($pattern2, $data);
             case 'image':
-                $file = $_FILES[$var];
-                $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
-                $mime_type = mime_content_type($file['tmp_name']);
-                $file_ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-                if (
-                    in_array($mime_type, $allowed_types) &&
-                    in_array(strtolower($file_ext), $allowed_extensions)
-                ) {
-                    return true;
-                }
-                return false;
+                return is_string($data) && (
+                    str_contains($data, 'data:image/jpeg;base64,') ||
+                    str_contains($data, 'data:image/png;base64,') ||
+                    str_contains($data, 'data:image/svg+xml;base64,')
+                );
+            case 'gif':
+                return is_string($data) && str_contains($data, 'data:image/gif;base64,');
+            case 'pdf':
+                return is_string($data) && str_contains($data, 'data:application/pdf;base64,');
             default:
                 return false;
         }

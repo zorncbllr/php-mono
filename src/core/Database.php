@@ -123,6 +123,8 @@ class Database
             if ($e->getCode() == "42S01") {
                 $pdo->exec("DROP TABLE `{$table}`");
                 self::migrateModel($config);
+            } else {
+                var_dump($e->getMessage());
             }
             return false;
         }
