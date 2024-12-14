@@ -25,7 +25,7 @@ class Validator
             foreach ($filters as $option => $filter) {
                 switch ($option) {
                     case 'type':
-                        if (!$this->isValidType($filter, $data[$var])) {
+                        if (!$this->isValidType($filter, $data[$var], $var)) {
                             array_push(
                                 $this->errors[$var],
                                 $option['message'] ?? $var . ' should be of type ' . $filter . '.'
@@ -57,7 +57,7 @@ class Validator
         }
     }
 
-    private function isValidType(string $type, mixed $data)
+    private function isValidType(string $type, mixed $data, string $var = '')
     {
         switch ($type) {
             case 'string':
@@ -78,6 +78,19 @@ class Validator
                 $pattern1 = '/^\d{4}-\d{2}-\d{2}$/';
                 $pattern2 = '/^\d{2}\/\d{2}\/\d{4}$/';
                 return preg_match($pattern1, $data) || preg_match($pattern2, $data);
+            case 'image':
+                $file = $_FILES[$var];
+                $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                $mime_type = mime_content_type($file['tmp_name']);
+                $file_ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                if (
+                    in_array($mime_type, $allowed_types) &&
+                    in_array(strtolower($file_ext), $allowed_extensions)
+                ) {
+                    return true;
+                }
+                return false;
             default:
                 return false;
         }
