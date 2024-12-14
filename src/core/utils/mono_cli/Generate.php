@@ -155,26 +155,20 @@ class Generate
     {
         $path = self::getPath($filename);
         $constructorBlocks = self::getconstructorBlocks($filename);
-        $attrs = self::getAttributes($filename, keys: true);
+        $attrs = self::getAttributes($filename);
 
         $initAttrs = "";
         $gettersAndSetters = "\n";
 
         $constructorBlocks[2] = explode("}", $constructorBlocks[2])[0] . "\n\t}";
 
-        foreach ($attrs as $index => $attr) {
+        foreach ($attrs as $attr => $options) {
             $copy = str_replace("$", "", $attr);
-            $copy = explode(" ", $copy);
 
-            $pattern = "/public/";
-
-            $copy = $copy[sizeof($copy) - 1];
-
-            if (!preg_match($pattern, $copy)) {
+            if ($options['modifier'] == 'private') {
                 $gettersAndSetters .= self::gettersAndSetters($copy);
             }
-            $copy = trim(str_replace("public", "", $copy));
-            $initAttrs .= "\n\t\t\$this->$copy = \$$copy;" . ($index < (sizeof($attrs) - 1) ? "" : "\n");
+            $initAttrs .= "\n\t\t\$this->$copy = \$$copy;" . ($attr != array_key_last($attrs) ? "" : "\n");
         }
 
         $constructorBlocks[2] = "\n" . $initAttrs . $constructorBlocks[2];
@@ -195,7 +189,7 @@ class Generate
         exit();
     }
 
-    private static function getAttributes(string $filename, $keys = false, $list = false, $assoc = false): array
+    private static function getAttributes(string $filename): array
     {
         $types = ["string", "int", "array", "object", "bool", "double", "float"];
         $directory = __DIR__ . "/../../../models/";
@@ -214,8 +208,9 @@ class Generate
         $result = [];
 
         for ($i = 0; $i < sizeof($attributes) - 1; $i++) {
-            $line = $attributes[$i];
+            $line = trim($attributes[$i]);
 
+            $modifier = explode(" ", $line)[0];
             $datatype = "";
 
             foreach ($types as $type) {
@@ -229,24 +224,15 @@ class Generate
             $attrs = explode(",", $line);
 
             foreach ($attrs as $attr) {
-                $attr = trim(str_replace("private", "", $attr));
-                $result[str_replace(" ", "", $attr)] = $datatype;
+                $attr = trim(str_replace($modifier, "", $attr));
+                $result[str_replace(" ", "", $attr)] = [
+                    'datatype' => $datatype,
+                    'modifier' => $modifier
+                ];
             }
         }
 
-        if ($keys) {
-            return array_keys($result);
-        } elseif ($list) {
-            $list = [];
-            foreach ($result as $key => $val) {
-                array_push($list, $val . " " . $key);
-            }
-            return $list;
-        } else if ($assoc) {
-            return $result;
-        }
-
-        return [];
+        return $result;
     }
 
     private static function getconstructorBlocks(string $filename): array
@@ -269,30 +255,35 @@ class Generate
         $constructorBlocks = self::getconstructorBlocks($filename);
         $constructor = explode("(", $constructorBlocks[1]);
 
-        $attrs = self::getAttributes($filename, list: true);
-        $attrs = array_map(
-            fn($attr) => trim(str_replace("public", "", $attr)),
-            $attrs
+        $attributes = self::getAttributes($filename);
+
+        $optional_attrs = array_filter(
+            $attributes,
+            fn($options) => empty($options['datatype'])
         );
 
-        $severalParams = sizeof($attrs) > 4;
-        $finalParam =  "";
-        $optionals = "";
+        $wtype_attrs = array_filter(
+            $attributes,
+            fn($options) => !empty($options['datatype'])
+        );
 
-        foreach ($attrs as $index => $attr) {
-            $is_optional = sizeof(explode(' ', $attr)) === 1;
-            $is_last_attr = $index === (sizeof($attrs) - 1);
-            $wspce = sizeof($attrs) > 4 ? "\n\t\t" : "";
-            if ($is_optional) {
-                $optionals .= $wspce . $attr . " = null" . ($is_last_attr ? '' : ', ');
-            } else {
-                $finalParam .= $wspce . $attr . ($is_last_attr && empty($optionals) ? '' : ', ');
-            }
+        $severalParams = sizeof($attributes) > 4;
+        $space = $severalParams ? "\n\t\t" : "";
+        $constructor_params =  "";
+
+        foreach ($wtype_attrs as $attr => $options) {
+            $constructor_params .= "{$space}{$options['datatype']} {$attr}" . ($attr == array_key_last($wtype_attrs) ? '' : ', ');
         }
 
-        $finalParam .= $optionals;
+        if (!empty($optional_attrs)) {
+            $constructor_params .= ", ";
+        }
 
-        $result = $constructor[0] . "($finalParam" . ($severalParams ? "\n\t)" : ")");
+        foreach ($optional_attrs as $attr => $options) {
+            $constructor_params .= "{$space}{$attr} = null" . ($attr == array_key_last($optional_attrs) ? '' : ', ');
+        }
+
+        $result = "{$constructor[0]}({$constructor_params}" . ($severalParams ? "\n\t)" : ")");
 
         return $result;
     }
@@ -307,15 +298,14 @@ class Generate
 
     private static function initModelFunction(string $filename)
     {
-        $attributes = self::getAttributes($filename, assoc: true);
-        $result = "\n\tpublic static function init" . ucfirst($filename) . "() {\n\t\tself::migrateModel('";
+        $attributes = self::getAttributes($filename);
+        $result = "\n\n\tpublic static function init" . ucfirst($filename) . "() {\n\t\tself::migrateModel('";
 
-        foreach ($attributes as $attr => $type) {
+        foreach ($attributes as $attr => $options) {
             $copy = str_replace("$", "", $attr);
-            $copy = str_replace("public", "", $copy);
 
-            $result .= match ($type) {
-                "string" => "\n\t\t\t$copy VARCHAR(20) NOT NULL",
+            $result .= match ($options['datatype']) {
+                "string" => "\n\t\t\t$copy VARCHAR(255) NOT NULL",
                 "int" => "\n\t\t\t$copy INT AUTO_INCREMENT PRIMARY KEY",
                 default => "\n\t\t\t$copy <ADD YOUR CONFIGURATION>"
             };

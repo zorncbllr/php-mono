@@ -2,8 +2,10 @@
 
 class Record extends Model
 {
-	private $id, $title, $content, $createdAt;
-	public function __construct($id = null, $title = null, $content = null, $createdAt = null)
+	private $id;
+	public string $title, $content, $createdAt;
+
+	public function __construct(string $title, string $content, string $createdAt, $id = null)
 	{
 		$this->id = $id;
 		$this->title = $title;
@@ -14,10 +16,10 @@ class Record extends Model
 	public static function initRecord()
 	{
 		self::migrateModel('
-			id INT PRIMARY KEY AUTO_INCREMENT,
-			title VARCHAR(50) NOT NULL,
+			id <ADD YOUR CONFIGURATION>,
+			title VARCHAR(255) NOT NULL,
 			content VARCHAR(255) NOT NULL,
-			createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+			createdAt VARCHAR(255) NOT NULL
 		');
 	}
 
@@ -29,35 +31,5 @@ class Record extends Model
 	public function setId($id)
 	{
 		$this->id = $id;
-	}
-
-	public function getTitle()
-	{
-		return $this->title;
-	}
-
-	public function setTitle($title)
-	{
-		$this->title = $title;
-	}
-
-	public function getContent()
-	{
-		return $this->content;
-	}
-
-	public function setContent($content)
-	{
-		$this->content = $content;
-	}
-
-	public function getCreatedAt()
-	{
-		return $this->createdAt;
-	}
-
-	public function setCreatedAt($createdAt)
-	{
-		$this->createdAt = $createdAt;
 	}
 }
