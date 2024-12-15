@@ -1,6 +1,9 @@
 <?php
 
 
+require_once __DIR__ . '/vendor/autoload.php';
+Dotenv\Dotenv::createImmutable(__DIR__)->load();
+
 function handleOperation($mode, $arg1 = '', $arg2 = '')
 {
     if ($mode === 'gen' || $mode === 'generate' || $mode === '-g') {
@@ -80,6 +83,7 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
     if ($mode === 'db' && $arg1 === 'push') {
         try {
             include_once __DIR__ . '/src/core/Database.php';
+            include_once __DIR__ . '/src/core/Model.php';
             spl_autoload_register(function ($model) {
                 $path = __DIR__ . "/src/models/{$model}.php";
                 if (file_exists($path)) {
@@ -87,7 +91,11 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
                 }
             });
             echo "Iniatilizing...";
-            Database::initModels();
+            if (!empty($arg2)) {
+                eval("{$arg2}::init" . ucfirst($arg2) . "();");
+            } else {
+                Database::initModels();
+            }
             echo "\nDatabase initialization process complete.\nTable migration successfully executed.\n";
         } catch (Error $err) {
             die("Database initializing error: {$err->getMessage()}.\n");
