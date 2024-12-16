@@ -4,7 +4,7 @@ class Controller
 {
     static function getMethod(Controller $controller, ReflectionMethod $method, Request $request)
     {
-        include_once __DIR__ . '/utils/response_methods.php';
+        include_once __DIR__ . '/utils/includes/response_methods.php';
 
         $valid = self::handleMiddlewares($method, $request);
 

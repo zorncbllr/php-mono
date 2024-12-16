@@ -4,12 +4,14 @@ class Request
 {
     public array $body, $headers, $query, $param, $cookies, $form_data, $sessions;
     public string $base_uri, $uri;
+    public array | object | null $payload;
 
     public function __construct($param = [])
     {
         $this->setQuery();
         $this->setBody();
         $this->param = $param;
+        $this->payload = null;
         $this->headers = getallheaders();
         $this->cookies = $_COOKIE;
         $this->sessions = $_SESSION;

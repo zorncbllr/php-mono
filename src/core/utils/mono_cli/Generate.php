@@ -275,7 +275,7 @@ class Generate
             $constructor_params .= "{$space}{$options['datatype']} {$attr}" . ($attr == array_key_last($wtype_attrs) ? '' : ', ');
         }
 
-        if (!empty($optional_attrs)) {
+        if (!empty($optional_attrs) && !empty($wtype_attrs)) {
             $constructor_params .= ", ";
         }
 

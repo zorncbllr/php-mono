@@ -4,9 +4,11 @@ class App
 {
     public string $URI_PATH;
 
-    public function __construct()
+    public function __construct(string $path = '')
     {
-        if (
+        if (!empty($path)) {
+            $this->URI_PATH = $path;
+        } elseif (
             $_SERVER["SERVER_NAME"] === "localhost" &&
             $_SERVER["SERVER_PORT"] >= 3000
         ) {

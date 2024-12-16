@@ -18,9 +18,15 @@ function view(string $filename, array $data = [])
     require file_exists("$path.view.php") ? "$path.view.php" : "$path.php";
 }
 
-function redirect(string $location)
+function redirect($location = null)
 {
-    header("Location: $location");
+    if ($location) {
+        header("Location: $location");
+        exit();
+    } else {
+        include_once('redirect.php');
+        return new Redirect();
+    }
 }
 
 function component(string $component, array $data = [])
