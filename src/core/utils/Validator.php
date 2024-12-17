@@ -22,36 +22,40 @@ class Validator
 
         foreach ($schema as $var => $filters) {
             $this->errors[$var] = [];
-            foreach ($filters as $option => $filter) {
-                switch ($option) {
-                    case 'type':
-                        if (!$this->isValidType($filter, $data[$var], $var)) {
-                            array_push(
-                                $this->errors[$var],
-                                $option['message'] ?? $var . ' should be of type ' . $filter . '.'
-                            );
-                        }
-                        break;
-                    case 'length':
-                        $lowerThanMIn = is_string($data[$var]) ? strlen($data[$var]) < $filter['min'] : $data[$var] < $filter['min'];
 
-                        $higherThanMax = is_string($data[$var]) ? strlen($data[$var]) > $filter['max'] : $data[$var] > $filter['max'];
+            if (isset($filters['required'])) {
+                $filter = $filters['required'];
+                if (empty(trim($data[$var])) && $filter === true) {
+                    array_push(
+                        $this->errors[$var],
+                        $option['message'] ?? $var . ' should not be empty.'
+                    );
+                } else {
+                    break;
+                }
+            }
 
-                        if ($lowerThanMIn || $higherThanMax) {
-                            array_push(
-                                $this->errors[$var],
-                                $option['message'] ?? $var . ' must be at least ' . $filter['min'] . ' and ' . $filter['max'] . ' maximum.'
-                            );
-                        }
-                        break;
-                    case 'required':
-                        if (empty(trim($data[$var])) && $filter === true) {
-                            array_push(
-                                $this->errors[$var],
-                                $option['message'] ?? $var . ' should not be empty.'
-                            );
-                        }
-                        break;
+            if (isset($filters['type'])) {
+                $filter = $filters['type'];
+                if (!$this->isValidType($filter, $data[$var], $var)) {
+                    array_push(
+                        $this->errors[$var],
+                        $option['message'] ?? $var . ' should be of type ' . $filter . '.'
+                    );
+                }
+            }
+
+            if (isset($filters['length'])) {
+                $filter = $filters['length'];
+                $lowerThanMIn = is_string($data[$var]) ? strlen($data[$var]) < $filter['min'] : $data[$var] < $filter['min'];
+
+                $higherThanMax = is_string($data[$var]) ? strlen($data[$var]) > $filter['max'] : $data[$var] > $filter['max'];
+
+                if ($lowerThanMIn || $higherThanMax) {
+                    array_push(
+                        $this->errors[$var],
+                        $option['message'] ?? $var . ' must be at least ' . $filter['min'] . ' and ' . $filter['max'] . ' maximum.'
+                    );
                 }
             }
         }

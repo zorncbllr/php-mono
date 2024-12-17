@@ -29,6 +29,7 @@ abstract class Model extends Database
 
         return self::mapper($data);
     }
+    
 
     public static function findById(int | string $id)
     {
