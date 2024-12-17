@@ -109,7 +109,7 @@ class Database
         $statement->execute($attributes);
     }
 
-   public static function migrateModel(string $config): bool
+    public static function migrateModel(string $config): bool
     {
         $pdo = self::getPDOInstance();
         $table = lcfirst(get_called_class()) . "s";
