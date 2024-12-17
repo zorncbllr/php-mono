@@ -14,7 +14,7 @@ function view(string $filename, array $data = [])
         extract($data, EXTR_OVERWRITE);
     }
 
-    $path = __DIR__ . "/../../views/$filename";
+    $path = __DIR__ . "/../../../views/$filename";
     require file_exists("$path.view.php") ? "$path.view.php" : "$path.php";
 }
 
@@ -35,6 +35,6 @@ function component(string $component, array $data = [])
         extract($data, EXTR_OVERWRITE);
     }
 
-    $path = __DIR__ . "/../../views/components/$component";
+    $path = __DIR__ . "/../../../views/components/$component";
     include_once file_exists("$path.com.php") ? "$path.com.php" : "$path.php";
 }
