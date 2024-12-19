@@ -1,5 +1,8 @@
 <?php
 
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+
 function json(mixed $data)
 {
     header("Content-Type: application/json");
@@ -10,12 +13,10 @@ function view(string $filename, array $data = [])
 {
     header("Content-Type: text/html");
 
-    if (!empty($data)) {
-        extract($data, EXTR_OVERWRITE);
-    }
+    $loader = new FilesystemLoader(__DIR__ . "/../../../views");
+    $twig = new Environment($loader);
 
-    $path = __DIR__ . "/../../../views/$filename";
-    require file_exists("$path.view.php") ? "$path.view.php" : "$path.php";
+    echo $twig->render("{$filename}.twig", [...$data]);
 }
 
 function redirect($location = null)
@@ -31,10 +32,10 @@ function redirect($location = null)
 
 function component(string $component, array $data = [])
 {
-    if (!empty($data)) {
-        extract($data, EXTR_OVERWRITE);
-    }
+    header("Content-Type: text/html");
 
-    $path = __DIR__ . "/../../../views/components/$component";
-    include_once file_exists("$path.com.php") ? "$path.com.php" : "$path.php";
+    $loader = new FilesystemLoader(__DIR__ . "/../../../views/components");
+    $twig = new Environment($loader);
+
+    echo $twig->render("{$component}.twig", [...$data]);
 }

@@ -1,5 +1,9 @@
 <?php
 
+namespace Src\Core\Model;
+
+use Database;
+
 abstract class Model extends Database
 {
     public static function find(array $param = [])
@@ -29,7 +33,7 @@ abstract class Model extends Database
 
         return self::mapper($data);
     }
-    
+
 
     public static function findById(int | string $id)
     {

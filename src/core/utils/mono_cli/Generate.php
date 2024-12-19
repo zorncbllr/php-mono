@@ -81,7 +81,7 @@ class Generate
 
         file_put_contents(
             $directory . "/$class.php",
-            "<?php\n\nclass $class extends Model {\n\tprivate \$id;\n\tpublic function __construct(\$id = null) {\n\t\t\$this->id = \$id;\n\t}\n}"
+            "<?php\n\nnamespace Src\Models;\n\nuse Src\Core\Model\Model;\n\nclass $class extends Model {\n\tprivate \$id;\n\tpublic function __construct(\$id = null) {\n\t\t\$this->id = \$id;\n\t}\n}"
         );
 
         exit();
@@ -109,7 +109,7 @@ class Generate
         }
 
         file_put_contents(
-            $directory . "/$comp.com.php",
+            $directory . "/$comp.twig",
             "<div>\n\t<h1>$comp component</h1>\n<div>"
         );
 
@@ -137,14 +137,14 @@ class Generate
             mkdir($directory);
             if ($directory === __DIR__ . "/../../../views") {
                 file_put_contents(
-                    $directory . "/404.view.php",
+                    $directory . "/404.twig",
                     "<!DOCTYPE html>\n<html lang='en'>\n<head>\n\t<meta charset='UTF-8'>\n\t<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n\t<title>404 | Page not Found</title>\n</head>\n<body>\n\t<h1>404 | Page not Found</h1>\n</body>\n</html>"
                 );
             }
         }
 
         file_put_contents(
-            $directory . "/$view.view.php",
+            $directory . "/$view.twig",
             "<!DOCTYPE html>\n<html lang='en'>\n<head>\n\t<meta charset='UTF-8'>\n\t<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n\t<title>$view</title>\n</head>\n<body>\n\t<h1>$view</h1>\n</body>\n</html>"
         );
 

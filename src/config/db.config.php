@@ -3,10 +3,10 @@
 // Edit database configuration.
 
 return [
-    "host" => "localhost",
-    "port" => 3306,
-    "user" => "root",
-    "password" => "",
-    "dbname" => "",
-    "charset" => "utf8mb4"
+    "host" => getenv('DATABASE_HOST'),
+    "port" => getenv('DATABASE_PORT'),
+    "user" => getenv('DATABASE_USER'),
+    "password" => getenv('DATABASE_PASSWORD'),
+    "dbname" => getenv('DATABASE_NAME'),
+    "charset" => getenv('DATABASE_CHARSET')
 ];

@@ -1,5 +1,9 @@
 <?php
 
+namespace Src\Models;
+
+use Src\Core\Model\Model;
+
 class Record extends Model
 {
 	private $id;
