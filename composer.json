@@ -7,7 +7,7 @@
     "vlucas/phpdotenv": "^5.6",
     "twig/twig": "^3.17"
   },
-  "version": "1.0.0",
+  "version": "2.8.4",
   "license": "MIT",
   "autoload": {
     "psr-4": {
