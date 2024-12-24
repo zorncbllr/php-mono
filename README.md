@@ -46,14 +46,12 @@ Navigate to the root directory of your Mono project.
 Run one of the following commands:
 
 ```bash
-Copy code
 php mono serve
 ```
 
 or
 
 ```bash
-Copy code
 php mono -s
 ```
 
@@ -67,21 +65,18 @@ Generating a Controller
 Run one of the following commands to generate a new controller:
 
 ```bash
-Copy code
 php mono -g con <filename>
 ```
 
 or
 
 ```bash
-Copy code
 php mono gen controller <filename>
 ```
 
 or
 
 ```bash
-Copy code
 php mono generate controller <filename>
 ```
 
@@ -92,8 +87,6 @@ Example: Generated Controller
 Below is an example of a generated Home controller:
 
 ```php
-Copy code
-
 <?php
 
 class Home extends Controller
@@ -104,10 +97,10 @@ class Home extends Controller
         return 'Home Controller';
     }
 }
-
 ```
 
-Routing in Mono
+# Routing in Mono
+
 Mono features a hybrid routing system that combines the simplicity of file-based routing with the power of route attributes. This dual approach ensures flexibility and speed.
 
 Key Concepts
@@ -126,13 +119,12 @@ File-Based Routing Example:
 For a controller named Home.php, the default route is:
 
 ```arduino
-Copy code
 /home
 ```
-Custom Route Example:
-php
-Copy code
 
+Custom Route Example:
+
+```php
 <?php
 
 class Home extends Controller
@@ -143,8 +135,9 @@ class Home extends Controller
         return 'Welcome to the Dashboard!';
     }
 }
-Access this route via http://localhost:8000/dashboard.
+```
 
+Access this route via http://localhost:8000/dashboard.
 
 # Models in Mono
 
@@ -158,24 +151,30 @@ To create a new model, use the Mono CLI:
 
 ```bash
 php mono -g mod <filename>
+```
+
 or
 
-bash
-Copy code
+```bash
 php mono gen model <filename>
+```
+
 or
 
-bash
-Copy code
+```bash
 php mono generate model <filename>
+```
+
 What Happens?
 A new model class file <filename>.php will be created in the models directory.
 The generated class will include:
 A default id attribute.
 A commented static function for database migration setup, which you can configure to suit your needs.
+
 Model Basics
 Table Mapping
 The model class name maps to the corresponding database table name with an appended 's'.
+
 For example:
 User.php refers to the users table in your database.
 Built-in Methods
@@ -191,18 +190,22 @@ Public Methods
 save()
 update()
 delete()
+
 MigrateModel Method
+
 The migrateModel() method is used to define and initialize your database table schema. This method allows you to specify the columns and their configurations.
 
 Steps to Migrate:
 Define your table structure in the migrateModel() method of your model class.
 Run the following command to push the changes to your database:
-bash
-Copy code
+
+```bash
 php mono db push
+```
+
 Example: User Model with Migration
-php
-Copy code
+
+```php
 <?php
 
 class User extends Model
@@ -225,25 +228,28 @@ class User extends Model
         ");
     }
 }
+```
+
 Ensure your database configurations are correctly set in the src/config folder before running migrations.
 
 Save() Method
 The save() method saves a new instance of your model to the corresponding database table.
 
 Example:
-php
-Copy code
+
+```php
 $new_user = new User(
     username: "zornnn",
     password: "zorn123456"
 );
 
 $new_user->save();
+```
+
 Error Handling:
 The save() method throws a PDOException on error. Use a try-catch block to handle exceptions gracefully:
 
-php
-Copy code
+```php
 try {
     $new_user = new User(
         username: "zornnn",
@@ -262,26 +268,32 @@ try {
         'message' => $e->getMessage()
     ]);
 }
+```
+
 Find() and FindById() Methods
 find() Method
 Retrieves all rows from the table.
 Accepts optional filtering criteria.
 Example:
-php
-Copy code
+
+```php
 // Retrieve all users
 $users = User::find();
 
 // Retrieve specific users by criteria
 $user = User::find(['username' => $username]);
+```
+
 The find() method returns an array of objects, where each object is an instance of the model class.
 
 findById() Method
 Retrieves a specific row based on its primary key (id).
 Example:
-php
-Copy code
+
+```php
 $user = User::findById(id: 1);
+```
+
 The findById() method returns a single object of the calling model class.
 
 Note:
@@ -291,20 +303,21 @@ Update() Method
 The update() method updates specific data in the database. It accepts arguments corresponding to the model's constructor but only patches the specified fields.
 
 Example:
-php
-Copy code
+
+```php
 $user = User::findById(id: 1);
 
 $user->update(
-    username: 'new_username123'
+username: 'new_username123'
 );
+```
+
 Error Handling:
 Use a try-catch block to handle errors:
 
-php
-Copy code
+```php
 try {
-    $user = User::findById(id: 1);
+$user = User::findById(id: 1);
 
     $user->update(
         username: 'new_username123'
@@ -314,20 +327,23 @@ try {
     return json([
         'message' => 'User has been updated.'
     ]);
+
 } catch (PDOException $e) {
-    http_response_code(400);
-    return json([
-        'message' => $e->getMessage()
-    ]);
+http_response_code(400);
+return json([
+'message' => $e->getMessage()
+]);
 }
+```
+
 Delete() Method
 The delete() method removes a specific row from the database.
 
 Example:
-php
-Copy code
+
+```php
 try {
-    $user = User::findById(id: 1);
+$user = User::findById(id: 1);
 
     $user->delete();
 
@@ -335,14 +351,16 @@ try {
     return json([
         'message' => 'User has been deleted.'
     ]);
-} catch (PDOException $e) {
-    http_response_code(400);
-    return json([
-        'message' => $e->getMessage()
-    ]);
-}
-Mono's models are designed to simplify database operations and improve development productivity. With built-in methods and flexible schema management, working with your database becomes seamless and efficient.
 
+} catch (PDOException $e) {
+http_response_code(400);
+return json([
+'message' => $e->getMessage()
+]);
+}
+```
+
+Mono's models are designed to simplify database operations and improve development productivity. With built-in methods and flexible schema management, working with your database becomes seamless and efficient.
 
 # Middleware in Mono
 
@@ -356,22 +374,26 @@ Use the Mono CLI to generate a new middleware class:
 
 ```bash
 php mono -g mid <filename>
+```
+
 or
 
-bash
-Copy code
+```bash
 php mono gen middleware <filename>
+```
+
 or
 
-bash
-Copy code
+```bash
 php mono generate middleware <filename>
+```
+
 What Happens?
 A new middleware class file <filename>.php will be created in the middleware directory.
 The generated class will include a runnable() method that gets executed when the middleware is triggered.
 Example: Basic Middleware
-php
-Copy code
+
+```php
 <?php
 
 use App\Core\Middleware;
@@ -385,6 +407,8 @@ class Auth extends Middleware
         return $next();
     }
 }
+```
+
 The $next() callable moves the request to the next middleware in the pipeline or to the target controller.
 You can use this method to intercept and handle requests.
 Handling Responses in Middleware
@@ -397,8 +421,7 @@ redirect(): To redirect users to another route.
 Example: JWT Authentication Middleware
 Middlewares are an ideal place to handle authentication and authorization processes. You can use Mono's native JWT handling capabilities to verify tokens.
 
-php
-Copy code
+```php
 <?php
 
 use App\Core\Middleware;
@@ -420,6 +443,8 @@ class Auth extends Middleware
         return $next();
     }
 }
+```
+
 Using Middlewares
 Middlewares can be applied to individual controller methods or entire controllers using the #[Middleware] attribute.
 
@@ -427,8 +452,8 @@ Applying to a Method
 To use a middleware for a specific method, instantiate it within the #[Middleware] attribute above the target method.
 
 Example:
-php
-Copy code
+
+```php
 <?php
 
 class Home extends Controller
@@ -440,14 +465,16 @@ class Home extends Controller
         return view('Home');
     }
 }
+```
+
 In this example, the Auth middleware will be triggered before the index() method is executed.
 
 Applying to a Controller
 Middlewares can also be applied to an entire controller. This allows you to manage requests for all methods within the controller.
 
 Example:
-php
-Copy code
+
+```php
 <?php
 
 #[Middleware(new Auth)]
@@ -465,10 +492,11 @@ class Home extends Controller
         // Logic for creating a new resource
     }
 }
+```
+
 In this example, the Auth middleware will handle requests for both index() and create() methods.
 
 Middlewares in Mono provide a powerful way to handle cross-cutting concerns such as security, validation, and logging. By reusing middleware classes, you can keep your code modular, maintainable, and clean.
-
 
 # Views in Mono Framework
 
@@ -482,16 +510,20 @@ Use the Mono CLI to generate a new view file:
 
 ```bash
 php mono -g vw <filename>
+```
+
 or
 
-bash
-Copy code
+```bash
 php mono gen view <filename>
+```
+
 or
 
-bash
-Copy code
+```bash
 php mono generate view <filename>
+```
+
 What Happens?
 A new Twig template file <filename>.twig will be created in the views directory.
 The generated file contains a default HTML snippet and an <h1> tag with the name of the file.
@@ -499,7 +531,7 @@ Example Generated View:
 For a view named Home:
 
 twig
-Copy code
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -511,12 +543,13 @@ Copy code
     <h1>Home</h1>
 </body>
 </html>
+
 Returning a View in Mono
 To render a view from a controller, use the view() function.
 
 Example:
-php
-Copy code
+
+```php
 <?php
 
 class Home extends Controller
@@ -527,6 +560,8 @@ class Home extends Controller
         return view("Home");
     }
 }
+```
+
 The view("Home") function renders the Home.twig template located in the views directory.
 Passing Data to a View
 The view() function allows you to pass data from the controller to the view as an associative array.
@@ -534,8 +569,7 @@ The view() function allows you to pass data from the controller to the view as a
 Example:
 Controller:
 
-php
-Copy code
+```php
 <?php
 
 class Home extends Controller
@@ -546,11 +580,14 @@ class Home extends Controller
         return view("Home", ["name" => "KENDRICK"]);
     }
 }
+```
+
 View (Home.twig):
 
 twig
-Copy code
+
 <h1>{{ name }}</h1>
+
 In this example, the name variable from the controller is accessible in the view using Twig's {{ variable }} syntax.
 The rendered HTML will output: <h1>KENDRICK</h1>.
 Benefits of Twig Templating
@@ -563,8 +600,7 @@ Dynamic Rendering: Easily loop through data or apply conditional logic.
 Example of Dynamic Rendering with Twig:
 Controller:
 
-php
-Copy code
+```php
 <?php
 
 class Home extends Controller
@@ -575,10 +611,12 @@ class Home extends Controller
         return view("Home", ["users" => ["Alice", "Bob", "Charlie"]]);
     }
 }
+```
+
 View (Home.twig):
 
 twig
-Copy code
+
 <h1>Users</h1>
 <ul>
     {% for user in users %}
@@ -588,7 +626,7 @@ Copy code
 Rendered HTML:
 
 html
-Copy code
+
 <h1>Users</h1>
 <ul>
     <li>Alice</li>
@@ -597,7 +635,6 @@ Copy code
 </ul>
 Learn More About Twig
 To explore more features of Twig, such as filters, macros, and advanced templating capabilities, refer to the Twig Documentation.
-
 
 # Services in Mono Framework
 
@@ -609,7 +646,7 @@ Services in Mono are designed to encapsulate business logic and functionality th
 
 To generate a new service, use the Mono CLI:
 
-```bash
+````bash
 php mono -g ser <filename>
 or
 
