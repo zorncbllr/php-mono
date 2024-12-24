@@ -1,5 +1,7 @@
 <?php
 
+use Src\Core\Model\Model;
+
 class Database
 {
     private PDO | bool $pdo;
@@ -127,6 +129,8 @@ class Database
                     'dbname' => $dbname
                 ]);
             }
+
+            echo "\n{$e->getMessage()}\n";
 
             return false;
         }

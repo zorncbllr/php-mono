@@ -1,932 +1,929 @@
 # MONO - PHP FRAMEWORK
 
-Mono is a Powerful and Fast, Object Oriented Based PHP Framework.
-It follows the MVC architecture.
-It comes with its own commandline interface.
+Mono is a powerful, fast, and lightweight PHP framework designed to simplify and accelerate web application development. It leverages an object-oriented approach and adheres to the MVC (Model-View-Controller) architecture, ensuring a clean and modular codebase. Mono also includes a robust command-line interface (CLI) to streamline development tasks.
 
-## Serving the Project
+---
 
-#### Run command:
+## Features
 
-    php mono serve
+- **Object-Oriented Design**: Promotes reusable and maintainable code.
+- **MVC Architecture**: Separates application logic, user interface, and data, fostering scalability.
+- **Built-in Command-Line Interface**: Enables developers to manage the project, generate files, and execute tasks efficiently.
+- **Hybrid Routing System**: Combines file-based routing with route attributes for flexibility and high performance.
+- **Built-in ORM (Object-Relational Mapping)**: Simplifies database interactions with an intuitive and efficient abstraction layer.
+- **Twig Templating Engine Integration**: Supports dynamic and flexible rendering of views with the Twig templating engine.
+- **Customizable and Lightweight**: Suitable for projects of all sizes, from small-scale applications to enterprise-level solutions.
 
+---
+
+## Getting Started
+
+### Prerequisites
+
+Ensure that your system meets the following requirements:
+
+- **PHP Version**: PHP 8.0 or higher.
+- **Composer**: Installed globally for dependency management.
+
+---
+
+## Creating a New Mono Project
+
+To start a new Mono project, use the following Composer command:
+
+````bash
+composer create-project zorncbllr/php-mono <project-name>
+What Happens?
+This command will download and set up a fresh Mono project in the <project-name> directory.
+All required dependencies will be installed automatically.
+Serving the Project
+To quickly serve your project in a local development environment, Mono provides an easy-to-use CLI command.
+
+Steps to Serve:
+Navigate to the root directory of your Mono project.
+Run one of the following commands:
+bash
+Copy code
+php mono serve
 or
 
-    php mono -s
+bash
+Copy code
+php mono -s
+What Happens?
+The command starts a local development server, typically accessible at http://localhost:8000.
+This eliminates the need to configure external web servers during development.
+Creating a Controller
+Controllers are a vital part of the MVC architecture. Mono simplifies the creation of controllers through its CLI.
 
-## Creating a Controller
+Generating a Controller
+Run one of the following commands to generate a new controller:
 
-#### Run command:
-
-    php mono -g con <filename>
-
+bash
+Copy code
+php mono -g con <filename>
 or
 
-    php mono gen controller <filename>
-
+bash
+Copy code
+php mono gen controller <filename>
 or
 
-    php mono generate controller <filename>
+bash
+Copy code
+php mono generate controller <filename>
+What Happens?
+A new PHP file named <filename>.php is created in the controllers directory.
+The file contains a boilerplate controller class with a default route handler for the index action.
+Example: Generated Controller
+Below is an example of a generated Home controller:
 
-After running this command, a controller class snippet will be generated with
-a default index route handler.
+php
+Copy code
+<?php
 
-example controller:
-
-    <?php
-
-    class Home extends Controller
+class Home extends Controller
+{
+    #[Get()]
+    public function index(Request $request)
     {
-        #[Get()]
-        public function index(Request $request)
-        {
-            return 'Home Controller';
-        }
+        return 'Home Controller';
     }
+}
+Routing in Mono
+Mono features a hybrid routing system that combines the simplicity of file-based routing with the power of route attributes. This dual approach ensures flexibility and speed.
 
-Mono uses hybrid file-based routing and Route attributes for flexible
-and faster routing.
+Key Concepts
+File-Based Routing:
 
-Base routes are anchored to the name of the controller class.
+Base routes are derived from the controller file names.
+Example:
+Controller File: Home.php
+Base Route: /home
+Route Attributes:
 
-example:
+Use PHP attributes (e.g., #[Get()]) to define HTTP methods and customize routes directly in the controller.
+Example:
+#[Get('/custom-route')] defines a custom GET route.
+Example: Routing in Action
+File-Based Routing Example:
+For a controller named Home.php, the default route is:
 
-    controller: Home.php
-    route: /home
+arduino
+Copy code
+/home
+Custom Route Example:
+php
+Copy code
+<?php
 
-## Creating a Middleware
-
-#### Run command:
-
-    php mono -g mid <filename>
-
-or
-
-    php mono gen middleware <filename>
-
-or
-
-    php mono generate middleware <filename>
-
-After running this command, a new middleware class snippet will be
-generated with a runnable method that would be executed once a middleware
-is instanciated inside a middleware attribute.
-
-example:
-
-    <?php
-
-    use App\Core\Middleware;
-
-    class Auth extends Middleware
+class Home extends Controller
+{
+    #[Get('/dashboard')]
+    public function dashboard(Request $request)
     {
-        static function runnable(Request $request, callable $next)
-        {
-            echo 'Auth Middleware';
-
-            return $next();
-        }
+        return 'Welcome to the Dashboard!';
     }
+}
+Access this route via http://localhost:8000/dashboard.
 
-Use the $next() callable function to move to the next middleware
-or controller.
 
-You may return void, json(), view(), and redirect() in handling
-bad requests or unauthenticated requests.
+# Models in Mono
 
-You may also use a native jwt token inside the middleware,
-which is the recommended place for authentication and
-authorization processes.
+Mono's Model classes act as blueprints for database tables, providing powerful methods to interact with your database. They simplify CRUD (Create, Read, Update, Delete) operations, migrations, and schema management while keeping your codebase clean and maintainable.
 
-example with native jwt token:
-
-    <?php
-
-    use App\Core\Middleware;
-
-    class Auth extends Middleware
-    {
-        static function runnable(Request $request, callable $next)
-        {
-            $jwt = $request->cookies['auth_token'] ?? "";
-
-    	    $key = "sample_secret_key";
-
-    	    $payload = Token::verify($jwt, $key);
-
-    	    if (!$payload) {
-    	    	return redirect('/login');
-    	    }
-
-    	    return $next();
-        }
-    }
-
-#### Using Middlewares
-
-To use a middleware, add an attribute on top of your target method
-to which you wish to apply the middleware.
-
-Create a new instance of your middleware inside the Middleware attribute
-constructor.
-
-example:
-
-    <?php
-
-    class Home extends Controller
-    {
-        #[Get()]
-        #[Middleware(new Auth)]
-        public function index(Request $request)
-        {
-            return view('Home');
-        }
-    }
-
-Middlewares may also be applied on the controller class itself.
-This way, the middleware will be able to handle authentication
-and authorization processes for the whole base route.
-
-example:
-
-    <?php
-
-    #[Middleware(new Auth)]
-    class Home extends Controller
-    {
-        #[Get()]
-        public function index(Request $request)
-        {
-            return view('Home');
-        }
-    }
+---
 
 ## Creating a Model
 
-#### Run command:
+To create a new model, use the Mono CLI:
 
-    php mono -g mod <filename>
-
+```bash
+php mono -g mod <filename>
 or
 
-    php mono gen model <filename>
-
+bash
+Copy code
+php mono gen model <filename>
 or
 
-    php mono generate model <filename>
+bash
+Copy code
+php mono generate model <filename>
+What Happens?
+A new model class file <filename>.php will be created in the models directory.
+The generated class will include:
+A default id attribute.
+A commented static function for database migration setup, which you can configure to suit your needs.
+Model Basics
+Table Mapping
+The model class name maps to the corresponding database table name with an appended 's'.
+For example:
+User.php refers to the users table in your database.
+Built-in Methods
+Mono models come with several powerful static and public methods:
 
-After running this command, a model class snippet will be generated with default
-id attribute and a commented static function that you need to configure
-depending on your liking.
+Static Methods
+find()
+findById()
+query()
+migrateModel()
+initModels()
+Public Methods
+save()
+update()
+delete()
+MigrateModel Method
+The migrateModel() method is used to define and initialize your database table schema. This method allows you to specify the columns and their configurations.
 
-#### Generated example Model
+Steps to Migrate:
+Define your table structure in the migrateModel() method of your model class.
+Run the following command to push the changes to your database:
+bash
+Copy code
+php mono db push
+Example: User Model with Migration
+php
+Copy code
+<?php
 
-    <?php
+class User extends Model
+{
+    public $id, $username, $password;
 
-    class Product extends Model {
-        private $id;
-
-        public function __construct($id = null)
-        {
-            $this->id = $id;
-        }
+    public function __construct($id = null, $username = null, $password = null)
+    {
+        $this->id = $id;
+        $this->username = $username;
+        $this->password = $password;
     }
-
-Use the self::createTable() method to create a new table.
-
-The name of the model class will be automatically saved as
-a table to the database.
-
-Model class provides find(), findById(), create(), update(),
-delete(), and initModel() out of the box.
-
-example:
-
-    // returns all rows in the table.
-    User::find();
-
-    // returns either the user or false if not found.
-    User::find(['email' => $email]);
-
-    // returns specific user from the database.
-    User::findById();
-
-    // creates new user in the database.
-    User::create();
-
-#### Model Auto-Completion
-
-You may automatically initialize all your model attributes/properties
-and generates getters and setters for all private properties of your model schema.
-
-just run the command:
-
-    php mono -f <model name>
-
-or
-
-    php mono fill <model name>
-
-example:
-
-        php mono fill user
-
-After running the command, getters and setters for all specified
-attributes within the class will be generated automatically, as well as
-the initialization of the attributes.
-
-You will also be provided with configuration options to configure
-your rows in the database within the initModel() function.
-
-example:
 
     public static function initUser()
     {
-    	self::createTable('
-    		name VARCHAR(20) NOT NULL,
-    		email VARCHAR(20) NOT NULL,
-    		id INT AUTO_INCREMENT PRIMARY KEY,
-    		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    		password VARCHAR(20) NOT NULL
-    	');
+        self::migrateModel("
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(50) NOT NULL UNIQUE,
+            password VARCHAR(100) NOT NULL
+        ");
+    }
+}
+Ensure your database configurations are correctly set in the src/config folder before running migrations.
+
+Save() Method
+The save() method saves a new instance of your model to the corresponding database table.
+
+Example:
+php
+Copy code
+$new_user = new User(
+    username: "zornnn",
+    password: "zorn123456"
+);
+
+$new_user->save();
+Error Handling:
+The save() method throws a PDOException on error. Use a try-catch block to handle exceptions gracefully:
+
+php
+Copy code
+try {
+    $new_user = new User(
+        username: "zornnn",
+        password: "zorn123456"
+    );
+
+    $new_user->save();
+
+    http_response_code(201);
+    return json([
+        'message' => 'New user created.'
+    ]);
+} catch (PDOException $e) {
+    http_response_code(400);
+    return json([
+        'message' => $e->getMessage()
+    ]);
+}
+Find() and FindById() Methods
+find() Method
+Retrieves all rows from the table.
+Accepts optional filtering criteria.
+Example:
+php
+Copy code
+// Retrieve all users
+$users = User::find();
+
+// Retrieve specific users by criteria
+$user = User::find(['username' => $username]);
+The find() method returns an array of objects, where each object is an instance of the model class.
+
+findById() Method
+Retrieves a specific row based on its primary key (id).
+Example:
+php
+Copy code
+$user = User::findById(id: 1);
+The findById() method returns a single object of the calling model class.
+
+Note:
+The findById() method requires the primary key column to be named id.
+
+Update() Method
+The update() method updates specific data in the database. It accepts arguments corresponding to the model's constructor but only patches the specified fields.
+
+Example:
+php
+Copy code
+$user = User::findById(id: 1);
+
+$user->update(
+    username: 'new_username123'
+);
+Error Handling:
+Use a try-catch block to handle errors:
+
+php
+Copy code
+try {
+    $user = User::findById(id: 1);
+
+    $user->update(
+        username: 'new_username123'
+    );
+
+    http_response_code(201);
+    return json([
+        'message' => 'User has been updated.'
+    ]);
+} catch (PDOException $e) {
+    http_response_code(400);
+    return json([
+        'message' => $e->getMessage()
+    ]);
+}
+Delete() Method
+The delete() method removes a specific row from the database.
+
+Example:
+php
+Copy code
+try {
+    $user = User::findById(id: 1);
+
+    $user->delete();
+
+    http_response_code(205);
+    return json([
+        'message' => 'User has been deleted.'
+    ]);
+} catch (PDOException $e) {
+    http_response_code(400);
+    return json([
+        'message' => $e->getMessage()
+    ]);
+}
+Mono's models are designed to simplify database operations and improve development productivity. With built-in methods and flexible schema management, working with your database becomes seamless and efficient.
+
+
+# Middleware in Mono
+
+Middlewares in Mono allow you to manage authentication, authorization, and request validation processes. They are reusable, flexible, and can be applied to specific controller methods or entire controllers.
+
+---
+
+## Creating a Middleware
+
+Use the Mono CLI to generate a new middleware class:
+
+```bash
+php mono -g mid <filename>
+or
+
+bash
+Copy code
+php mono gen middleware <filename>
+or
+
+bash
+Copy code
+php mono generate middleware <filename>
+What Happens?
+A new middleware class file <filename>.php will be created in the middleware directory.
+The generated class will include a runnable() method that gets executed when the middleware is triggered.
+Example: Basic Middleware
+php
+Copy code
+<?php
+
+use App\Core\Middleware;
+
+class Auth extends Middleware
+{
+    static function runnable(Request $request, callable $next)
+    {
+        echo 'Auth Middleware';
+
+        return $next();
+    }
+}
+The $next() callable moves the request to the next middleware in the pipeline or to the target controller.
+You can use this method to intercept and handle requests.
+Handling Responses in Middleware
+Inside the runnable() method, you can return various responses based on your needs:
+
+Void: To terminate the request flow without a response.
+json(): To return JSON responses for API endpoints.
+view(): To render views for UI responses.
+redirect(): To redirect users to another route.
+Example: JWT Authentication Middleware
+Middlewares are an ideal place to handle authentication and authorization processes. You can use Mono's native JWT handling capabilities to verify tokens.
+
+php
+Copy code
+<?php
+
+use App\Core\Middleware;
+
+class Auth extends Middleware
+{
+    static function runnable(Request $request, callable $next)
+    {
+        $jwt = $request->cookies['auth_token'] ?? "";
+
+        $key = "sample_secret_key";
+
+        $payload = Token::verify($jwt, $key);
+
+        if (!$payload) {
+            return redirect('/login');
+        }
+
+        return $next();
+    }
+}
+Using Middlewares
+Middlewares can be applied to individual controller methods or entire controllers using the #[Middleware] attribute.
+
+Applying to a Method
+To use a middleware for a specific method, instantiate it within the #[Middleware] attribute above the target method.
+
+Example:
+php
+Copy code
+<?php
+
+class Home extends Controller
+{
+    #[Get()]
+    #[Middleware(new Auth)]
+    public function index(Request $request)
+    {
+        return view('Home');
+    }
+}
+In this example, the Auth middleware will be triggered before the index() method is executed.
+
+Applying to a Controller
+Middlewares can also be applied to an entire controller. This allows you to manage requests for all methods within the controller.
+
+Example:
+php
+Copy code
+<?php
+
+#[Middleware(new Auth)]
+class Home extends Controller
+{
+    #[Get()]
+    public function index(Request $request)
+    {
+        return view('Home');
     }
 
-Within this function inside your model, you can configure what your
-table columns should look like.
+    #[Post()]
+    public function create(Request $request)
+    {
+        // Logic for creating a new resource
+    }
+}
+In this example, the Auth middleware will handle requests for both index() and create() methods.
 
-The syntax comes from SQL code that is being passed in the createTable() method.
+Middlewares in Mono provide a powerful way to handle cross-cutting concerns such as security, validation, and logging. By reusing middleware classes, you can keep your code modular, maintainable, and clean.
+
+
+# Views in Mono Framework
+
+Mono Framework leverages the **Twig templating engine** to provide dynamic and powerful rendering capabilities for your application. Views in Mono allow you to create clean, reusable, and easily maintainable HTML templates for your web application.
+
+---
 
 ## Creating a View
 
-#### Run command:
+Use the Mono CLI to generate a new view file:
 
-    mono -g vw <filename>
-
+```bash
+php mono -g vw <filename>
 or
 
-    mono gen view <filename>
-
+bash
+Copy code
+php mono gen view <filename>
 or
 
-    mono generate view <filename>
+bash
+Copy code
+php mono generate view <filename>
+What Happens?
+A new Twig template file <filename>.twig will be created in the views directory.
+The generated file contains a default HTML snippet and an <h1> tag with the name of the file.
+Example Generated View:
+For a view named Home:
 
-After running this command, a .view.php file will be generated with
-default html snippet and an h1 tag with the file's name.
+twig
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Home</h1>
+</body>
+</html>
+Returning a View in Mono
+To render a view from a controller, use the view() function.
 
-example view:
+Example:
+php
+Copy code
+<?php
 
-    <!DOCTYPE html>
-    <html lang='en'>
+class Home extends Controller
+{
+    #[Get()]
+    public function index(Request $request)
+    {
+        return view("Home");
+    }
+}
+The view("Home") function renders the Home.twig template located in the views directory.
+Passing Data to a View
+The view() function allows you to pass data from the controller to the view as an associative array.
 
-    <head>
-        <meta charset='UTF-8'>
-        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <title>Home</title>
-    </head>
+Example:
+Controller:
 
-    <body>
-        <h1>Mono</h1>
-        <h3>The Fast, Scalable, Object-Oriented PHP Framework.</h3>
-        <p>HELLO WORLD!</p>
-    </body>
+php
+Copy code
+<?php
 
-    </html>
+class Home extends Controller
+{
+    #[Get()]
+    public function index(Request $request)
+    {
+        return view("Home", ["name" => "KENDRICK"]);
+    }
+}
+View (Home.twig):
 
-You can return view( filename , [ options ] ) to pass data from your
-controller. the keys in your options will be evaluated as a variable.
+twig
+Copy code
+<h1>{{ name }}</h1>
+In this example, the name variable from the controller is accessible in the view using Twig's {{ variable }} syntax.
+The rendered HTML will output: <h1>KENDRICK</h1>.
+Benefits of Twig Templating
+Twig provides numerous advantages, including:
 
-example:
+Separation of Concerns: Keep your presentation layer clean and separate from your business logic.
+Reusable Components: Use Twig's features like includes and blocks for reusable and modular templates.
+Security: Twig escapes output by default, preventing XSS attacks.
+Dynamic Rendering: Easily loop through data or apply conditional logic.
+Example of Dynamic Rendering with Twig:
+Controller:
 
-controller:
+php
+Copy code
+<?php
 
-    return view('Home', [ 'name' => 'John Doe' ]);
+class Home extends Controller
+{
+    #[Get()]
+    public function index(Request $request)
+    {
+        return view("Home", ["users" => ["Alice", "Bob", "Charlie"]]);
+    }
+}
+View (Home.twig):
 
-view:
+twig
+Copy code
+<h1>Users</h1>
+<ul>
+    {% for user in users %}
+        <li>{{ user }}</li>
+    {% endfor %}
+</ul>
+Rendered HTML:
 
-    <p> <?= $name ?> </p>
+html
+Copy code
+<h1>Users</h1>
+<ul>
+    <li>Alice</li>
+    <li>Bob</li>
+    <li>Charlie</li>
+</ul>
+Learn More About Twig
+To explore more features of Twig, such as filters, macros, and advanced templating capabilities, refer to the Twig Documentation.
 
-Note that variables in the view depends on the its key being passed
-as the second argument to the view() function.
+
+# Services in Mono Framework
+
+Services in Mono are designed to encapsulate business logic and functionality that can be reused across multiple controllers. This helps keep your controllers clean and focused on handling routes, while the service layer manages complex logic.
+
+---
 
 ## Creating a Service
 
-#### Run command:
+To generate a new service, use the Mono CLI:
 
-    php mono -g ser <filename>
-
+```bash
+php mono -g ser <filename>
 or
 
-    php mono gen ser <filename>
-
-of
-
-    php mono generate service <filename>
-
-After running the command, a new service class will be generated with the
-the same methods as the controller class but only static.
-
-Controller class will be automatically created if a controller class
-for the service is not yet created.
-
-example:
-
-    <?php
-
-    class ProductsService
-    {
-        static function index(Request $request)
-        {
-            $product = [
-                'name' => 'Brandyy',
-                'brand' => 'Brand X',
-                'expiration' => 'November 23, 2030'
-            ];
-
-            return json([
-                'product' => $product
-            ]);
-        }
-    }
-
-usage:
-
-    <?php
-
-    class Products extends Controller
-    {
-        #[Get()]
-        public function index(Request $request)
-        {
-            return ProductsService::index($request);
-        }
-    }
-
-Using services can be efficient when the logic is too complex.
-
-Services separates the logic from route handling for better
-code refactoring and better code structuring.
-
-Using services will help your code to be more organized and
-readable.
-
-## Routing with Mono
-
-Mono uses hybrid file-based routing. Thanks to its file-based characteristics,
-the framework can easily find existing routes, resulting in much faster performance.
-
-It is labelled as hybrid because it utilizes route attributes alongside file routing
-system. Because of this, Mono is not only performant in terms of speed, it is also
-flexible enough to handle complex and nested uri routes.
-
-Base routes are named after the name of file for the controller.
-
-example:
-
-    <?php
-
-    class Home extends Controller
-    {
-        #[Get()]
-        public function index(Request $request)
-        {
-            return ProductsService::index($request);
-        }
-    }
-
-By default, Home.php or /home refers to the root path.
-
-Mono would recognize a controller with Home.php filename as the root controller.
-hence, / is the same as /home.
-
-## Nested Routes
-
-Nested routes are routes added after the base route.
-
-example:
-
-    /users/profile
-
-where profile is the nested route.
-
-In Mono, to create a nested route handler,
-you have to create a controller class and another function
-with specified http method attribute on the top.
-
-example implementation:
-
-    <?php
-
-    class Users extends Controller
-    {
-        #[Get()]
-        public function index(Request $request)
-        {
-            return 'Users controller';
-        }
-
-        #[Get('/profile')]
-        public function index(Request $request)
-        {
-            return 'this is the profile route handler';
-        }
-    }
-
-#### explanation:
-
-Mono makes use of php attributes such as Get, Post, Patch, Put, and Delete that are extension of Route attributes.
-You may specify the route inside of these attributes.
-
-By default, path is pointing at the name of the controller class,
-thus, you only need to add the specified path like '/profile' to the path.
-
-path result:
-
-    /users/profile
-
-## Dynamic Routes
-
-Dynamic routes in Mono are the same with other frameworks.
-You need to add a semicolon at the beginning of the route.
-
-example:
-
-    /users/:id
-
-id route will be dynamic and can contain dynamic values.
-
-example implementation:
-
-    <?php
-
-    class Users extends Controller
-    {
-        #[Get()]
-        public function index(Request $request)
-        {
-            return 'Users controller';
-        }
-
-        #[Get('/:id')]
-        public function index(Request $request)
-        {
-            return 'id = ' . $request->param["id"];
-        }
-    }
-
-If a route includes an specified :id,
-the route handler will run regardless of the value being passed into the :id.
-
-example:
-
-    users/12
-    users/11
-    users/7
-
-    id = 12
-    id = 11
-    id = 7
-
-## Parsing Dynamic Route Param
-
-To parse the route parameter in Mono, you need to access
-the $request parameter that's availble to you.
-
-The request object $request includes various data and
-one of those data is the route param.
-
-#### accessing the value:
-
-The value is within the $request object in param array.
-To access the value, simply specify the name of the parameter.
-
-example:
-
-    path: /users/:id
-
-accessing:
-
-    $request->param["id"]
-
-## Query Parameters in Mono
-
-Query parameters can be found within the $request object
-provided by mono function handlers.
-
-To access the value of the query parameter, simply specify the query key.
-
-example:
-
-path:
-
-    /users?id=12
-
-query parameter:
-
-    $request->query["id"]
-
-## Request Methods in Mono
-
-Request methods may include Get, Post, Patch, Put, and Delete.
-Routes with the same path but different request methods will be
-treated and handled differently.
-
-## The Route Attributes: Get(), Post(), Patch(), Put(), Delete()
-
-Route attributes are similar to annotations in other programming languages.
-
-There are five route attributes available in Mono: Get, Post, Patch, Put, and Delete.
-
-Note that route attributes are dependent on the controller they are implemented from.
-This means that if you are in a controller with for example, named Home,
-it would automatically assume that home is your base route.
-
-To implement a route handler, you need to specify the right route attribute for your desired request method.
-You may also provide additional uri path as an argument to these attributes.
-
-By default, if no arguments are provided, Mono assumes that it corresponds to the base route named after the controller.
-
-example:
-
-    <?php
-
-    class Home extends Controller
-    {
-        #[Get()]
-        public function index(Request $request)
-        {
-            return view("Home");
-        }
-
-        #[Get('/profile')]
-        public function index(Request $request)
-        {
-            return view("Profile");
-        }
-    }
-
-uri routes:
-
-    /home
-    /home/profile
-
-In this example, the route handler function named 'index' has an attribute
-of Get with the path poiting at home.
-
-Notice that you only need to specify the nested path which is /profile
-instead of including /home. This is because /profile is within the Home controller,
-thus Mono assumes that it is already related to the home route, abstracting it from
-the route path.
-
-## Views in Mono Framework
-
-Mono provides a way to render a view or an HTML template inside PHP.
-View files have an extension of .view.php
-View files can be returned by the controller route handler functions.
-View contains all the HTML tags and templates being rendered by the server.
-
-#### Returning a View
-
-    <?php
-
-    class Home extends Controller
-    {
-        #[Get()]
-        public function index(Request $request)
-        {
-            return view("Home");
-        }
-    }
-
-To return a view, simply call the view() function and
-specify the filename of the .view.php file as the first argument.
-
-You can add a second argument to the view() function as an
-associative array to pass in data from the controller to the view.
-
-example:
-
-Controller:
-
-    <?php
-
-    class Home extends Controller {
-        #[Get()]
-        public function index(Request $request)
-        {
-            return view("Home", [ "name" => "KENDRICK" ]);
-        }
-    }
-
-View:
-
-    <h1> <?= $name ?> </h1>
-
-If you pass in a value as the second argument in the view() function,
-the value can be accessed within a variable with the same naming convention as specified
-in your key within the associated array options that you've passed.
-
-## Models in Mono
-
-Model classes are blueprints of a database table.
-
-Model classes can have columns specified in your database table.
-
-The name of the model class represents the name of the table inside your database.
-
-For example:
-
-    User.php refers to the user table inside your database.
-
-Model classes also provides built in static functions that
-you can use to read, create, update, and delete data inside your database.
-
-## Model Class Methods
-
-Model class methods includes:
-
-- create()
-- delete()
-- update()
-- find()
-- findById()
-- query()
-- migrateModel()
-- initModels()
-
-## MigrateModel Method in Mono
-
-The migrateModel() method is used to initialize and configure your database table.
-You can specify the name, type, and other configurations of your columns
-by using this method.
-
-After configuring, simply run the command 'php mono db push' to migrate your models into your database.
-
-Make sure to provide the correct database configurations inside the src/config folder.
-
-example implementation:
-
-    <?php
-
-    class User extends Model
-    {
-        public $id, $username, $password;
-
-        public function __construct($id = null, $username = null, $password = null)
-        {
-            $this->id = $id;
-            $this->username = $username;
-            $this->password = $password;
-        }
-
-        public static function initUser()
-        {
-            self::migrateModel("
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                username VARCHAR(50) NOT NULL UNIQUE,
-                password VARCHAR(100) NOT NULL
-            ");
-        }
-    }
-
-## Create() Method
-
-The create() method provided by the Model class creates and saves
-a new Model to the database table.
-
-example implementation:
-
-    $new_user = new User(
-        username: "zornnn",
-        password: "zorn123456"
-    );
-
-    User::create($new_user);
-
-The create() method accepts a User object with the same type.
-It then creates a new row and saves the newly created row into the table.
-
-Syntax:
-
-    Model::create(new Model(...))
-
-The create() method returns a boolean value,
-which then can be used to handle invalid inputs and failed creation.
-
-Hence, should be:
-
-    $new_user = new User(
-        username: "zornnn",
-        password: "zorn123456"
-    );
-
-    $isCreated = User::create($new_user);
-
-    if ($isCreated){
-        return 'new user is created';
-    } else {
-        return 'failed to create new user';
-    }
-
-## Find() and FindById() Methods
-
-For each model schema you create, you will have access to find()
-and findById() methods.
-
-find() method is used to get all of the data from your table.
-
-Mono will automatically assume and use the name of your model
-schema class as the table name inside your database.
-
-example:
-
-Model schema class name:
-
-    User
-
-Database table name:
-
-    users
-
-example implementations:
-
-    // returns all the users in thes users table.
-    $user = User::find();
-
-    // returns a specific user based on the username.
-    // returns false if not found.
-    $user = User::find(['username' => $username])
-
-The find() method returns an array of User objects, hence
-each element posesses the properties and methods you have specified
-inside the User model class, such as the getters and setters.
-
-##### findById() implementation
-
-For this example, assume again that you have a model user inside
-your models folder.
-
-example:
-
-        $user = User::findById( id: 1 );
-
-findById() method takes and int $id parameter to find specific data
-by its id attribute in the database.
-
-findById() method returns an object of the model class that
-issued the method.
-
-In this example, findById() returns an object instance of User.
-All public attributes and methods inside the User model class will
-be accessible in the object returned by this method.
-
-## Update() method
-
-The update method lets you update a specific data in your database
-table.
-
-It takes one argument, your model object, and updates the data
-by its id.
-
-The $id variable is important in this method for targeting the
-right data in your database table.
-
-In this example, assume that you have a model class User with
-variables $id, $username, and $password
-
-example:
-
-    $user = User::findById( id: 1 );
-
-    $user->setUsername('new_sername_example');
-
-    User::update($user);
-
-The update method returns a boolean value which you can use
-to stuffs like checking if the operation was successfull.
-
-example:
-
-    $user = User::findById( id: 1 );
-
-    $user->setUsername('new_sername_example');
-
-    $is_updated = User::update($user);
-
-    if ($is_updated) {
-        return 'user updated successfully';
-    }
-
-## Delete() method
-
-The delete() method lets you delete and remove specific data from
-your database table.
-
-The delete() method takes one argument, either an object or an integer
-variable.
-
-Using integer as an argument will speed up the process of deleting.
-
-The delete() method returns a boolean value which you can use to check
-if the operation was successful.
-
-example:
-
-    $is_deleted = User::delete( target: 1 );
-
-    if ($is_deleted) {
-        return 'user deleted successfully';
-    }
-
+bash
+Copy code
+php mono gen ser <filename>
 or
 
-    $user = User::findById( id: 1 );
+bash
+Copy code
+php mono generate service <filename>
+What Happens?
+A new service class <filename>.php will be created in the services directory.
+The service class will contain static methods similar to those found in controllers.
+If a controller does not exist for the service, it will be automatically created for you.
+Example: Service Class
+php
+Copy code
+<?php
 
-    $is_deleted = User::delete($user);
+class ProductsService
+{
+    static function index(Request $request)
+    {
+        $product = [
+            'name' => 'Brandyy',
+            'brand' => 'Brand X',
+            'expiration' => 'November 23, 2030'
+        ];
 
-    if ($is_deleted) {
-        return 'user deleted successfully';
+        return json([
+            'product' => $product
+        ]);
+    }
+}
+In this example, the ProductsService contains a static index() method that returns a product in JSON format.
+
+Using a Service in a Controller
+Once the service is created, you can call its static methods from within your controllers. This decouples business logic from route handling, making your code more modular and maintainable.
+
+Example: Controller Using the Service
+php
+Copy code
+<?php
+
+class Products extends Controller
+{
+    #[Get()]
+    public function index(Request $request)
+    {
+        return ProductsService::index($request);
+    }
+}
+In this example, the ProductsController calls the index() method from ProductsService.
+
+Benefits of Using Services
+Separation of Concerns: Services help separate complex business logic from the controller, making the controller focused only on routing.
+Code Reusability: Services can be reused across multiple controllers, avoiding duplicate code and promoting DRY (Don’t Repeat Yourself) principles.
+Better Organization: Using services helps keep your application well-structured, with clear responsibilities assigned to different layers.
+Easier Refactoring: Services make it easier to refactor and maintain complex logic over time.
+When to Use Services?
+When the logic behind a specific task is too complex for a controller.
+When you need to share logic across multiple controllers.
+When you want to cleanly separate business logic from HTTP-related functionality.
+
+
+# Routing with Mono Framework
+
+Mono uses a hybrid routing system that combines both file-based routing and attribute-based routing. This approach results in improved performance while maintaining flexibility for complex routing needs. The hybrid nature allows for fast routing while still enabling advanced features like dynamic and nested routes.
+
+---
+
+## Base Routes
+
+In Mono, base routes are defined by the name of the controller file. The file name of the controller determines the base path for its routes.
+
+### Example: Base Route
+
+```php
+<?php
+
+class Home extends Controller
+{
+    #[Get()]
+    public function index(Request $request)
+    {
+        return 'Welcome to the Home Page!';
+    }
+}
+The Home.php controller corresponds to the /home route.
+By default, the Home.php controller is linked to the / route, so /home and / point to the same controller.
+Nested Routes
+Nested routes are routes defined within a controller that extend the base route. They are appended to the base route path.
+
+Example: Nested Route
+php
+Copy code
+<?php
+
+class Users extends Controller
+{
+    #[Get()]
+    public function index(Request $request)
+    {
+        return 'Users Controller';
     }
 
-## Native JWT Token class: sign() and verify() methods
+    #[Get('/profile')]
+    public function profile(Request $request)
+    {
+        return 'This is the Profile route handler';
+    }
+}
+/users maps to the index() method.
+/users/profile maps to the profile() method.
+Explanation:
+The route path /profile is appended to the controller's base route (/users).
+This approach allows for clear and logical route structure, making the system flexible and extensible.
+Dynamic Routes
+Dynamic routes allow for capturing variable parts of a URL. In Mono, dynamic segments are indicated by a colon (:) before the parameter name.
 
-In Mono, you will be provided with the native jwt token with static methods
-sign() and verify() which you can use to authenticate users.
+Example: Dynamic Route
+php
+Copy code
+<?php
 
-The sign() method generates a hashed token, with the provided payload and secret key.
-
-example with sign():
-
-    $payload = [
-        'userId' => 07737477
-    ];
-
-    $secret = 'hGS7asBcczaUcsa';
-
-    $jwt = Token::sign($payload, $secret);
-
-You may also specify the token expiration as the third argument.
-
-example with expiration:
-
-    $payload = [
-        'userId' => 07737477
-    ];
-
-    $secret = 'hGS7asBcczaUcsa';
-
-    $jwt = Token::sign($payload, $secret, 60 * 60 * 24);
-
-You can use verify() method to check the validity of the token.
-this method returns the decrypted payload if the token is valid,
-and returns false if invalid.
-
-example with verify():
-
-    $payload = Token::verify($payload, $secret);
-
-    // if invalid and returned false.
-    if (!$payload) {
-        return redirect('/login');
+class Users extends Controller
+{
+    #[Get()]
+    public function index(Request $request)
+    {
+        return 'Users Controller';
     }
 
-You can use both methods to handle authentication process with your app.
+    #[Get('/:id')]
+    public function show(Request $request)
+    {
+        return 'User ID: ' . $request->param['id'];
+    }
+}
+/users/12 will pass 12 to the show() method as the id parameter.
+Dynamic routes are useful for handling resources that can be identified by unique identifiers, such as user IDs.
+Example Requests:
+/users/12 will result in User ID: 12.
+/users/11 will result in User ID: 11.
+Parsing Dynamic Route Parameters
+To access the dynamic parameters, use the $request->param array. This array contains the values of the dynamic segments in the URL.
 
-## Validator class
+Example: Accessing Dynamic Parameter
+For the route /users/:id, you can access the id parameter like this:
 
-In Mono, you will be provided with the Validator class to for validating
-your data by passing the filters as the first argument and the data as the
-second argument.
+php
+Copy code
+$id = $request->param['id'];  // Example: $id = 12
+Query Parameters
+In addition to route parameters, you can also retrieve query parameters from the URL using $request->query. These parameters are typically appended to the URL after a question mark (?).
 
-example:
+Example: Query Parameters
+For the URL /users?id=12, you can access the query parameter like this:
 
-    $email = $request->body['email'];
-    $password = $request->body['password'];
+php
+Copy code
+$userId = $request->query['id'];  // Example: $userId = 12
+Request Methods
+Mono supports several HTTP methods to define how routes are handled. These methods are represented by the following route attributes:
 
-    $result = new Validator([
-        'email' => [
-            'type' => 'email',
-            'required' => true,
+#[Get()] for GET requests
+#[Post()] for POST requests
+#[Put()] for PUT requests
+#[Patch()] for PATCH requests
+#[Delete()] for DELETE requests
+Example: Request Method Attributes
+php
+Copy code
+<?php
+
+class Home extends Controller
+{
+    #[Get()]
+    public function index(Request $request)
+    {
+        return view('Home');
+    }
+
+    #[Post('/submit')]
+    public function submit(Request $request)
+    {
+        return json(['message' => 'Form Submitted']);
+    }
+}
+/home is mapped to the index() method via the GET request.
+/home/submit is mapped to the submit() method via the POST request.
+Handling Different Request Methods
+If you define multiple methods for the same path but with different HTTP methods, Mono will treat each request method separately.
+
+The Route Attributes: Get(), Post(), Patch(), Put(), Delete()
+Mono uses route attributes to define how requests are mapped to controller methods. These attributes function similarly to annotations in other languages and allow for clean, expressive routing definitions.
+
+Each attribute corresponds to a specific HTTP method and can include an optional path parameter to specify a route.
+
+Example: Route Attribute Usage
+php
+Copy code
+<?php
+
+class Home extends Controller
+{
+    #[Get()]
+    public function index(Request $request)
+    {
+        return view("Home");
+    }
+
+    #[Get('/profile')]
+    public function profile(Request $request)
+    {
+        return view("Profile");
+    }
+}
+#[Get()] corresponds to the /home route (default route for the Home.php controller).
+#[Get('/profile')] corresponds to /home/profile.
+By default, if no specific path is provided, Mono assumes that the route corresponds to the controller's base route.
+
+Summary
+Mono’s hybrid routing system combines the performance benefits of file-based routing with the flexibility of attribute-based routing. This makes it easy to define both simple and complex routes, including dynamic and nested routes, while keeping the routing system fast and efficient. Whether you need basic routes or dynamic paths, Mono’s routing system has you covered.
+
+
+# Native JWT Token Class: `sign()` and `verify()` Methods
+
+In Mono, the native JWT token functionality is provided through the `Token` class, which includes two static methods: `sign()` and `verify()`. These methods are used to handle authentication by generating and verifying JWT tokens.
+
+---
+
+## `sign()` Method
+
+The `sign()` method is used to create a hashed token by providing a payload and a secret key. You can also set an expiration time for the token.
+
+### Example: Signing a Token
+
+```php
+$payload = [
+    'userId' => 07737477
+];
+
+$secret = 'hGS7asBcczaUcsa';
+
+$jwt = Token::sign($payload, $secret);
+This will generate a JWT token with the provided payload and secret key.
+Example: Signing a Token with Expiration
+php
+Copy code
+$payload = [
+    'userId' => 07737477
+];
+
+$secret = 'hGS7asBcczaUcsa';
+
+$jwt = Token::sign($payload, $secret, 60 * 60 * 24); // Token expires in 24 hours
+The third argument is the expiration time in seconds. In this example, the token expires in 24 hours.
+verify() Method
+The verify() method is used to check the validity of the JWT token. If the token is valid, it returns the decrypted payload; otherwise, it returns false.
+
+Example: Verifying a Token
+php
+Copy code
+$payload = Token::verify($jwt, $secret);
+
+if (!$payload) {
+    return redirect('/login');
+}
+This example verifies the token using the same secret key. If the token is invalid, the user is redirected to the login page.
+Both sign() and verify() methods are essential for handling authentication in your application, ensuring that users are properly authenticated using JWT tokens.
+
+Validator Class
+Mono also provides a Validator class to help you validate data, such as user inputs, by passing a set of filters and the data to be validated.
+
+Using the Validator Class
+To validate data, you need to pass an array of validation rules and the data you want to validate. The validator will check if the data meets the specified criteria.
+
+Example: Validating User Input
+php
+Copy code
+$email = $request->body['email'];
+$password = $request->body['password'];
+
+$result = new Validator([
+    'email' => [
+        'type' => 'email',
+        'required' => true,
+    ],
+    'password' => [
+        'required' => true,
+        'length' => [
+            'min' => 8,
+            'max' => 50
         ],
-        'password' => [
-            'required' => true,
-            'length' => [
-                'min' => 8,
-                'max' => 50
-            ],
-            'message' => 'password must be at least 8 characters.'
-        ]
-    ], ['email' => $email, 'password' => $password]);
+        'message' => 'Password must be at least 8 characters long.'
+    ]
+], ['email' => $email, 'password' => $password]);
 
-    if (!$result->isValid()) {
-        return json(['errors' => $result->getErrors()]);
-    }
+if (!$result->isValid()) {
+    return json(['errors' => $result->getErrors()]);
+}
 
-    return json(['msg' => 'registered successfully.']);
+return json(['msg' => 'Registered successfully.']);
+In this example, the Validator checks:
+The email is a valid email and is required.
+The password is required and its length is between 8 and 50 characters. If the password is shorter than 8 characters, it returns a custom error message.
+Validator Features
+Type: You can specify the type of data (e.g., email, number, etc.).
+Required: This flag ensures that the data is present.
+Length: You can specify a minimum and maximum length for string data.
+Custom Messages: You can provide custom error messages. If no custom message is provided, a default error message is used.
+Checking Validation Results
+You can use the following methods to handle validation results:
 
-You may specify the type, required, length with minimum and maximum, and
-add your custom message. By default if message is not explicitly provided,
-the default error message will be used.
+isValid(): Returns true if all validations pass; otherwise, false.
+getErrors(): Returns an array of error messages if the validation fails.
+Example: Handling Errors
+php
+Copy code
+if (!$result->isValid()) {
+    return json(['errors' => $result->getErrors()]);
+}
+This example checks if the validation passed and returns any errors if they exist.
 
-You can check the validity by using the isValid() method.
-You can also get all errors using the getErrors() getter method.
+Summary
+JWT Token Methods:
+sign() for generating a token.
+verify() for validating a token.
+Validator Class:
+Provides flexible and powerful data validation.
+Supports multiple validation rules, custom messages, and error handling.
+These tools help ensure that your application handles authentication and data validation securely and efficiently.
+````
