@@ -31,8 +31,10 @@ Ensure that your system meets the following requirements:
 
 To start a new Mono project, use the following Composer command:
 
-````bash
+```bash
 composer create-project zorncbllr/php-mono <project-name>
+```
+
 What Happens?
 This command will download and set up a fresh Mono project in the <project-name> directory.
 All required dependencies will be installed automatically.
@@ -42,14 +44,19 @@ To quickly serve your project in a local development environment, Mono provides 
 Steps to Serve:
 Navigate to the root directory of your Mono project.
 Run one of the following commands:
-bash
+
+```bash
 Copy code
 php mono serve
+```
+
 or
 
-bash
+```bash
 Copy code
 php mono -s
+```
+
 What Happens?
 The command starts a local development server, typically accessible at http://localhost:8000.
 This eliminates the need to configure external web servers during development.
@@ -59,27 +66,34 @@ Controllers are a vital part of the MVC architecture. Mono simplifies the creati
 Generating a Controller
 Run one of the following commands to generate a new controller:
 
-bash
+```bash
 Copy code
 php mono -g con <filename>
+```
+
 or
 
-bash
+```bash
 Copy code
 php mono gen controller <filename>
+```
+
 or
 
-bash
+```bash
 Copy code
 php mono generate controller <filename>
+```
+
 What Happens?
 A new PHP file named <filename>.php is created in the controllers directory.
 The file contains a boilerplate controller class with a default route handler for the index action.
 Example: Generated Controller
 Below is an example of a generated Home controller:
 
-php
+```php
 Copy code
+
 <?php
 
 class Home extends Controller
@@ -90,6 +104,9 @@ class Home extends Controller
         return 'Home Controller';
     }
 }
+
+```
+
 Routing in Mono
 Mono features a hybrid routing system that combines the simplicity of file-based routing with the power of route attributes. This dual approach ensures flexibility and speed.
 
@@ -103,18 +120,19 @@ Base Route: /home
 Route Attributes:
 
 Use PHP attributes (e.g., #[Get()]) to define HTTP methods and customize routes directly in the controller.
-Example:
-#[Get('/custom-route')] defines a custom GET route.
+Example: #[Get('/custom-route')] defines a custom GET route.
 Example: Routing in Action
 File-Based Routing Example:
 For a controller named Home.php, the default route is:
 
-arduino
+```arduino
 Copy code
 /home
+```
 Custom Route Example:
 php
 Copy code
+
 <?php
 
 class Home extends Controller
