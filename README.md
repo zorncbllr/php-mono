@@ -806,7 +806,7 @@ In Mono, base routes are defined by the name of the controller file. The file na
 
 ### Example: Base Route
 
-````php
+```php
 <?php
 
 class Home extends Controller
@@ -817,14 +817,16 @@ class Home extends Controller
         return 'Welcome to the Home Page!';
     }
 }
+```
+
 The Home.php controller corresponds to the /home route.
 By default, the Home.php controller is linked to the / route, so /home and / point to the same controller.
 Nested Routes
 Nested routes are routes defined within a controller that extend the base route. They are appended to the base route path.
 
 Example: Nested Route
-php
-Copy code
+
+```php
 <?php
 
 class Users extends Controller
@@ -841,17 +843,24 @@ class Users extends Controller
         return 'This is the Profile route handler';
     }
 }
+```
+
 /users maps to the index() method.
 /users/profile maps to the profile() method.
+
 Explanation:
+
 The route path /profile is appended to the controller's base route (/users).
+
 This approach allows for clear and logical route structure, making the system flexible and extensible.
-Dynamic Routes
+
+## Dynamic Routes
+
 Dynamic routes allow for capturing variable parts of a URL. In Mono, dynamic segments are indicated by a colon (:) before the parameter name.
 
 Example: Dynamic Route
-php
-Copy code
+
+```php
 <?php
 
 class Users extends Controller
@@ -868,40 +877,50 @@ class Users extends Controller
         return 'User ID: ' . $request->param['id'];
     }
 }
+```
+
 /users/12 will pass 12 to the show() method as the id parameter.
+
 Dynamic routes are useful for handling resources that can be identified by unique identifiers, such as user IDs.
+
 Example Requests:
+
 /users/12 will result in User ID: 12.
 /users/11 will result in User ID: 11.
-Parsing Dynamic Route Parameters
+
+## Parsing Dynamic Route Parameters
+
 To access the dynamic parameters, use the $request->param array. This array contains the values of the dynamic segments in the URL.
 
-Example: Accessing Dynamic Parameter
+### Example: Accessing Dynamic Parameter
+
 For the route /users/:id, you can access the id parameter like this:
 
-php
-Copy code
-$id = $request->param['id'];  // Example: $id = 12
-Query Parameters
+```php
+$id = $request->param['id']; // Example: $id = 12
+```
+
+## Query Parameters
+
 In addition to route parameters, you can also retrieve query parameters from the URL using $request->query. These parameters are typically appended to the URL after a question mark (?).
 
 Example: Query Parameters
+
 For the URL /users?id=12, you can access the query parameter like this:
 
-php
-Copy code
-$userId = $request->query['id'];  // Example: $userId = 12
-Request Methods
+```php
+$userId = $request->query['id']; // Example: $userId = 12
+```
+
+## Request Methods
+
 Mono supports several HTTP methods to define how routes are handled. These methods are represented by the following route attributes:
 
-#[Get()] for GET requests
-#[Post()] for POST requests
-#[Put()] for PUT requests
-#[Patch()] for PATCH requests
-#[Delete()] for DELETE requests
+#[Get()] for GET requests #[Post()] for POST requests #[Put()] for PUT requests #[Patch()] for PATCH requests #[Delete()] for DELETE requests
+
 Example: Request Method Attributes
-php
-Copy code
+
+```php
 <?php
 
 class Home extends Controller
@@ -918,19 +937,24 @@ class Home extends Controller
         return json(['message' => 'Form Submitted']);
     }
 }
+```
+
 /home is mapped to the index() method via the GET request.
 /home/submit is mapped to the submit() method via the POST request.
-Handling Different Request Methods
+
+## Handling Different Request Methods
+
 If you define multiple methods for the same path but with different HTTP methods, Mono will treat each request method separately.
 
-The Route Attributes: Get(), Post(), Patch(), Put(), Delete()
+# The Route Attributes: Get(), Post(), Patch(), Put(), Delete()
+
 Mono uses route attributes to define how requests are mapped to controller methods. These attributes function similarly to annotations in other languages and allow for clean, expressive routing definitions.
 
 Each attribute corresponds to a specific HTTP method and can include an optional path parameter to specify a route.
 
 Example: Route Attribute Usage
-php
-Copy code
+
+```php
 <?php
 
 class Home extends Controller
@@ -947,23 +971,25 @@ class Home extends Controller
         return view("Profile");
     }
 }
-#[Get()] corresponds to the /home route (default route for the Home.php controller).
-#[Get('/profile')] corresponds to /home/profile.
+```
+
+#[Get()] corresponds to the /home route (default route for the Home.php controller). #[Get('/profile')] corresponds to /home/profile.
+
 By default, if no specific path is provided, Mono assumes that the route corresponds to the controller's base route.
 
-Summary
+### Summary
+
 Mono’s hybrid routing system combines the performance benefits of file-based routing with the flexibility of attribute-based routing. This makes it easy to define both simple and complex routes, including dynamic and nested routes, while keeping the routing system fast and efficient. Whether you need basic routes or dynamic paths, Mono’s routing system has you covered.
 
+# Native JWT Token Class: sign() and verify() Methods
 
-# Native JWT Token Class: `sign()` and `verify()` Methods
-
-In Mono, the native JWT token functionality is provided through the `Token` class, which includes two static methods: `sign()` and `verify()`. These methods are used to handle authentication by generating and verifying JWT tokens.
+In Mono, the native JWT token functionality is provided through the Token class, which includes two static methods: sign() and verify(). These methods are used to handle authentication by generating and verifying JWT tokens.
 
 ---
 
-## `sign()` Method
+## Sign() Method
 
-The `sign()` method is used to create a hashed token by providing a payload and a secret key. You can also set an expiration time for the token.
+The sign() method is used to create a hashed token by providing a payload and a secret key. You can also set an expiration time for the token.
 
 ### Example: Signing a Token
 
@@ -975,68 +1001,85 @@ $payload = [
 $secret = 'hGS7asBcczaUcsa';
 
 $jwt = Token::sign($payload, $secret);
+```
+
 This will generate a JWT token with the provided payload and secret key.
 Example: Signing a Token with Expiration
-php
-Copy code
+
+```php
 $payload = [
-    'userId' => 07737477
+'userId' => 07737477
 ];
 
 $secret = 'hGS7asBcczaUcsa';
 
-$jwt = Token::sign($payload, $secret, 60 * 60 * 24); // Token expires in 24 hours
+$jwt = Token::sign($payload, $secret, 60 _ 60 _ 24); // Token expires in 24 hours
+```
+
 The third argument is the expiration time in seconds. In this example, the token expires in 24 hours.
-verify() Method
+
+## Verify() Method
+
 The verify() method is used to check the validity of the JWT token. If the token is valid, it returns the decrypted payload; otherwise, it returns false.
 
 Example: Verifying a Token
-php
-Copy code
+
+```php
 $payload = Token::verify($jwt, $secret);
 
 if (!$payload) {
-    return redirect('/login');
+return redirect('/login');
 }
+```
+
 This example verifies the token using the same secret key. If the token is invalid, the user is redirected to the login page.
+
 Both sign() and verify() methods are essential for handling authentication in your application, ensuring that users are properly authenticated using JWT tokens.
 
-Validator Class
+# Validator Class
+
 Mono also provides a Validator class to help you validate data, such as user inputs, by passing a set of filters and the data to be validated.
 
-Using the Validator Class
+## Using the Validator Class
+
 To validate data, you need to pass an array of validation rules and the data you want to validate. The validator will check if the data meets the specified criteria.
 
 Example: Validating User Input
-php
-Copy code
+
+```php
 $email = $request->body['email'];
 $password = $request->body['password'];
 
 $result = new Validator([
-    'email' => [
-        'type' => 'email',
-        'required' => true,
-    ],
-    'password' => [
-        'required' => true,
-        'length' => [
-            'min' => 8,
-            'max' => 50
-        ],
-        'message' => 'Password must be at least 8 characters long.'
-    ]
+'email' => [
+'type' => 'email',
+'required' => true,
+],
+'password' => [
+'required' => true,
+'length' => [
+'min' => 8,
+'max' => 50
+],
+'message' => 'Password must be at least 8 characters long.'
+]
 ], ['email' => $email, 'password' => $password]);
 
 if (!$result->isValid()) {
-    return json(['errors' => $result->getErrors()]);
+return json(['errors' => $result->getErrors()]);
 }
 
 return json(['msg' => 'Registered successfully.']);
+```
+
 In this example, the Validator checks:
+
 The email is a valid email and is required.
+
 The password is required and its length is between 8 and 50 characters. If the password is shorter than 8 characters, it returns a custom error message.
-Validator Features
+
+## Validator Features
+
 Type: You can specify the type of data (e.g., email, number, etc.).
 Required: This flag ensures that the data is present.
 Length: You can specify a minimum and maximum length for string data.
@@ -1047,14 +1090,17 @@ You can use the following methods to handle validation results:
 isValid(): Returns true if all validations pass; otherwise, false.
 getErrors(): Returns an array of error messages if the validation fails.
 Example: Handling Errors
-php
-Copy code
+
+```php
 if (!$result->isValid()) {
-    return json(['errors' => $result->getErrors()]);
+return json(['errors' => $result->getErrors()]);
 }
+```
+
 This example checks if the validation passed and returns any errors if they exist.
 
-Summary
+### Summary
+
 JWT Token Methods:
 sign() for generating a token.
 verify() for validating a token.
@@ -1062,4 +1108,3 @@ Validator Class:
 Provides flexible and powerful data validation.
 Supports multiple validation rules, custom messages, and error handling.
 These tools help ensure that your application handles authentication and data validation securely and efficiently.
-````
