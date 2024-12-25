@@ -115,9 +115,9 @@ class Home extends Controller
 
 Mono features a hybrid routing system that combines the simplicity of file-based routing with the power of route attributes. This dual approach ensures flexibility and speed.
 
-#### Key Concepts
+## Key Concepts
 
-- **File-Based Routing:**
+### File-Based Routing:
 
 Base routes are derived from the controller file names.
 
@@ -127,7 +127,7 @@ Controller File: Home.php
 
 Base Route: /home
 
-- **Route Attributes:**
+### Route Attributes:
 
 Use PHP attributes (e.g., #[Get()]) to define HTTP methods and customize routes directly in the controller.
 
@@ -135,7 +135,7 @@ Example: #[Get('/custom-route')] defines a custom GET route.
 
 Example: Routing in Action
 
-###### File-Based Routing Example:
+### File-Based Routing Example:
 
 For a controller named Home.php, the default route is:
 
@@ -143,7 +143,7 @@ For a controller named Home.php, the default route is:
 /home
 ```
 
-###### Custom Route Example:
+### Custom Route Example:
 
 ```php
 <?php
@@ -198,7 +198,7 @@ A commented static function for database migration setup, which you can configur
 
 ## Model Basics
 
-#### Table Mapping
+### Table Mapping
 
 The model class name maps to the corresponding database table name with an appended 's'.
 
@@ -206,11 +206,11 @@ For example:
 
 User.php refers to the users table in your database.
 
-#### Built-in Methods
+## Built-in Methods
 
 Mono models come with several powerful static and public methods:
 
-###### Static Methods
+### Static Methods
 
 - **find()**
 - **findById()**
@@ -218,7 +218,7 @@ Mono models come with several powerful static and public methods:
 - **migrateModel()**
 - **initModels()**
 
-###### Public Methods
+### Public Methods
 
 - **save()**
 - **update()**
@@ -466,7 +466,7 @@ Inside the runnable() method, you can return various responses based on your nee
 - **view():** To render views for UI responses.
 - **redirect():** To redirect users to another route.
 
-###### Example: JWT Authentication Middleware
+## Example: JWT Authentication Middleware
 
 Middlewares are an ideal place to handle authentication and authorization processes. You can use Mono's native JWT handling capabilities to verify tokens.
 
