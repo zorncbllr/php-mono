@@ -586,19 +586,19 @@ The generated file contains a default HTML snippet and an <h1> tag with the name
 
 For a view named Home:
 
-twig
-
+```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Home</h1>
-</body>
+  </body>
 </html>
+```
 
 ## Returning a View in Mono
 
@@ -643,9 +643,9 @@ class Home extends Controller
 
 View (Home.twig):
 
-twig
-
+```html
 <h1>{{ name }}</h1>
+```
 
 In this example, the name variable from the controller is accessible in the view using Twig's {{ variable }} syntax.
 
@@ -679,26 +679,27 @@ class Home extends Controller
 
 View (Home.twig):
 
-twig
-
+```html
 <h1>Users</h1>
 <ul>
-    {% for user in users %}
-        <li>{{ user }}</li>
-    {% endfor %}
+  {% for user in users %}
+  <li>{{ user }}</li>
+  {% endfor %}
 </ul>
+```
+
 Rendered HTML:
 
-html
-
+```html
 <h1>Users</h1>
 <ul>
-    <li>Alice</li>
-    <li>Bob</li>
-    <li>Charlie</li>
+  <li>Alice</li>
+  <li>Bob</li>
+  <li>Charlie</li>
 </ul>
+```
 
-###### Learn More About Twig
+### Learn More About Twig
 
 To explore more features of Twig, such as filters, macros, and advanced templating capabilities, refer to the Twig Documentation.
 
@@ -1093,7 +1094,7 @@ Example: Handling Errors
 
 ```php
 if (!$result->isValid()) {
-return json(['errors' => $result->getErrors()]);
+    return json(['errors' => $result->getErrors()]);
 }
 ```
 
