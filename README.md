@@ -347,7 +347,7 @@ Example:
 $user = User::findById(id: 1);
 
 $user->update(
-username: 'new_username123'
+    username: 'new_username123'
 );
 ```
 
@@ -1009,7 +1009,7 @@ Example: Signing a Token with Expiration
 
 ```php
 $payload = [
-'userId' => 07737477
+    'userId' => 07737477
 ];
 
 $secret = 'hGS7asBcczaUcsa';
@@ -1029,7 +1029,7 @@ Example: Verifying a Token
 $payload = Token::verify($jwt, $secret);
 
 if (!$payload) {
-return redirect('/login');
+    return redirect('/login');
 }
 ```
 
@@ -1052,22 +1052,22 @@ $email = $request->body['email'];
 $password = $request->body['password'];
 
 $result = new Validator([
-'email' => [
-'type' => 'email',
-'required' => true,
-],
-'password' => [
-'required' => true,
-'length' => [
-'min' => 8,
-'max' => 50
-],
-'message' => 'Password must be at least 8 characters long.'
-]
-], ['email' => $email, 'password' => $password]);
+    'email' => [
+    'type' => 'email',
+    'required' => true,
+    ],
+    'password' => [
+        'required' => true,
+        'length' => [
+            'min' => 8,
+            'max' => 50
+        ],
+        'message' => 'Password must be at least 8 characters long.'
+    ]
+    ], ['email' => $email, 'password' => $password]);
 
 if (!$result->isValid()) {
-return json(['errors' => $result->getErrors()]);
+    return json(['errors' => $result->getErrors()]);
 }
 
 return json(['msg' => 'Registered successfully.']);
