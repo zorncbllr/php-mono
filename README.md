@@ -36,13 +36,16 @@ composer create-project zorncbllr/php-mono <project-name>
 ```
 
 What Happens?
+
 This command will download and set up a fresh Mono project in the <project-name> directory.
 All required dependencies will be installed automatically.
 Serving the Project
 To quickly serve your project in a local development environment, Mono provides an easy-to-use CLI command.
 
-Steps to Serve:
+## Steps to Serve:
+
 Navigate to the root directory of your Mono project.
+
 Run one of the following commands:
 
 ```bash
@@ -56,12 +59,17 @@ php mono -s
 ```
 
 What Happens?
+
 The command starts a local development server, typically accessible at http://localhost:8000.
+
 This eliminates the need to configure external web servers during development.
-Creating a Controller
+
+## Creating a Controller
+
 Controllers are a vital part of the MVC architecture. Mono simplifies the creation of controllers through its CLI.
 
-Generating a Controller
+## Generating a Controller
+
 Run one of the following commands to generate a new controller:
 
 ```bash
@@ -81,9 +89,13 @@ php mono generate controller <filename>
 ```
 
 What Happens?
+
 A new PHP file named <filename>.php is created in the controllers directory.
+
 The file contains a boilerplate controller class with a default route handler for the index action.
+
 Example: Generated Controller
+
 Below is an example of a generated Home controller:
 
 ```php
@@ -103,26 +115,35 @@ class Home extends Controller
 
 Mono features a hybrid routing system that combines the simplicity of file-based routing with the power of route attributes. This dual approach ensures flexibility and speed.
 
-Key Concepts
-File-Based Routing:
+#### Key Concepts
+
+- **File-Based Routing:**
 
 Base routes are derived from the controller file names.
+
 Example:
+
 Controller File: Home.php
+
 Base Route: /home
-Route Attributes:
+
+- **Route Attributes:**
 
 Use PHP attributes (e.g., #[Get()]) to define HTTP methods and customize routes directly in the controller.
+
 Example: #[Get('/custom-route')] defines a custom GET route.
+
 Example: Routing in Action
-File-Based Routing Example:
+
+###### File-Based Routing Example:
+
 For a controller named Home.php, the default route is:
 
 ```arduino
 /home
 ```
 
-Custom Route Example:
+###### Custom Route Example:
 
 ```php
 <?php
@@ -166,32 +187,44 @@ php mono generate model <filename>
 ```
 
 What Happens?
+
 A new model class file <filename>.php will be created in the models directory.
+
 The generated class will include:
+
 A default id attribute.
+
 A commented static function for database migration setup, which you can configure to suit your needs.
 
-Model Basics
-Table Mapping
+## Model Basics
+
+#### Table Mapping
+
 The model class name maps to the corresponding database table name with an appended 's'.
 
 For example:
+
 User.php refers to the users table in your database.
-Built-in Methods
+
+#### Built-in Methods
+
 Mono models come with several powerful static and public methods:
 
-Static Methods
-find()
-findById()
-query()
-migrateModel()
-initModels()
-Public Methods
-save()
-update()
-delete()
+###### Static Methods
 
-MigrateModel Method
+- **find()**
+- **findById()**
+- **query()**
+- **migrateModel()**
+- **initModels()**
+
+###### Public Methods
+
+- **save()**
+- **update()**
+- **delete()**
+
+## MigrateModel Method
 
 The migrateModel() method is used to define and initialize your database table schema. This method allows you to specify the columns and their configurations.
 
@@ -232,7 +265,8 @@ class User extends Model
 
 Ensure your database configurations are correctly set in the src/config folder before running migrations.
 
-Save() Method
+## Save() Method
+
 The save() method saves a new instance of your model to the corresponding database table.
 
 Example:
@@ -246,7 +280,8 @@ $new_user = new User(
 $new_user->save();
 ```
 
-Error Handling:
+#### Error Handling:
+
 The save() method throws a PDOException on error. Use a try-catch block to handle exceptions gracefully:
 
 ```php
@@ -270,8 +305,10 @@ try {
 }
 ```
 
-Find() and FindById() Methods
-find() Method
+## Find() and FindById() Methods
+
+#### find() Method
+
 Retrieves all rows from the table.
 Accepts optional filtering criteria.
 Example:
@@ -286,7 +323,8 @@ $user = User::find(['username' => $username]);
 
 The find() method returns an array of objects, where each object is an instance of the model class.
 
-findById() Method
+###### findById() Method
+
 Retrieves a specific row based on its primary key (id).
 Example:
 
@@ -299,7 +337,8 @@ The findById() method returns a single object of the calling model class.
 Note:
 The findById() method requires the primary key column to be named id.
 
-Update() Method
+## Update() Method
+
 The update() method updates specific data in the database. It accepts arguments corresponding to the model's constructor but only patches the specified fields.
 
 Example:
@@ -312,7 +351,8 @@ username: 'new_username123'
 );
 ```
 
-Error Handling:
+#### Error Handling:
+
 Use a try-catch block to handle errors:
 
 ```php
@@ -329,14 +369,15 @@ $user = User::findById(id: 1);
     ]);
 
 } catch (PDOException $e) {
-http_response_code(400);
-return json([
-'message' => $e->getMessage()
-]);
+    http_response_code(400);
+    return json([
+    'message' => $e->getMessage()
+    ]);
 }
 ```
 
-Delete() Method
+## Delete() Method
+
 The delete() method removes a specific row from the database.
 
 Example:
@@ -353,10 +394,10 @@ $user = User::findById(id: 1);
     ]);
 
 } catch (PDOException $e) {
-http_response_code(400);
-return json([
-'message' => $e->getMessage()
-]);
+    http_response_code(400);
+    return json([
+    'message' => $e->getMessage()
+    ]);
 }
 ```
 
@@ -389,8 +430,11 @@ php mono generate middleware <filename>
 ```
 
 What Happens?
+
 A new middleware class file <filename>.php will be created in the middleware directory.
+
 The generated class will include a runnable() method that gets executed when the middleware is triggered.
+
 Example: Basic Middleware
 
 ```php
@@ -410,15 +454,20 @@ class Auth extends Middleware
 ```
 
 The $next() callable moves the request to the next middleware in the pipeline or to the target controller.
+
 You can use this method to intercept and handle requests.
-Handling Responses in Middleware
+
+## Handling Responses in Middleware
+
 Inside the runnable() method, you can return various responses based on your needs:
 
-Void: To terminate the request flow without a response.
-json(): To return JSON responses for API endpoints.
-view(): To render views for UI responses.
-redirect(): To redirect users to another route.
-Example: JWT Authentication Middleware
+- **Void:** To terminate the request flow without a response.
+- **json():** To return JSON responses for API endpoints.
+- **view():** To render views for UI responses.
+- **redirect():** To redirect users to another route.
+
+###### Example: JWT Authentication Middleware
+
 Middlewares are an ideal place to handle authentication and authorization processes. You can use Mono's native JWT handling capabilities to verify tokens.
 
 ```php
@@ -445,10 +494,12 @@ class Auth extends Middleware
 }
 ```
 
-Using Middlewares
+## Using Middlewares
+
 Middlewares can be applied to individual controller methods or entire controllers using the #[Middleware] attribute.
 
-Applying to a Method
+## Applying to a Method
+
 To use a middleware for a specific method, instantiate it within the #[Middleware] attribute above the target method.
 
 Example:
@@ -469,7 +520,8 @@ class Home extends Controller
 
 In this example, the Auth middleware will be triggered before the index() method is executed.
 
-Applying to a Controller
+## Applying to a Controller
+
 Middlewares can also be applied to an entire controller. This allows you to manage requests for all methods within the controller.
 
 Example:
@@ -525,9 +577,13 @@ php mono generate view <filename>
 ```
 
 What Happens?
+
 A new Twig template file <filename>.twig will be created in the views directory.
+
 The generated file contains a default HTML snippet and an <h1> tag with the name of the file.
-Example Generated View:
+
+###### Example Generated View:
+
 For a view named Home:
 
 twig
@@ -544,7 +600,8 @@ twig
 </body>
 </html>
 
-Returning a View in Mono
+## Returning a View in Mono
+
 To render a view from a controller, use the view() function.
 
 Example:
@@ -563,7 +620,9 @@ class Home extends Controller
 ```
 
 The view("Home") function renders the Home.twig template located in the views directory.
-Passing Data to a View
+
+## Passing Data to a View
+
 The view() function allows you to pass data from the controller to the view as an associative array.
 
 Example:
@@ -589,15 +648,20 @@ twig
 <h1>{{ name }}</h1>
 
 In this example, the name variable from the controller is accessible in the view using Twig's {{ variable }} syntax.
+
 The rendered HTML will output: <h1>KENDRICK</h1>.
-Benefits of Twig Templating
+
+#### Benefits of Twig Templating
+
 Twig provides numerous advantages, including:
 
-Separation of Concerns: Keep your presentation layer clean and separate from your business logic.
-Reusable Components: Use Twig's features like includes and blocks for reusable and modular templates.
-Security: Twig escapes output by default, preventing XSS attacks.
-Dynamic Rendering: Easily loop through data or apply conditional logic.
-Example of Dynamic Rendering with Twig:
+- **Separation of Concerns:** Keep your presentation layer clean and separate from your business logic.
+- **Reusable Components:** Use Twig's features like includes and blocks for reusable and modular templates.
+- **Security:** Twig escapes output by default, preventing XSS attacks.
+- **Dynamic Rendering:** Easily loop through data or apply conditional logic.
+
+###### Example of Dynamic Rendering with Twig:
+
 Controller:
 
 ```php
@@ -633,7 +697,9 @@ html
     <li>Bob</li>
     <li>Charlie</li>
 </ul>
-Learn More About Twig
+
+###### Learn More About Twig
+
 To explore more features of Twig, such as filters, macros, and advanced templating capabilities, refer to the Twig Documentation.
 
 # Services in Mono Framework
@@ -646,25 +712,33 @@ Services in Mono are designed to encapsulate business logic and functionality th
 
 To generate a new service, use the Mono CLI:
 
-````bash
+```bash
 php mono -g ser <filename>
+```
+
 or
 
-bash
-Copy code
+```bash
 php mono gen ser <filename>
+```
+
 or
 
-bash
-Copy code
+```bash
 php mono generate service <filename>
+```
+
 What Happens?
+
 A new service class <filename>.php will be created in the services directory.
+
 The service class will contain static methods similar to those found in controllers.
+
 If a controller does not exist for the service, it will be automatically created for you.
+
 Example: Service Class
-php
-Copy code
+
+```php
 <?php
 
 class ProductsService
@@ -682,14 +756,17 @@ class ProductsService
         ]);
     }
 }
+```
+
 In this example, the ProductsService contains a static index() method that returns a product in JSON format.
 
-Using a Service in a Controller
+## Using a Service in a Controller
+
 Once the service is created, you can call its static methods from within your controllers. This decouples business logic from route handling, making your code more modular and maintainable.
 
 Example: Controller Using the Service
-php
-Copy code
+
+```php
 <?php
 
 class Products extends Controller
@@ -700,18 +777,22 @@ class Products extends Controller
         return ProductsService::index($request);
     }
 }
+```
+
 In this example, the ProductsController calls the index() method from ProductsService.
 
-Benefits of Using Services
-Separation of Concerns: Services help separate complex business logic from the controller, making the controller focused only on routing.
-Code Reusability: Services can be reused across multiple controllers, avoiding duplicate code and promoting DRY (Don’t Repeat Yourself) principles.
-Better Organization: Using services helps keep your application well-structured, with clear responsibilities assigned to different layers.
-Easier Refactoring: Services make it easier to refactor and maintain complex logic over time.
-When to Use Services?
-When the logic behind a specific task is too complex for a controller.
-When you need to share logic across multiple controllers.
-When you want to cleanly separate business logic from HTTP-related functionality.
+#### Benefits of Using Services
 
+- **Separation of Concerns:** Services help separate complex business logic from the controller, making the controller focused only on routing.
+- **Code Reusability:** Services can be reused across multiple controllers, avoiding duplicate code and promoting DRY (Don’t Repeat Yourself) principles.
+- **Better Organization:** Using services helps keep your application well-structured, with clear responsibilities assigned to different layers.
+- **Easier Refactoring:** Services make it easier to refactor and maintain complex logic over time.
+
+#### When to Use Services?
+
+- When the logic behind a specific task is too complex for a controller.
+- When you need to share logic across multiple controllers.
+- When you want to cleanly separate business logic from HTTP-related functionality.
 
 # Routing with Mono Framework
 
@@ -725,7 +806,7 @@ In Mono, base routes are defined by the name of the controller file. The file na
 
 ### Example: Base Route
 
-```php
+````php
 <?php
 
 class Home extends Controller
