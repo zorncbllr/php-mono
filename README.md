@@ -24,6 +24,7 @@ Ensure that your system meets the following requirements:
 
 - **PHP Version**: PHP 8.0 or higher.
 - **Composer**: Installed globally for dependency management.
+- **Node**: Installed globally for dependency management.
 
 ---
 
@@ -33,6 +34,7 @@ To start a new Mono project, use the following Composer command:
 
 ```bash
 composer create-project zorncbllr/php-mono <project-name> -s dev
+npm install
 ```
 
 What Happens?
