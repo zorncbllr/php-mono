@@ -15,6 +15,9 @@
       "Manuel\\PhpMono\\": "src/"
     }
   },
+  "scripts": {
+    "dev": "php mono -s & npm run dev"
+  },
   "authors": [
     {
       "name": "Manuel",
