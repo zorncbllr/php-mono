@@ -81,7 +81,7 @@ class Generate
 
         file_put_contents(
             $directory . "/$class.php",
-            "<?php\n\nnamespace Src\Models;\n\nuse Src\Core\Model\Model;\n\nclass $class extends Model {\n\tprivate \$id;\n\tpublic function __construct(\$id = null) {\n\t\t\$this->id = \$id;\n\t}\n}"
+            "<?php\n\nclass $class extends Model {\n\tprivate \$id;\n\tpublic function __construct(\$id = null) {\n\t\t\$this->id = \$id;\n\t}\n}"
         );
 
         exit();
