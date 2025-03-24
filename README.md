@@ -34,7 +34,6 @@ To start a new Mono project, use the following Composer command:
 
 ```bash
 composer create-project zorncbllr/php-mono <project-name> -s dev
-npm install
 ```
 Use npm install to install node dependencies.
 
