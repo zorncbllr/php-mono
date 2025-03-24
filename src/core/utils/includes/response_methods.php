@@ -1,7 +1,5 @@
 <?php
 
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
 function json(mixed $data)
 {
@@ -9,14 +7,25 @@ function json(mixed $data)
     echo json_encode($data);
 }
 
-function view(string $filename, array $data = [])
+function view(string $view, array $data = [])
 {
     header("Content-Type: text/html");
 
-    $loader = new FilesystemLoader(__DIR__ . "/../../../views");
-    $twig = new Environment($loader);
+    extract($data);
 
-    echo $twig->render("{$filename}.twig", [...$data]);
+    $path = __DIR__ . "/../../../views/{$view}.view.php";
+
+    if (file_exists($path)) {
+        return require_once $path;
+    }
+
+    $path = str_replace("{$filename}.view.php", "{$filename}.php", $path);
+
+    if (file_exists($path)) {
+        return require_once $path;
+    }
+
+    echo "<script>alert('Error: Could not find specified view.');</script>";
 }
 
 function redirect($location = null)
@@ -34,8 +43,13 @@ function component(string $component, array $data = [])
 {
     header("Content-Type: text/html");
 
-    $loader = new FilesystemLoader(__DIR__ . "/../../../views/components");
-    $twig = new Environment($loader);
+    extract($data);
 
-    echo $twig->render("{$component}.twig", [...$data]);
+    $path = __DIR__ . "/../../../views/components/{$component}.php";
+
+    if (file_exists($path)) {
+        return require_once $path;
+    }
+
+    echo "<script>alert('Error: Could not find specified component.');</script>";
 }
