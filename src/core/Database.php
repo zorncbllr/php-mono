@@ -1,6 +1,5 @@
 <?php
 
-use Src\Core\Model\Model;
 
 class Database
 {
