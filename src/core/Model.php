@@ -2,14 +2,10 @@
 
 abstract class Model extends Database
 {
-    public static function find(array $param = [])
+    public static function find(array $param)
     {
         $table = strtolower(get_called_class());
         $query = "SELECT * FROM `{$table}s`";
-
-        if (empty($param)) {
-            return self::mapper(parent::query($query));
-        }
 
         $query .= " WHERE";
 
@@ -28,6 +24,25 @@ abstract class Model extends Database
         }
 
         return self::mapper($data);
+    }
+
+    public static function all(array $columns = [])
+    {
+        $table = strtolower(get_called_class());
+        $query = empty($columns) ? "SELECT * FROM `{$table}s`" : "SELECT " . implode(", ", $columns) . " FROM `{$table}s`";
+
+        if (!empty($columns)) {
+            if (sizeof($columns) == 1) {
+                return array_map(
+                    fn($column): string =>  $column[$columns[0]],
+                    parent::query($query)
+                );
+            }
+
+            return parent::query($query);
+        }
+
+        return self::mapper(parent::query($query));
     }
 
 
