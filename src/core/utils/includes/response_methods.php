@@ -16,13 +16,19 @@ function view(string $view, array $data = [])
     $path = __DIR__ . "/../../../views/{$view}.view.php";
 
     if (file_exists($path)) {
-        return require_once $path;
+        require_once $path;
+        Component::loadComponents();
+
+        return;
     }
 
     $path = str_replace("{$filename}.view.php", "{$filename}.php", $path);
 
     if (file_exists($path)) {
-        return require_once $path;
+        require_once $path;
+        Component::loadComponents();
+
+        return;
     }
 
     echo "<script>alert('Error: Could not find specified view.');</script>";

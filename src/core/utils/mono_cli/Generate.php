@@ -110,7 +110,7 @@ class Generate
 
         file_put_contents(
             $directory . "/$comp.php",
-            "<div>\n\t<h1>$comp component</h1>\n<div>"
+            "<div>\n\t<h1>$comp component</h1>\n</div>"
         );
 
         exit();
