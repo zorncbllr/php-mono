@@ -32,7 +32,7 @@ Ensure that your system meets the following requirements:
 To start a new Mono project, use the following Composer command:
 
 ```bash
-composer create-project zorncbllr/php-mono <project-name>
+composer create-project zorncbllr/php-mono <project-name> -s dev
 ```
 
 What Happens?
