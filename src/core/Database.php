@@ -34,6 +34,7 @@ class Database
             if ($e->getCode() == 1049) {
                 self::alert("Database Error: Unknown database {$config['dbname']}.");
             }
+
             return false;
         }
     }

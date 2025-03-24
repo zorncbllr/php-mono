@@ -3,10 +3,10 @@
 // Edit database configuration.
 
 return [
-    "host" => getenv('DATABASE_HOST'),
-    "port" => getenv('DATABASE_PORT'),
-    "user" => getenv('DATABASE_USER'),
-    "password" => getenv('DATABASE_PASSWORD'),
-    "dbname" => getenv('DATABASE_NAME'),
-    "charset" => getenv('DATABASE_CHARSET')
+    "host" => $_ENV['DATABASE_HOST'],
+    "port" => $_ENV['DATABASE_PORT'],
+    "user" => $_ENV['DATABASE_USER'],
+    "password" => $_ENV['DATABASE_PASSWORD'],
+    "dbname" => $_ENV['DATABASE_NAME'],
+    "charset" => $_ENV['DATABASE_CHARSET']
 ];

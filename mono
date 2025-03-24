@@ -3,6 +3,7 @@
 require_once __DIR__ . '/vendor/autoload.php';
 Dotenv\Dotenv::createImmutable(__DIR__)->load();
 
+
 function handleOperation($mode, $arg1 = '', $arg2 = '')
 {
     if ($mode === 'gen' || $mode === 'generate' || $mode === '-g') {
