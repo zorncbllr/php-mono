@@ -49,13 +49,7 @@ Navigate to the root directory of your Mono project.
 Run one of the following commands:
 
 ```bash
-php mono serve
-```
-
-or
-
-```bash
-php mono -s
+composer run dev
 ```
 
 What Happens?
