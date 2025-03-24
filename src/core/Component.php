@@ -17,12 +17,12 @@ class Component
         }
     }
 
-    static function create(string $name, string $path)
+    private static function create(string $name, string $path)
     {
         $contents = str_replace('<?= $slot ?>', '${this.innerHTML}', file_get_contents($path));
 
         $lowered = strtolower($name);
-        $capitalized = ucfirst($lowered);
+        $capitalized = self::dashToCamel(ucfirst($lowered));
 
         echo "
         <script>
@@ -43,5 +43,17 @@ class Component
             })
         </script>
         ";
+    }
+
+    private static function dashToCamel($string)
+    {
+        $words = explode('-', $string);
+        $res = "";
+
+        for ($i = 0; $i < sizeof($words); $i++) {
+            $res .= ucfirst($words[$i]);
+        }
+
+        return $res;
     }
 }

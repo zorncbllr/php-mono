@@ -89,7 +89,7 @@ class Generate
 
     static function createNewComponent(string $filename)
     {
-        $comp = ucfirst($filename);
+        $comp = $filename;
         $directory = __DIR__ . "/../../../views/components";
 
         $folders = explode('/', $filename);
@@ -118,7 +118,7 @@ class Generate
 
     static function createView(string $filename)
     {
-        $view = ucfirst($filename);
+        $view = $filename;
         $directory = __DIR__ . "/../../../views";
 
         $folders = explode('/', $filename);

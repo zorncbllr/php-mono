@@ -5,6 +5,6 @@ class Home extends Controller
 	#[Get()]
 	public function index(Request $request)
 	{
-		return view("Welcome");
+		return view("welcome");
 	}
 }
