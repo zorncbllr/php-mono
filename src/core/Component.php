@@ -19,30 +19,32 @@ class Component
 
     private static function create(string $name, string $path)
     {
-        $contents = str_replace('<?= $slot ?>', '${this.innerHTML}', file_get_contents($path));
+        $contents = str_replace('{{ $slot }}', '${this.innerHTML}', file_get_contents($path));
+
+        $match = null;
+        $js = null;
+
+        preg_match_all('/@props\(.*\)/', $contents, $match);
+
+        eval("\$js = self::get" . ucfirst(str_replace("@", "", $match[0][0])) . ";");
+
+        $contents = str_replace($match[0][0], "", $contents);
 
         $lowered = strtolower($name);
         $capitalized = self::dashToCamel(ucfirst($lowered));
 
-        echo "
-        <script>
-            window.addEventListener('DOMContentLoaded', () => {
+        include(__DIR__ . '/utils/includes/template.php');
+    }
 
-                try {
-                    class {$capitalized} extends HTMLElement {
-                        constructor() {
-                            super();
+    private static function getProps(array $props): string
+    {
+        $res = "";
 
-                            this.innerHTML = `{$contents}`;
-                        }
-                    }
+        foreach ($props as $prop) {
+            $res .= "const {$prop} = this.getAttribute('{$prop}');\n";
+        }
 
-                    customElements.define('x-{$lowered}', {$capitalized});
-
-                } catch (_) {}
-            })
-        </script>
-        ";
+        return $res;
     }
 
     private static function dashToCamel($string)

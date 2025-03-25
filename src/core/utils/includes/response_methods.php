@@ -47,6 +47,11 @@ function redirect($location = null)
 
 function component(string $component, array $data = [])
 {
+    function props(array $props)
+    {
+        echo "helcsakcakcj";
+    }
+
     header("Content-Type: text/html");
 
     extract($data);
