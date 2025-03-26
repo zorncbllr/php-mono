@@ -5,6 +5,11 @@ class Component
     static function loadComponents()
     {
         $path = __DIR__ . "/../views/components";
+
+        if (PHP_OS_FAMILY == "Windows") {
+            $path = __DIR__ . "\\..\\views\\components";
+        }
+
         $iterator = new DirectoryIterator($path);
 
 
