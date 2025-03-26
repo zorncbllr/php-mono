@@ -24,6 +24,11 @@ class Component
             file_get_contents($componentPath)
         );
 
+
+        $componentContent = self::parseForEach($componentContent, $variables);
+
+        $componentContent = self::parseVariables($componentContent, $variables);
+
         foreach ($iterator as $file) {
             $name = $file->getBaseName('.blade.php');
 
@@ -36,17 +41,11 @@ class Component
                     file_get_contents($file->getPathname())
                 );
 
-                $componentContent = self::replaceContents($name, $replacement, $componentContent);
+                $componentContent = self::parseComponents($name, $replacement, $componentContent);
             }
         }
 
-        $componentContent = htmlspecialchars_decode($componentContent);
-
-        $componentContent = self::parseForEach($componentContent, $variables);
-
-        $componentContent = self::parseVariables($componentContent, $variables);
-
-        echo $componentContent;
+        echo htmlspecialchars_decode($componentContent);
     }
 
     private static function parseVariables(string $content, array $variables): string
@@ -75,14 +74,60 @@ class Component
         return $content;
     }
 
-    private static function replaceContents(string $component, string $replacement, string $content)
+    private static function parseComponents(string $component, string $replacement, string $content)
     {
-        $match = null;
-        $pattern = "/&lt;$component *\/&gt;/";
+        $matches = null;
+        $pattern = "/<$component.*\/>/";
 
-        preg_match_all($pattern, $content, $match);
+        preg_match_all(htmlspecialchars($pattern), $content, $matches);
 
-        return str_replace($match[0][0], $replacement, $content);
+
+        if (!$matches) return $content;
+
+        if (sizeof($matches[0]) == 0) return $content;
+
+
+        foreach ($matches[0] as $match) {
+            $pattern = '/\w+="\w*"/';
+            $props = null;
+
+            preg_match_all(htmlspecialchars($pattern), $match, $props);
+
+            if ($props && $props[0]) {
+                foreach ($props[0] as $prop) {
+                    $key = explode("=", $prop)[0];
+                    $value = str_replace(
+                        htmlspecialchars("\""),
+                        "",
+                        explode("=", $prop)[1]
+                    );
+
+                    $content = str_replace(
+                        $match,
+                        self::parseVariables($replacement, [$key => $value]),
+                        $content
+                    );
+                }
+            }
+        }
+
+        $content = str_replace(
+            $match,
+            self::parseVariables($replacement, []),
+            $content
+        );
+
+        return $content;
+    }
+
+    private static function hasUndefinedVariable($content)
+    {
+        $pattern = '/\{\{\s*\$[a-zA-Z_][a-zA-Z0-9_]*\s*\}\}/';
+        $matches = null;
+
+        preg_match_all($pattern, $content, $matches);
+
+        return $matches && sizeof($matches[0]) === 0;
     }
 
     private static function parseForEach(string $content, $variables)
@@ -133,9 +178,9 @@ class Component
     private static function hasComponent(string $search, string $content)
     {
         $match = null;
-        $pattern = "/&lt;$search *\/&gt;/";
+        $pattern = "/<$search.*\/>/";
 
-        preg_match_all($pattern, $content, $match);
+        preg_match_all(htmlspecialchars($pattern), $content, $match);
 
         return sizeof($match[0]) !== 0;
     }
