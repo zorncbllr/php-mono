@@ -2,57 +2,68 @@
 
 namespace Src\Core;
 
-use DirectoryIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 use function Src\Core\Utils\Helpers\getdir;
 
 class Component
 {
-    static function loadComponents()
+    static function loadComponents(string $component)
     {
-        $path = getdir(__DIR__) . "/../views";
+        $path = getdir(__DIR__) . '/../views';
 
-        $iterator = new DirectoryIterator($path);
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($path)
+        );
 
+        $component = str_replace(".", "/", $component);
+        $componentPath = getdir(__DIR__) . "/../views/$component.blade.php";
+
+        $componentContent = htmlspecialchars(
+            file_get_contents($componentPath)
+        );
 
         foreach ($iterator as $file) {
-            if ($file->isFile()) {
-                $name = $file->getBasename(".php");
+            $name = $file->getBaseName('.blade.php');
 
-                self::create($name, "$path/$name.php");
+            if (
+                $file->isFile()
+                && $file->getPathname() !== $componentPath
+                && self::hasComponent($name, $componentContent)
+            ) {
+                $replacement = htmlspecialchars(
+                    file_get_contents($file->getPathname())
+                );
+
+                $componentContent = self::replaceContents($name, $replacement, $componentContent);
             }
         }
+
+        echo htmlspecialchars_decode($componentContent);
     }
 
-    private static function create(string $name, string $path)
+    private static function replaceContents(string $component, string $replacement, string $content)
     {
-        $contents = str_replace('{{ $slot }}', '${this.innerHTML}', file_get_contents($path));
-
         $match = null;
-        $js = null;
+        $pattern = "/&lt;$component *\/&gt;/";
 
-        preg_match_all('/@props\(.*\)/', $contents, $match);
+        preg_match_all($pattern, $content, $match);
 
-        eval("\$js = self::get" . ucfirst(str_replace("@", "", $match[0][0])) . ";");
-
-        $contents = str_replace($match[0][0], "", $contents);
-
-        $lowered = strtolower($name);
-        $capitalized = self::dashToCamel(ucfirst($lowered));
-
-        include(getdir(__DIR__) . '/utils/includes/template.php');
+        return str_replace($match[0][0], $replacement, $content);
     }
 
-    private static function getProps(array $props): string
+    private static function hasComponent(string $search, string $content)
     {
-        $res = "";
+        $match = null;
+        $pattern = "/&lt;$search *\/&gt;/";
 
-        foreach ($props as $prop) {
-            $res .= "const {$prop} = this.getAttribute('{$prop}');\n";
-        }
+        preg_match_all($pattern, $content, $match);
 
-        return $res;
+        return $match[0][0] ? true : false;
     }
+
+    private static function compile() {}
 
     private static function dashToCamel($string)
     {

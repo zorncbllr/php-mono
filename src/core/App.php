@@ -26,7 +26,7 @@ class App
         }
     }
 
-    static function debug_print(mixed $prop)
+    static function debugPrint(mixed $prop)
     {
         echo "<pre>";
         (is_array($prop) ? print_r($prop) : var_dump($prop));

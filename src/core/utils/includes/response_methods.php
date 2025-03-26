@@ -15,22 +15,21 @@ function view(string $view, array $data = [])
 {
     header("Content-Type: text/html");
 
-    $path = getdir(__DIR__) . "/../../../views/{$view}.view.php";
+    $path = getdir(__DIR__) . "/../../../views/{$view}.blade.php";
 
     if (file_exists($path)) {
         extract($data);
-        require_once $path;
-        // Component::loadComponents();
+        Component::loadComponents($view);
 
         return;
     }
 
-    $path = str_replace("{$filename}.view.php", "{$filename}.php", $path);
+    $path = str_replace("{$filename}.blade.php", "{$filename}.php", $path);
 
     if (file_exists($path)) {
         extract($data);
         require_once $path;
-        // Component::loadComponents();
+        Component::loadComponents($view);
 
         return;
     }
@@ -51,20 +50,15 @@ function redirect($location = null)
 
 function component(string $component, array $data = [])
 {
-    function props(array $props)
-    {
-        echo "helcsakcakcj";
-    }
-
     header("Content-Type: text/html");
 
 
-    $path = getdir(__DIR__) . "/../../../views/components/{$component}.php";
+    $path = getdir(__DIR__) . "/../../../views/components/{$component}.blade.php";
 
     if (file_exists($path)) {
         extract($data);
 
-        return require_once $path;
+        Component::loadComponents($component);
     }
 
     echo "<script>alert('Error: Could not find specified component.');</script>";
