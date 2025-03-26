@@ -18,18 +18,17 @@ function view(string $view, array $data = [])
     $path = getdir(__DIR__) . "/../../../views/{$view}.blade.php";
 
     if (file_exists($path)) {
-        extract($data);
-        Component::loadComponents($view);
+        Component::loadComponents($view, $data);
 
         return;
     }
 
-    $path = str_replace("{$filename}.blade.php", "{$filename}.php", $path);
+    $path = str_replace("{$view}.blade.php", "{$view}.php", $path);
 
     if (file_exists($path)) {
         extract($data);
         require_once $path;
-        Component::loadComponents($view);
+        Component::loadComponents($view, $data);
 
         return;
     }
@@ -56,9 +55,8 @@ function component(string $component, array $data = [])
     $path = getdir(__DIR__) . "/../../../views/components/{$component}.blade.php";
 
     if (file_exists($path)) {
-        extract($data);
 
-        Component::loadComponents($component);
+        Component::loadComponents($component, $data);
     }
 
     echo "<script>alert('Error: Could not find specified component.');</script>";

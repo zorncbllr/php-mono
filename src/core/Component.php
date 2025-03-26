@@ -9,7 +9,7 @@ use function Src\Core\Utils\Helpers\getdir;
 
 class Component
 {
-    static function loadComponents(string $component)
+    static function loadComponents(string $component, array $variables)
     {
         $path = getdir(__DIR__) . '/../views';
 
@@ -40,6 +40,15 @@ class Component
             }
         }
 
+        $componentContent = self::parseForEach($componentContent, $variables);
+
+
+        $componentContent = str_replace(
+            "}}",
+            "",
+            str_replace("{{", "", $componentContent)
+        );
+
         echo htmlspecialchars_decode($componentContent);
     }
 
@@ -51,6 +60,43 @@ class Component
         preg_match_all($pattern, $content, $match);
 
         return str_replace($match[0][0], $replacement, $content);
+    }
+
+    private static function parseForEach(string $content, $variables)
+    {
+        extract($variables);
+        $matches = null;
+        $pattern = "/@foreach\s*\(.*?\)\s*[\s\S]*?\s*@endforeach/";
+
+        preg_match_all($pattern, $content, $matches);
+
+        if ($matches[0]) {
+            foreach ($matches[0] as $match) {
+                $pattern = "/@foreach\s*\(.*?\)/";
+                $foreach = null;
+                preg_match($pattern, $match, $foreach);
+
+                $foreachContent = str_replace(
+                    "@endforeach",
+                    "",
+                    str_replace($foreach[0], "", $match)
+                );
+
+                $result = "";
+
+                $foreachBlock = str_replace("@", "", $foreach[0]);
+
+                eval("
+                    $foreachBlock {
+                        \$result .= \"$foreachContent\";
+                    }
+                ");
+
+                $content = str_replace($match, $result, $content);
+            }
+        }
+
+        return $content;
     }
 
     private static function hasComponent(string $search, string $content)
