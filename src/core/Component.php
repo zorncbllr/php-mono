@@ -106,7 +106,7 @@ class Component
 
         preg_match_all($pattern, $content, $match);
 
-        return $match[0][0] ? true : false;
+        return sizeof($match[0]) !== 0;
     }
 
     private static function compile() {}
