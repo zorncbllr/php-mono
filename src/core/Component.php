@@ -88,7 +88,7 @@ class Component
 
 
         foreach ($matches[0] as $match) {
-            $pattern = '/\w+="\w*"/';
+            $pattern = '/\w+=".*"/';
             $props = null;
 
             preg_match_all(htmlspecialchars($pattern), $match, $props);
