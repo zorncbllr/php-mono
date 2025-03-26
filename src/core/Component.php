@@ -40,16 +40,39 @@ class Component
             }
         }
 
+        $componentContent = htmlspecialchars_decode($componentContent);
+
         $componentContent = self::parseForEach($componentContent, $variables);
 
+        $componentContent = self::parseVariables($componentContent, $variables);
 
-        $componentContent = str_replace(
-            "}}",
-            "",
-            str_replace("{{", "", $componentContent)
-        );
+        echo $componentContent;
+    }
 
-        echo htmlspecialchars_decode($componentContent);
+    private static function parseVariables(string $content, array $variables): string
+    {
+        $pattern = '/\{\{\s*\$[a-zA-Z_][a-zA-Z0-9_]*\s*\}\}/';
+        $matches = null;
+
+        preg_match_all($pattern, $content, $matches);
+
+        if (sizeof($matches[0]) == 0) {
+            return $content;
+        }
+
+        foreach ($matches[0] as $match) {
+            $pattern = '/[a-zA-Z_][a-zA-Z0-9_]*/';
+            $varname = null;
+            preg_match($pattern, $match, $varname);
+
+            $content = str_replace(
+                $match,
+                htmlspecialchars($variables[$varname[0]]),
+                $content
+            );
+        }
+
+        return $content;
     }
 
     private static function replaceContents(string $component, string $replacement, string $content)
@@ -72,7 +95,7 @@ class Component
 
         if ($matches[0]) {
             foreach ($matches[0] as $match) {
-                $pattern = "/@foreach\s*\(.*?\)/";
+                $pattern = '/@foreach\s*\(.*?\)/';
                 $foreach = null;
                 preg_match($pattern, $match, $foreach);
 
@@ -84,13 +107,21 @@ class Component
 
                 $result = "";
 
-                $foreachBlock = str_replace("@", "", $foreach[0]);
+                $pattern = '/@foreach\s*\(\s*\$.*as\s*/';
+                $argArray = null;
+                preg_match($pattern, $foreach[0], $argArray);
 
-                eval("
-                    $foreachBlock {
-                        \$result .= \"$foreachContent\";
-                    }
-                ");
+                $argVar = str_replace(")", "", str_replace($argArray[0], "", $foreach[0]));
+
+                preg_match('/\$\w*/', $argArray[0], $argArray);
+
+                $argArray = $argArray[0];
+
+                eval("foreach($argArray as $argVar) {
+                    \$result .= self::parseVariables(\$foreachContent, [
+                        '" . str_replace('$', '', $argVar) . "' => $argVar
+                    ]);
+                }");
 
                 $content = str_replace($match, $result, $content);
             }
@@ -109,7 +140,6 @@ class Component
         return sizeof($match[0]) !== 0;
     }
 
-    private static function compile() {}
 
     private static function dashToCamel($string)
     {
