@@ -2,6 +2,8 @@
 
 namespace Src\Core\Utils\Mono_Cli;
 
+use function Src\Core\Utils\Helpers\getdir;
+
 require_once getdir(__DIR__) . '/../../Controller.php';
 require_once getdir(__DIR__) . '/Generate.php';
 

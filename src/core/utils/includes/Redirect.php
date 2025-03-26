@@ -1,5 +1,7 @@
 <?php
 
+namespace Src\Core\Utils\Includes;
+
 use Src\Core\App;
 use Src\Core\Router;
 use Src\Core\Utils\Request;

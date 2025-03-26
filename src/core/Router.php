@@ -58,7 +58,7 @@ class Router
         require_once $controller;
 
         $controllerClass = $route;
-        $this->controller = new $controllerClass();
+        eval("\$this->controller = new Src\Controllers\\$controllerClass();");
 
         array_shift($this->URL);
 

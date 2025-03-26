@@ -12,7 +12,16 @@
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "Src\\": "src/"
+      "Src\\": "src/",
+      "Src\\Core\\": "src/core/",
+      "Src\\Models\\": "src/models/",
+      "Src\\Controllers\\": "src/controllers/",
+      "Src\\Middlewares\\": "src/middlewares/",
+      "Src\\Core\\Utils\\Helpers\\": "src/core/utils/helpers/",
+      "Src\\Core\\Utils\\": "src/core/utils/",
+      "Src\\Core\\Utils\\Includes\\": "src/core/utils/includes/",
+      "Src\\Core\\Utils\\Annotations\\": "src/core/utils/annotations/",
+      "Src\\Core\\Utils\\Mono_Cli\\": "src/core/utils/mono_cli/"
     }
   },
   "scripts": {

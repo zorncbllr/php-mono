@@ -10,11 +10,7 @@ class Component
 {
     static function loadComponents()
     {
-        $path = getdir(__DIR__) . "/../views/components";
-
-        if (PHP_OS_FAMILY == "Windows") {
-            $path = getdir(__DIR__) . "\\..\\views\\components";
-        }
+        $path = getdir(__DIR__) . "/../views";
 
         $iterator = new DirectoryIterator($path);
 

@@ -77,7 +77,7 @@ class Controller
 
     static function HandleError(Controller $controller, Request $request)
     {
-        $method = new ReflectionMethod("_404::error");
+        $method = new ReflectionMethod("Src\Controllers\_404::error");
 
         self::getMethod($controller, $method, $request);
     }

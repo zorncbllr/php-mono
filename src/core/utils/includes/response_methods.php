@@ -1,6 +1,7 @@
 <?php
 
 use Src\Core\Component;
+use Src\Core\Utils\Includes\Redirect;
 
 use function Src\Core\Utils\Helpers\getdir;
 
@@ -14,13 +15,12 @@ function view(string $view, array $data = [])
 {
     header("Content-Type: text/html");
 
-    extract($data);
-
     $path = getdir(__DIR__) . "/../../../views/{$view}.view.php";
 
     if (file_exists($path)) {
+        extract($data);
         require_once $path;
-        Component::loadComponents();
+        // Component::loadComponents();
 
         return;
     }
@@ -28,8 +28,9 @@ function view(string $view, array $data = [])
     $path = str_replace("{$filename}.view.php", "{$filename}.php", $path);
 
     if (file_exists($path)) {
+        extract($data);
         require_once $path;
-        Component::loadComponents();
+        // Component::loadComponents();
 
         return;
     }
@@ -57,11 +58,12 @@ function component(string $component, array $data = [])
 
     header("Content-Type: text/html");
 
-    extract($data);
 
     $path = getdir(__DIR__) . "/../../../views/components/{$component}.php";
 
     if (file_exists($path)) {
+        extract($data);
+
         return require_once $path;
     }
 

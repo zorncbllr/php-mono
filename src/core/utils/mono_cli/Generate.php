@@ -4,6 +4,8 @@ namespace Src\Core\Utils\Mono_Cli;
 
 use DirectoryIterator;
 
+use function Src\Core\Utils\Helpers\getdir;
+
 class Generate
 {
     static function createNewController(string $filename, bool $end = true)
