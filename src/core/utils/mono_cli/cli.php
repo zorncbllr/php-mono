@@ -1,7 +1,9 @@
 <?php
 
-require_once __DIR__ . '/../../Controller.php';
-require_once __DIR__ . '/Generate.php';
+namespace Src\Core\Utils\Mono_Cli;
+
+require_once getdir(__DIR__) . '/../../Controller.php';
+require_once getdir(__DIR__) . '/Generate.php';
 
 if (isset($argv[1]) && (isset($argv[2]) || isset($argv[3]))) {
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core;
+namespace Src\Core;
 
-use Request;
+use Src\Core\Utils\Request;
 
 abstract class Middleware
 {

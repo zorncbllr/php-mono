@@ -1,6 +1,10 @@
 <?php
 
-#[Attribute]
+namespace Src\Core\Utils\Annotations;
+
+use Attribute;
+
+#[Attribute()]
 class Post extends Route
 {
     public function __construct($path = "")

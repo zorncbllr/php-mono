@@ -1,5 +1,7 @@
 <?php
 
+namespace Src\Core\Utils;
+
 class Validator
 {
     private array $filterSchema;

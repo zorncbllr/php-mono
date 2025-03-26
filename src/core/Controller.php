@@ -1,10 +1,18 @@
 <?php
 
+namespace Src\Core;
+
+use ReflectionClass;
+use ReflectionMethod;
+use Src\Core\Utils\Request;
+
+use function Src\Core\Utils\Helpers\getdir;
+
 class Controller
 {
     static function getMethod(Controller $controller, ReflectionMethod $method, Request $request)
     {
-        include_once __DIR__ . '/utils/includes/response_methods.php';
+        include_once getdir(__DIR__) . '/utils/includes/response_methods.php';
 
         $valid = self::handleMiddlewares($method, $request);
 
@@ -13,7 +21,7 @@ class Controller
             spl_autoload_register(
                 function ($service) {
                     $folder = str_replace('service', '', strtolower($service));
-                    $servicePath = __DIR__ . "/../controllers/$folder/$service.php";
+                    $servicePath = getdir(__DIR__) . "/../controllers/$folder/$service.php";
 
                     if (file_exists($servicePath)) {
                         require_once $servicePath;

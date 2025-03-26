@@ -1,7 +1,12 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
-Dotenv\Dotenv::createImmutable(__DIR__)->load();
+use Src\Core\Database;
+
+use function Src\Core\Utils\Helpers\getdir;
+
+require_once str_replace("\\", "/", __DIR__) . "/src/core/utils/helpers/getdir.php";
+require_once getdir(__DIR__) . '/vendor/autoload.php';
+Dotenv\Dotenv::createImmutable(getdir(__DIR__))->load();
 
 
 function handleOperation($mode, $arg1 = '', $arg2 = '')
@@ -60,14 +65,14 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
                 if (!str_contains(system("ping -n 1 github.com"), "ms")) {
                     error_handler();
                 }
-                $dir = __DIR__ . '\\src\\core';
+                $dir = getdir(__DIR__) . '\\src\\core';
                 update_core($dir);
                 break;
             case 'Linux':
                 if (!str_contains(system("ping -c 1 github.com"), "ms")) {
                     error_handler();
                 }
-                $dir = __DIR__ . '/src/core';
+                $dir = getdir(__DIR__) . '/src/core';
                 update_core($dir);
                 break;
         }
@@ -82,10 +87,10 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
 
     if ($mode === 'db' && $arg1 === 'push') {
         try {
-            include_once __DIR__ . '/src/core/Database.php';
-            include_once __DIR__ . '/src/core/Model.php';
+            include_once getdir(__DIR__) . '/src/core/Database.php';
+            include_once getdir(__DIR__) . '/src/core/Model.php';
             spl_autoload_register(function ($model) {
-                $path = __DIR__ . "/src/models/{$model}.php";
+                $path = getdir(__DIR__) . "/src/models/{$model}.php";
                 if (file_exists($path)) {
                     require_once $path;
                 }

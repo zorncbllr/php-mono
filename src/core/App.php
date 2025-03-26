@@ -1,5 +1,8 @@
 <?php
 
+
+namespace Src\Core;
+
 class App
 {
     public string $URI_PATH;

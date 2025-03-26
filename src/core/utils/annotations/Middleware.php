@@ -1,8 +1,11 @@
 <?php
 
-use App\Core\Middleware as CoreMiddleware;
+namespace Src\Core\Utils\Annotations;
 
-#[Attribute]
+use Attribute;
+use Src\Core\Middleware as CoreMiddleware;
+
+#[Attribute()]
 class Middleware
 {
     public array $middlewares;

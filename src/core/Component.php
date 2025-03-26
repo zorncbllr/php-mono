@@ -1,13 +1,19 @@
 <?php
 
+namespace Src\Core;
+
+use DirectoryIterator;
+
+use function Src\Core\Utils\Helpers\getdir;
+
 class Component
 {
     static function loadComponents()
     {
-        $path = __DIR__ . "/../views/components";
+        $path = getdir(__DIR__) . "/../views/components";
 
         if (PHP_OS_FAMILY == "Windows") {
-            $path = __DIR__ . "\\..\\views\\components";
+            $path = getdir(__DIR__) . "\\..\\views\\components";
         }
 
         $iterator = new DirectoryIterator($path);
@@ -38,7 +44,7 @@ class Component
         $lowered = strtolower($name);
         $capitalized = self::dashToCamel(ucfirst($lowered));
 
-        include(__DIR__ . '/utils/includes/template.php');
+        include(getdir(__DIR__) . '/utils/includes/template.php');
     }
 
     private static function getProps(array $props): string

@@ -1,5 +1,8 @@
 <?php
 
+use Src\Core\Component;
+
+use function Src\Core\Utils\Helpers\getdir;
 
 function json(mixed $data)
 {
@@ -13,7 +16,7 @@ function view(string $view, array $data = [])
 
     extract($data);
 
-    $path = __DIR__ . "/../../../views/{$view}.view.php";
+    $path = getdir(__DIR__) . "/../../../views/{$view}.view.php";
 
     if (file_exists($path)) {
         require_once $path;
@@ -56,7 +59,7 @@ function component(string $component, array $data = [])
 
     extract($data);
 
-    $path = __DIR__ . "/../../../views/components/{$component}.php";
+    $path = getdir(__DIR__) . "/../../../views/components/{$component}.php";
 
     if (file_exists($path)) {
         return require_once $path;

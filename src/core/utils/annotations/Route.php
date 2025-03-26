@@ -1,6 +1,10 @@
 <?php
 
-#[Attribute]
+namespace Src\Core\Utils\Annotations;
+
+use Attribute;
+
+#[Attribute()]
 class Route
 {
     public array $path;

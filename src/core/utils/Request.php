@@ -1,5 +1,7 @@
 <?php
 
+namespace Src\Core\Utils;
+
 class Request
 {
     public array $body, $headers, $query, $param, $cookies, $form_data, $sessions;

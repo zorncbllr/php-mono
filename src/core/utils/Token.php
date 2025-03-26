@@ -1,5 +1,7 @@
 <?php
 
+namespace Src\Core\Utils;
+
 class Token
 {
     public static function sign(array $payload, string $key, $expire = null)

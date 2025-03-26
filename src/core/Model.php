@@ -1,5 +1,8 @@
 <?php
 
+namespace Src\Core;
+
+
 abstract class Model extends Database
 {
     public static function find(array $param)

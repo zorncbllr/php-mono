@@ -1,5 +1,12 @@
 <?php
 
+namespace Src\Core;
+
+use DirectoryIterator;
+use PDO;
+use PDOException;
+
+use function Src\Core\Utils\Helpers\getdir;
 
 class Database
 {
@@ -7,7 +14,7 @@ class Database
 
     public function __construct()
     {
-        $config = require __DIR__ . '/../config/db.config.php';
+        $config = require getdir(__DIR__) . '/../config/db.config.php';
 
         if (!empty($config['dbname'])) {
             $this->pdo = self::getPDOInstance();
@@ -19,7 +26,7 @@ class Database
     private static function getPDOInstance(): PDO | bool
     {
         try {
-            $config = require __DIR__ . '/../config/db.config.php';
+            $config = require getdir(__DIR__) . '/../config/db.config.php';
 
             $dsn = "mysql:" . http_build_query($config, "", ";");
 
@@ -123,7 +130,7 @@ class Database
             return true;
         } catch (PDOException $e) {
             if ($e->getCode() === "42S01") {
-                $dbname = (require __DIR__ . '/../config/db.config.php')['dbname'];
+                $dbname = (require getdir(__DIR__) . '/../config/db.config.php')['dbname'];
                 return self::alterTable($pdo, $config, [
                     'table' => $table,
                     'dbname' => $dbname
@@ -212,8 +219,8 @@ class Database
 
     public static function initModels()
     {
-        include_once __DIR__ . '/Model.php';
-        $modelsPath = __DIR__ . "/../models";
+        include_once getdir(__DIR__) . '/Model.php';
+        $modelsPath = getdir(__DIR__) . "/../models";
         $iterator = new DirectoryIterator($modelsPath);
 
         foreach ($iterator as $file) {

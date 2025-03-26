@@ -1,5 +1,14 @@
 <?php
 
+namespace Src\Core;
+
+use ReflectionClass;
+use Src\Controllers\_404;
+use Src\Core\Utils\Annotations\Route;
+use Src\Core\Utils\Request;
+
+use function Src\Core\Utils\Helpers\getdir;
+
 class Router
 {
     private App $app;
@@ -53,7 +62,7 @@ class Router
 
         array_shift($this->URL);
 
-        include_once __DIR__ . '/utils/includes/response_methods.php';
+        include_once getdir(__DIR__) . '/utils/includes/response_methods.php';
 
         $reflection = new ReflectionClass($this->controller);
 
@@ -109,7 +118,7 @@ class Router
     {
         $folder = $this->camelToDash($className);
 
-        return __DIR__ . "/../controllers/" . ($withFolder ? "$folder/$className" : $className) . ".php";
+        return getdir(__DIR__) . "/../controllers/" . ($withFolder ? "$folder/$className" : $className) . ".php";
     }
 
     private function dashToCamel($string)

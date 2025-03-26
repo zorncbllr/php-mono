@@ -1,8 +1,14 @@
 <?php
 
-class _404 extends Controller {
+namespace Src\Controllers;
 
-	public static function error() {
+use Src\Core\Controller;
+
+class _404 extends Controller
+{
+
+	public static function error()
+	{
 
 		http_response_code(404);
 

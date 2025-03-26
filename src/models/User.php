@@ -1,5 +1,9 @@
 <?php
 
+namespace Src\Models;
+
+use Src\Core\Model;
+
 class User extends Model
 {
 	private $id, $password;

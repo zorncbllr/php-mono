@@ -1,6 +1,10 @@
 <?php
 
-#[Attribute]
+namespace Src\Core\Utils\Annotations;
+
+use Attribute;
+
+#[Attribute()]
 class Delete extends Route
 {
     public function __construct($path = "")

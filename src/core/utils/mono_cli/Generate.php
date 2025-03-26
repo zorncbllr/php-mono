@@ -1,24 +1,28 @@
 <?php
 
+namespace Src\Core\Utils\Mono_Cli;
+
+use DirectoryIterator;
+
 class Generate
 {
     static function createNewController(string $filename, bool $end = true)
     {
         $class = ucfirst($filename);
         $folder = self::camelToDashed($class);
-        $directory = __DIR__ . "/../../../controllers/$folder";
+        $directory = getdir(__DIR__) . "/../../../controllers/$folder";
 
         if (!is_dir($directory)) {
             mkdir($directory);
             file_put_contents(
                 $directory . "/../_404.php",
-                "<?php\n\nclass _404 extends Controller {\n\n\tpublic static function error() {\n\n\t\thttp_response_code(404);\n\n\t\treturn view('404');\n\t}\n}\n"
+                "<?php\n\nnamespace Src\Controllers;\n\nuse Src\Core\Controller;\nuse Src\Core\Utils\Annotations\Get;\nuse Src\Core\Utils\Request;\n\nclass _404 extends Controller {\n\n\tpublic static function error() {\n\n\t\thttp_response_code(404);\n\n\t\treturn view('404');\n\t}\n}\n"
             );
         }
 
         file_put_contents(
             $directory . "/$class.php",
-            "<?php\n\nclass $class extends Controller \n{\n\t#[Get()]\n\tpublic function index(Request \$request){\n\t\treturn '$class controller';\n\t}\n}\n"
+            "<?php\n\nnamespace Src\Controllers;\n\nuse Src\Core\Controller;\nuse Src\Core\Utils\Annotations\Get;\nuse Src\Core\Utils\Request;\n\nclass $class extends Controller \n{\n\t#[Get()]\n\tpublic function index(Request \$request){\n\t\treturn '$class controller';\n\t}\n}\n"
         );
 
         $end ?  exit() : null;
@@ -27,7 +31,7 @@ class Generate
     static function createControllerService(string $filename)
     {
         $class = ucfirst($filename);
-        $directory = __DIR__ . "/../../../controllers";
+        $directory = getdir(__DIR__) . "/../../../controllers";
         $folder = "$directory/" .  self::camelToDashed($class);
         $content = "<?php\n\nclass {$class}Service {";
 
@@ -73,7 +77,7 @@ class Generate
     static function createNewModel(string $filename)
     {
         $class = ucfirst($filename);
-        $directory = __DIR__ . "/../../../models";
+        $directory = getdir(__DIR__) . "/../../../models";
 
         if (!is_dir($directory)) {
             mkdir($directory);
@@ -81,7 +85,7 @@ class Generate
 
         file_put_contents(
             $directory . "/$class.php",
-            "<?php\n\nclass $class extends Model {\n\tprivate \$id;\n\tpublic function __construct(\$id = null) {\n\t\t\$this->id = \$id;\n\t}\n}"
+            "<?php\n\nnamespace Src\Models;\n\nuse Src\Core\Model;\n\nclass $class extends Model {\n\tprivate \$id;\n\tpublic function __construct(\$id = null) {\n\t\t\$this->id = \$id;\n\t}\n}"
         );
 
         exit();
@@ -90,7 +94,7 @@ class Generate
     static function createNewComponent(string $filename)
     {
         $comp = $filename;
-        $directory = __DIR__ . "/../../../views/components";
+        $directory = getdir(__DIR__) . "/../../../views/components";
 
         $folders = explode('/', $filename);
 
@@ -119,7 +123,7 @@ class Generate
     static function createView(string $filename)
     {
         $view = $filename;
-        $directory = __DIR__ . "/../../../views";
+        $directory = getdir(__DIR__) . "/../../../views";
 
         $folders = explode('/', $filename);
 
@@ -135,7 +139,7 @@ class Generate
 
         if (!is_dir($directory)) {
             mkdir($directory);
-            if ($directory === __DIR__ . "/../../../views") {
+            if ($directory === getdir(__DIR__) . "/../../../views") {
                 file_put_contents(
                     $directory . "/404.view.php",
                     "<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n\t<meta charset=\"UTF-8\">\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\t<title>Page Not Found</title>\n\t<link rel=\"stylesheet\" href=\"css/tailwind-build.css\">\n</head>\n\n<body>\n\t<section class=\"bg-white dark:bg-gray-900 \">\n\t\t<div class=\"container min-h-screen px-6 py-12 mx-auto lg:flex lg:items-center lg:gap-12\">\n\t\t\t<div class=\"wf-ull lg:w-1/2\">\n\t\t\t\t<p class=\"text-sm font-medium text-blue-500 dark:text-blue-400\">404 error</p>\n\t\t\t\t<h1 class=\"mt-3 text-2xl font-semibold text-gray-800 dark:text-white md:text-3xl\">Page not found</h1>\n\t\t\t\t<p class=\"mt-4 text-gray-500 dark:text-gray-400\">Sorry, the page you are looking for doesn't exist.Here are some helpful links:</p>\n\n\t\t\t\t<div class=\"flex items-center mt-6 gap-x-3\">\n\t\t\t\t\t<a href=\"/\" class=\"flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700\">\n\t\t\t\t\t\t<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-5 h-5 rtl:rotate-180\">\n\t\t\t\t\t\t\t<path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18\" />\n\t\t\t\t\t\t</svg>\n\n\t\t\t\t\t\t<span>Go back</span>\n\t\t\t\t\t</a>\n\n\t\t\t\t\t<a href=\"/\" class=\"w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600\">\n\t\t\t\t\t\tTake me home\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class=\"relative w-full mt-12 lg:w-1/2 lg:mt-0\">\n\t\t\t\t<img class=\"w-full max-w-lg lg:mx-auto\" src=\"assets/404.svg\" alt=\"\">\n\t\t\t</div>\n\t\t</div>\n\t</section>\n</body>\n\n</html>"
@@ -193,7 +197,7 @@ class Generate
     private static function getAttributes(string $filename): array
     {
         $types = ["string", "int", "array", "object", "bool", "double", "float"];
-        $directory = __DIR__ . "/../../../models/";
+        $directory = getdir(__DIR__) . "/../../../models/";
 
         $iterator = new DirectoryIterator($directory);
 
@@ -247,7 +251,7 @@ class Generate
     private static function getPath(string $filename)
     {
         $filename = ucfirst($filename) . ".php";
-        $directory = __DIR__ . "/../../../models/";
+        $directory = getdir(__DIR__) . "/../../../models/";
         return $directory . $filename;
     }
 
@@ -319,7 +323,7 @@ class Generate
     public static function createMiddleware(string $filename)
     {
         $class = ucfirst($filename);
-        $directory = __DIR__ . "/../../../middlewares";
+        $directory = getdir(__DIR__) . "/../../../middlewares";
 
         $folders = explode('/', $filename);
 
@@ -339,7 +343,7 @@ class Generate
 
         file_put_contents(
             $directory . "/$class.php",
-            "<?php\n\nuse App\Core\Middleware;\n\nclass $class extends Middleware\n{\n\tstatic function runnable(Request \$request, callable \$next)\n\t{\n\t\techo '$class Middleware';\n\t}\n}"
+            "<?php\n\nnamespace Src\Middlewares;\n\nuse Src\Core\Request;\nuse Src\Core\Middleware;\n\nclass $class extends Middleware\n{\n\tstatic function runnable(Request \$request, callable \$next)\n\t{\n\t\techo '$class Middleware';\n\t}\n}"
         );
 
         exit();
