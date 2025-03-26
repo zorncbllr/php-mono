@@ -4,6 +4,9 @@ namespace Src\Core\Utils\Mono_Cli;
 
 use function Src\Core\Utils\Helpers\getdir;
 
+require_once str_replace("\\", "/", __DIR__) . "/../helpers/getdir.php";
+require_once getdir(__DIR__) . '/../../../../vendor/autoload.php';
+
 require_once getdir(__DIR__) . '/../../Controller.php';
 require_once getdir(__DIR__) . '/Generate.php';
 
