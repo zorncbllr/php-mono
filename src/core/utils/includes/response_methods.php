@@ -1,5 +1,6 @@
 <?php
 
+use Src\Core\App;
 use Src\Core\Component;
 use Src\Core\Utils\Includes\Redirect;
 
@@ -15,6 +16,8 @@ function view(string $view, array $data = [])
 {
     header("Content-Type: text/html");
 
+    $view = str_replace(".", "/", $view);
+
     $path = getdir(__DIR__) . "/../../../views/{$view}.blade.php";
 
     if (file_exists($path)) {
@@ -26,8 +29,6 @@ function view(string $view, array $data = [])
     $path = str_replace("{$view}.blade.php", "{$view}.php", $path);
 
     if (file_exists($path)) {
-        extract($data);
-        require_once $path;
         Component::loadComponents($view, $data);
 
         return;
@@ -51,12 +52,14 @@ function component(string $component, array $data = [])
 {
     header("Content-Type: text/html");
 
+    $component = str_replace(".", "/", $component);
 
     $path = getdir(__DIR__) . "/../../../views/components/{$component}.blade.php";
 
     if (file_exists($path)) {
-
         Component::loadComponents($component, $data);
+
+        return;
     }
 
     echo "<script>alert('Error: Could not find specified component.');</script>";
