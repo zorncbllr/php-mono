@@ -77,7 +77,7 @@ class Component
     private static function parseComponents(string $component, string $replacement, string $content)
     {
         $matches = null;
-        $pattern = "/<$component.*\/>/";
+        $pattern = "/(<$component.*\/>|<$component.*\>.*<\/$component.*\>)/";
 
         preg_match_all(htmlspecialchars($pattern), $content, $matches);
 
@@ -88,12 +88,14 @@ class Component
 
 
         foreach ($matches[0] as $match) {
-            $pattern = '/\w+=".*"/';
+            $pattern = '/\s*\w+="[^"]*"\s*/';
             $props = null;
 
             preg_match_all(htmlspecialchars($pattern), $match, $props);
 
             if ($props && $props[0]) {
+                $propsMap = [];
+
                 foreach ($props[0] as $prop) {
                     $key = explode("=", $prop)[0];
                     $value = str_replace(
@@ -102,12 +104,16 @@ class Component
                         explode("=", $prop)[1]
                     );
 
-                    $content = str_replace(
-                        $match,
-                        self::parseVariables($replacement, [$key => $value]),
-                        $content
-                    );
+                    $propsMap[$key] = $value;
                 }
+
+                App::debugPrint($propsMap);
+
+                $content = str_replace(
+                    $match,
+                    self::parseVariables($replacement, $propsMap),
+                    $content
+                );
             }
         }
 
@@ -178,13 +184,12 @@ class Component
     private static function hasComponent(string $search, string $content)
     {
         $match = null;
-        $pattern = "/<$search.*\/>/";
+        $pattern = "/(<$search.*\/>|<$search.*\>.*<\/$search.*\>)/";
 
         preg_match_all(htmlspecialchars($pattern), $content, $match);
 
         return sizeof($match[0]) !== 0;
     }
-
 
     private static function dashToCamel($string)
     {
