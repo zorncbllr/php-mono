@@ -8,7 +8,7 @@
   },
   "minimum-stability": "dev",
   "prefer-stable": false,
-  "version": "0.0.2",
+  "version": "0.0.4",
   "license": "MIT",
   "autoload": {
     "psr-4": {
