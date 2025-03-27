@@ -25,7 +25,7 @@
     }
   },
   "scripts": {
-    "dev": "php mono -s & npm run dev"
+    "dev": "npx concurrently \"php mono -s\" \"npm run dev\""
   },
   "authors": [
     {
