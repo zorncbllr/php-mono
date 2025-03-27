@@ -91,6 +91,8 @@ class Component
 
         if (sizeof($matches[0]) == 0) return $content;
 
+        $propsMap = [];
+
         foreach ($matches[0] as $match) {
             $pattern = '/\w+="([^"]+)"/';
             $props = null;
@@ -98,7 +100,6 @@ class Component
             preg_match_all($pattern, $match, $props);
 
             if ($props && $props[0]) {
-                $propsMap = [];
 
                 foreach ($props[0] as $prop) {
                     $key = explode("=", $prop)[0];
@@ -110,14 +111,14 @@ class Component
 
                     $propsMap[$key] = $value;
                 }
-
-                $content = str_replace(
-                    $match,
-                    self::parseVariables($replacement, $propsMap),
-                    $content
-                );
             }
         }
+
+        $content = str_replace(
+            $match,
+            self::parseVariables($replacement, $propsMap),
+            $content
+        );
 
         return $content;
     }
