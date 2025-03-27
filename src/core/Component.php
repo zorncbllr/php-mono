@@ -37,11 +37,13 @@ class Component
                 && $file->getPathname() !== $componentPath
                 && self::hasComponent($name, $componentContent)
             ) {
-                $replacement = htmlspecialchars(
-                    file_get_contents($file->getPathname())
-                );
+                $replacement = file_get_contents($file->getPathname());
 
-                $componentContent = self::parseComponents($name, $replacement, $componentContent);
+                $componentContent = self::parseComponents(
+                    $name,
+                    $replacement,
+                    htmlspecialchars_decode($componentContent)
+                );
             }
         }
 
@@ -77,21 +79,23 @@ class Component
     private static function parseComponents(string $component, string $replacement, string $content)
     {
         $matches = null;
-        $pattern = "/(<$component.*\/>|<$component.*\>.*<\/$component.*\>)/";
+        $pattern = "/<$component\s+([^>]*?)\s*\/?>|<$component\s+([^>]*?)\s*?>.*?<\/$component\s*>/s";
 
-        preg_match_all(htmlspecialchars($pattern), $content, $matches);
-
+        preg_match_all(
+            $pattern,
+            htmlspecialchars_decode($content),
+            $matches
+        );
 
         if (!$matches) return $content;
 
         if (sizeof($matches[0]) == 0) return $content;
 
-
         foreach ($matches[0] as $match) {
-            $pattern = '/\s*\w+="[^"]*"\s*/';
+            $pattern = '/\w+="([^"]+)"/';
             $props = null;
 
-            preg_match_all(htmlspecialchars($pattern), $match, $props);
+            preg_match_all($pattern, $match, $props);
 
             if ($props && $props[0]) {
                 $propsMap = [];
@@ -99,15 +103,13 @@ class Component
                 foreach ($props[0] as $prop) {
                     $key = explode("=", $prop)[0];
                     $value = str_replace(
-                        htmlspecialchars("\""),
+                        "\"",
                         "",
                         explode("=", $prop)[1]
                     );
 
                     $propsMap[$key] = $value;
                 }
-
-                App::debugPrint($propsMap);
 
                 $content = str_replace(
                     $match,
@@ -117,24 +119,9 @@ class Component
             }
         }
 
-        $content = str_replace(
-            $match,
-            self::parseVariables($replacement, []),
-            $content
-        );
-
         return $content;
     }
 
-    private static function hasUndefinedVariable($content)
-    {
-        $pattern = '/\{\{\s*\$[a-zA-Z_][a-zA-Z0-9_]*\s*\}\}/';
-        $matches = null;
-
-        preg_match_all($pattern, $content, $matches);
-
-        return $matches && sizeof($matches[0]) === 0;
-    }
 
     private static function parseForEach(string $content, $variables)
     {
