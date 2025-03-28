@@ -98,7 +98,11 @@ class Database
         }
 
         $attributes = self::getProperties($this);
-        $table = lcfirst(get_called_class()) . "s";
+        $table = str_replace(
+            "src\\models\\",
+            "",
+            strtolower(get_called_class()) . 's'
+        );
 
         $query = "insert into `$table` (";
 
@@ -121,7 +125,11 @@ class Database
     public static function migrateModel(string $config): bool
     {
         $pdo = self::getPDOInstance();
-        $table = lcfirst(get_called_class()) . "s";
+        $table = str_replace(
+            "src\\models\\",
+            "",
+            strtolower(get_called_class()) . 's'
+        );
 
         try {
             $query = "CREATE TABLE `{$table}` ( {$config} )";
@@ -188,7 +196,11 @@ class Database
         try {
             echo "\nExtending columns...";
             $pdo = self::getPDOInstance();
-            $table = strtolower(get_called_class()) . "s";
+            $table = str_replace(
+                "src\\models\\",
+                "",
+                strtolower(get_called_class()) . "s"
+            );
             $query = "ALTER TABLE `{$table}` ADD " . trim($config);
 
             $pdo->exec($query);
@@ -227,7 +239,7 @@ class Database
             if ($file->isFile()) {
                 $modelClass = $file->getBasename(".php");
                 include_once "{$modelsPath}/{$modelClass}.php";
-                eval("{$modelClass}::init{$modelClass}();");
+                eval("Src\\Models\\{$modelClass}::init{$modelClass}();");
             }
         }
     }
@@ -247,7 +259,12 @@ class Database
 
         $this->__construct(...$updatedData);
 
-        $table = strtolower(get_called_class()) . "s";
+        $table = str_replace(
+            "src\\models\\",
+            "",
+            strtolower(get_called_class()) . "s"
+        );
+
         $query = "UPDATE `$table` SET ";
 
         foreach ($updatedData as $key => $value) {
@@ -272,7 +289,11 @@ class Database
         $modelData = self::getProperties($this);
         $primaryKey = self::getPrimaryKey($modelData);
 
-        $table = lcfirst(get_called_class()) . "s";
+        $table = str_replace(
+            "src\\models\\",
+            "",
+            strtolower(get_called_class()) . "s"
+        );
         $query = "DELETE FROM `$table` WHERE `$table`.`{$primaryKey}` = :{$primaryKey}";
 
         $statement = $pdo->prepare($query);

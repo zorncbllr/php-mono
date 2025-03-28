@@ -98,7 +98,7 @@ function handleOperation($mode, $arg1 = '', $arg2 = '')
             echo "Iniatilizing...";
             if (!empty($arg2)) {
                 $model = ucfirst($arg2);
-                eval("{$model}::init{$model}();");
+                eval("Src\\Models\\{$model}::init{$model}();");
             } else {
                 Database::initModels();
             }

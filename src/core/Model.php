@@ -7,7 +7,11 @@ abstract class Model extends Database
 {
     public static function find(array $param)
     {
-        $table = strtolower(get_called_class());
+        $table = str_replace(
+            "src\\models\\",
+            "",
+            strtolower(get_called_class())
+        );
         $query = "SELECT * FROM `{$table}s`";
 
         $query .= " WHERE";
@@ -31,7 +35,11 @@ abstract class Model extends Database
 
     public static function all(array $columns = [])
     {
-        $table = strtolower(get_called_class());
+        $table = str_replace(
+            "src\\models\\",
+            "",
+            strtolower(get_called_class())
+        );
         $query = empty($columns) ? "SELECT * FROM `{$table}s`" : "SELECT " . implode(", ", $columns) . " FROM `{$table}s`";
 
         if (!empty($columns)) {
@@ -51,7 +59,13 @@ abstract class Model extends Database
 
     public static function findById(int | string $id)
     {
-        $query = "select * from " . lcfirst(get_called_class()) . "s where id = :id";
+        $table = str_replace(
+            "src\\models\\",
+            "",
+            strtolower(get_called_class())
+        );
+
+        $query = "select * from {$table}s where id = :id";
 
         $data = parent::query($query, ["id" => $id]);
 
