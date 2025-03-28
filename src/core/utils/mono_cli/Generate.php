@@ -345,7 +345,7 @@ class Generate
 
         file_put_contents(
             $directory . "/$class.php",
-            "<?php\n\nnamespace Src\Middlewares;\n\nuse Src\Core\Request;\nuse Src\Core\Middleware;\n\nclass $class extends Middleware\n{\n\tstatic function runnable(Request \$request, callable \$next)\n\t{\n\t\techo '$class Middleware';\n\t}\n}"
+            "<?php\n\nnamespace Src\Middlewares;\n\nuse Src\Core\Utils\Request;\nuse Src\Core\Middleware;\n\nclass $class extends Middleware\n{\n\tstatic function runnable(Request \$request, callable \$next)\n\t{\n\t\techo '$class Middleware';\n\n\t\treturn \$next();\n\t}\n}"
         );
 
         exit();

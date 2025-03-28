@@ -48,11 +48,11 @@ class Controller
 
     public static function handleMiddlewares(ReflectionMethod | ReflectionClass $method, Request $request)
     {
-        if (empty($method->getAttributes('Middleware'))) {
+        if (empty($method->getAttributes('Src\Core\Utils\Annotations\Middleware'))) {
             return true;
         }
 
-        $attribute = $method->getAttributes('Middleware')[0];
+        $attribute = $method->getAttributes('Src\Core\Utils\Annotations\Middleware')[0];
 
         $middlewares = $attribute->newInstance()->middlewares;
 
